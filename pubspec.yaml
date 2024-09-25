@@ -1,0 +1,59 @@
+name: cphi
+description: A New Dreamcast Event App.
+
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.4+1
+
+environment:
+  sdk: '>=2.18.2 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.6
+  get: ^4.6.1
+  dio: ^4.0.6
+  intl: ^0.17.0
+  qr_code_scanner: ^1.0.1
+  qr_flutter: ^4.1.0
+  permission_handler: ^10.1.0
+  #flutter_zxing: any
+  camera: ^0.10.5+9
+  flutter_barcode_scanner: ^2.0.0
+  csv: any
+  open_file: ^3.2.1
+  external_path: ^1.0.3
+  share_plus: any
+  sqflite: ^2.3.2
+  flutter_slidable: ^3.0.1
+  vcard_maintained: ^0.0.1+1
+  http: any
+  shared_preferences: ^2.1.0
+  contacts_service: any
+  firebase_core: ^2.2.0 #connet to firebase service
+  firebase_database: ^10.0.5 #for firebase chat database manage
+  firebase_messaging: ^14.1.2 #used for get firebase notifications its working like a background service
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+dependency_overrides:
+#ffi: any
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/icons/
+  fonts:
+    - family: Figtree
+      fonts:
+        - asset: assets/fonts/Figtree-Italic-VariableFont_wght.ttf
+        - asset: assets/fonts/Figtree-VariableFont_wght.ttf
+        - asset: assets/fonts/SourceSansPro-Semibold.otf
