@@ -268,4 +268,9 @@ class MyStrings {
       " and I have read / I am obligated to read the afore said policy";
 
   static const disclamerHalf="I do hereby provide my free, specific, informed, unconditional and unambiguous consent for processing of...";
+  static const event_happening_with_dreamcast = "Event Happening with Dreamcast";
+  static const String uncategorized_event = 'Uncategorized Event';
+  static const secureLeadTitle = "Secure Your Lead Data: Continue with ";
+  static const logIn = "Log In";
+
 }

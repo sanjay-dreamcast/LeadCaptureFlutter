@@ -1,6 +1,7 @@
 import 'package:contacts_service/contacts_service.dart';
 import 'package:cphi/view/Dashboard/dashboardView.dart';
 import 'package:cphi/view/Home/homeView.dart';
+import 'package:cphi/view/events/events_Screen.dart';
 import 'package:cphi/view/localDatabase/addContactPage.dart';
 import 'package:get/get.dart';
 import '../splash/splash_binding.dart';
@@ -45,6 +46,7 @@ class AppPages {
     // GetPage(name: SignupPage.routeName, page: () => SignupPage()),
 
     GetPage(name: QRScanner.routeName, page: () => QRScanner()),
+    GetPage(name: EventsScreen.routeName, page: () => EventsScreen()),
 
     // GetPage(name: ChatDetailPage.routeName, page: () => ChatDetailPage()),
   ];

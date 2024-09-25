@@ -6,6 +6,6 @@ final ThemeData appThemeData = ThemeData(
   highlightColor: Colors.orange,
   fontFamily: 'Roboto',
   textTheme: TextTheme(
-    headline1: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
+    headlineLarge: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
   ),
 );

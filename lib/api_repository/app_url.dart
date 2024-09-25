@@ -1,7 +1,9 @@
 class AppUrl {
   //for production
   static String defaultFirebaseNode = "eventappsaasboomi2023";
-  static String baseUrl = 'https://mindmixer.saasboomi.org/api/3rdParty/v1';
+  // static String baseUrl = 'https://mindmixer.saasboomi.org/api/3rdParty/v1';
+  static String baseUrl = 'https://staging-eapp.godreamcast.com/lead_capture/api/app/v1';
+
   //for staging
   //static String defaultFirebaseNode = "eventappotm2024";
   //static String baseUrl = 'https://live.dreamcast.in/otm_2024/api/v1';
@@ -292,4 +294,7 @@ class AppUrl {
        "https://engagement.vehub.live/comonface_api/api/storeimg";
    static String get aiMyImage =>
        "https://engagement.vehub.live/comonface_api/api/all_my_images";*/
+
+  static String get eventList => '$baseUrl/event';
+
 }

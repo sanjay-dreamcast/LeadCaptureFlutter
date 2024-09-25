@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:cphi/model/guide_model.dart';
 import 'package:cphi/routes/my_constant.dart';
 import 'package:cphi/api_repository/app_url.dart';
+import 'package:cphi/view/localDatabase/event_data_Model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_instance/get_instance.dart';
@@ -217,6 +218,62 @@ class ApiService extends GetxService {
     }
   }
 
+  Future<EventApiResponse> getEventsList(dynamic body) async {
+    // Prepare your headers
+    Map<String, String> headerParams = {
+      "Authorization": "Bearer " + "",
+      "dc-timezone": getCurrentTimezoneOffsetInMinutes().toString(),
+    };
+
+    try {
+      final response = await DigestAuthClient(DIGEST_AUTH_USERNAME, DIGEST_AUTH_PASSWORD)
+          .get(Uri.parse(AppUrl.eventList),
+          headers: headerParams,)
+          .timeout(const Duration(seconds: 20));
+
+      print('Raw response body: ${response.body}'); // Log the raw response
+
+      // Attempt to parse the JSON response
+      return EventApiResponse.fromJson(json.decode(response.body));
+    } catch (e) {
+      print('Error: $e'); // Log the error for debugging
+      checkException(e);
+      rethrow;
+    }
+
+  }
+  // Future<EventApiResponse> getEventsList(dynamic body) async {
+  //   // Prepare your headers
+  //   Map<String, String> headerParams = {
+  //     "Authorization": "",
+  //     "dc-timezone": getCurrentTimezoneOffsetInMinutes().toString(),
+  //     "Content-Type": "application/json",
+  //   };
+  //
+  //   try {
+  //     final response = await http.post(
+  //       Uri.parse(AppUrl.eventList),
+  //       headers: headerParams,
+  //       body: jsonEncode(body),
+  //     ).timeout(const Duration(seconds: 20));
+  //
+  //     print('Raw response body: ${response.body}'); // Log the raw response
+  //
+  //     // Check if the response status code is OK (200)
+  //     if (response.statusCode == 200) {
+  //       // Attempt to parse the JSON response
+  //       return EventApiResponse.fromJson(json.decode(response.body));
+  //     } else {
+  //       throw Exception('Failed to load events: ${response.reasonPhrase}');
+  //     }
+  //   } catch (e) {
+  //     print('Error: $e'); // Log the error for debugging
+  //     // Optionally, you can handle different types of exceptions here
+  //     throw e; // Re-throw the error after logging
+  //   }
+  // }
+
+
   void checkException(Object exception) {
     if (exception is ServerException) {
       Get.snackbar(
@@ -241,6 +298,15 @@ class ApiService extends GetxService {
         "Please check your internet connection.",
       );
     }
+  }
+  int getCurrentTimezoneOffsetInMinutes() {
+    // Get the current timezone offset in milliseconds
+    final Duration offset = DateTime.now().timeZoneOffset;
+
+    // Convert the offset to minutes
+    final int offsetInMinutes = offset.inMinutes;
+
+    return offsetInMinutes;
   }
 //
 //   Future<CommonModel> updatePassword(dynamic body) async {
