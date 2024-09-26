@@ -308,7 +308,7 @@ class _SearchBarState extends State<SearchBar> {
           setState(() {});
         },
         decoration: InputDecoration(
-          prefixIcon: Icon(
+          prefixIcon: const Icon(
             Icons.search,
             color: Colors.grey,
             size: 35.0,
@@ -325,7 +325,7 @@ class _SearchBarState extends State<SearchBar> {
           )
               : null,
           hintText: MyStrings.search_here,
-          hintStyle: TextStyle(
+          hintStyle: const TextStyle(
             color: Colors.grey,
             fontSize: 16,
             fontWeight: FontWeight.w400,
