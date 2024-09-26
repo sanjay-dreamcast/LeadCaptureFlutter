@@ -272,5 +272,6 @@ class MyStrings {
   static const String uncategorized_event = 'Uncategorized Event';
   static const secureLeadTitle = "Secure Your Lead Data: Continue with ";
   static const logIn = "Log In";
-
+  static const  search_here = 'Search here';
+  static const no_event_found  = 'No Events Found!';
 }

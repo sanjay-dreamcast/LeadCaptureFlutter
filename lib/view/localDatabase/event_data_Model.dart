@@ -4,7 +4,7 @@ import 'dart:convert';
 class EventApiResponse {
   final bool? status;
   final String? message;
-  final List<Event>? body;
+  final List<EventData>? body;
   final int? code;
 
   EventApiResponse({this.status, this.message, this.body, this.code});
@@ -14,7 +14,7 @@ class EventApiResponse {
       status: json['status'] as bool?,
       message: json['message'] as String?,
       body: (json['body'] as List<dynamic>?)
-          ?.map((event) => Event.fromJson(event as Map<String, dynamic>))
+          ?.map((event) => EventData.fromJson(event as Map<String, dynamic>))
           .toList(),
       code: json['code'] as int?,
     );
@@ -30,7 +30,7 @@ class EventApiResponse {
   }
 }
 
-class Event {
+class EventData {
   final String? id;
   final String? name;
   final String? prefix;
@@ -45,7 +45,7 @@ class Event {
   final String? modified;
   final int? isSync;
 
-  Event({
+  EventData({
     this.id,
     this.name,
     this.prefix,
@@ -61,8 +61,8 @@ class Event {
     this.isSync,
   });
 
-  factory Event.fromJson(Map<String, dynamic> json) {
-    return Event(
+  factory EventData.fromJson(Map<String, dynamic> json) {
+    return EventData(
       id: json['id'] as String?,
       name: json['name'] as String?,
       prefix: json['prefix'] as String?,

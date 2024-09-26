@@ -57,3 +57,10 @@ flutter:
         - asset: assets/fonts/Figtree-Italic-VariableFont_wght.ttf
         - asset: assets/fonts/Figtree-VariableFont_wght.ttf
         - asset: assets/fonts/SourceSansPro-Semibold.otf
+        - asset: assets/fonts/figtree_bold.ttf
+        - asset: assets/fonts/figtree_extrabold.ttf
+        - asset: assets/fonts/figtree_medium.ttf
+        - asset: assets/fonts/figtree_medium_italic.ttf
+        - asset: assets/fonts/figtree_regular.ttf
+        - asset: assets/fonts/figtree_semibold.ttf
+

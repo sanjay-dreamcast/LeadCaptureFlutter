@@ -1,10 +1,14 @@
 import 'package:cphi/theme/strings.dart';
+import 'package:cphi/utils/LifecycleController.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart'; // Import GetX
 import '../../api_repository/api_service.dart';
+import '../../model/Status.dart';
 import '../../theme/app_colors.dart';
 import '../localDatabase/EventsController.dart';
+
 
 class EventsScreen extends StatefulWidget {
   const EventsScreen({super.key});
@@ -14,47 +18,99 @@ class EventsScreen extends StatefulWidget {
   State<EventsScreen> createState() => _EventsScreenState();
 }
 
-class _EventsScreenState extends State<EventsScreen> {
+class _EventsScreenState extends State<EventsScreen> with WidgetsBindingObserver {
   final EventsController eventsController = Get.put(EventsController(Get.find<ApiService>())); // Initialize the EventsController
+  final LifecycleController lifecycleController = Get.put(LifecycleController());
 
   @override
   void initState() {
     super.initState();
-    fetchEvents(); // Fetch events when the screen is initialized
+    fetchEvents();
+
+    // Register the observer
+    WidgetsBinding.instance.addObserver(this);
   }
 
   Future<void> fetchEvents() async {
     dynamic requestBody = {
-      // Your request parameters
+
     };
-    await eventsController.fetchEvents(requestBody); // Call fetchEvents from EventsController
+    await eventsController.fetchEvents(requestBody,isRefresh: true); // Call fetchEvents from EventsController
   }
+
+  Future<void> _onRefresh() async {
+    await fetchEvents();
+  }
+
+
+  @override
+  void dispose() {
+    // Unregister the observer
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // Update the lifecycle state in the LifecycleController
+    lifecycleController.updateLifecycleState(state); // Update through the controller
+
+    // Additional logic based on the lifecycle state
+    switch (state) {
+      case AppLifecycleState.resumed:
+        print("App is in the foreground");
+        fetchEvents(); // Refresh events when app resumes
+        break;
+      case AppLifecycleState.paused:
+        print("App is in the background");
+        break;
+      case AppLifecycleState.inactive:
+        print("App is inactive");
+        break;
+      case AppLifecycleState.detached:
+        print("App is detached");
+        break;
+      default:
+        print("Unhandled app lifecycle state: $state");
+        break;
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _loginStripUI(),
-            SearchBar(),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
-              child: Text(
-                MyStrings.event_happening_with_dreamcast,
-                style: TextStyle(
-                  color: grey10,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16,
-                  fontFamily: "Figtree",
+        resizeToAvoidBottomInset: false, // Prevent resizing
+        backgroundColor: Colors.white,
+        body: RefreshIndicator(
+          onRefresh: _onRefresh, // Call the _onRefresh method when swiped
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _loginStripUI(),
+              SearchBar(
+              onSearch: (query) {
+                eventsController.filterEvents(query);
+              },
+            ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
+                child: Text(
+                  MyStrings.event_happening_with_dreamcast,
+                  style: TextStyle(
+                    color: grey10,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14,
+                    fontFamily: "figtree_medium",
+                  ),
                 ),
               ),
-            ),
-            Expanded(child: _eventList()),
-            _uncategorizedEvent()
-          ],
+              Expanded(child: _eventList()),
+              _uncategorizedEvent()
+            ],
+          ),
         ),
       ),
     );
@@ -62,7 +118,7 @@ class _EventsScreenState extends State<EventsScreen> {
 
   Widget _loginStripUI() {
     return Container(
-      color: textColor,
+      color: blackGrey,
       padding: const EdgeInsets.symmetric(
         vertical: 5.0,
         horizontal: 40.0,
@@ -74,22 +130,21 @@ class _EventsScreenState extends State<EventsScreen> {
           style: const TextStyle(
             color: Colors.white,
             fontSize: 14,
-            fontWeight: FontWeight.normal,
-            fontFamily: "Figtree",
+            fontFamily: "figtree_medium",
           ),
           children: [
             TextSpan(
               text: MyStrings.logIn,
               style: const TextStyle(
-                fontFamily: "Figtree",
+                fontFamily: "figtree_medium",
                 color: Colors.white,
                 decoration: TextDecoration.underline,
-                fontWeight: FontWeight.w800,
                 fontSize: 14,
               ),
               recognizer: TapGestureRecognizer()
                 ..onTap = () {
                   print('Continue with Log In clicked');
+
                 },
             ),
           ],
@@ -99,56 +154,88 @@ class _EventsScreenState extends State<EventsScreen> {
   }
 
   Widget _eventList() {
-    return Obx(() { // Use Obx to reactively update the UI based on eventsController
-      if (eventsController.isLoading.value) {
-        return const Center(child: CircularProgressIndicator());
-      } else if (eventsController.errorMessage.isNotEmpty) {
-        return Center(child: Text(eventsController.errorMessage.value));
-      } else {
-        return ListView.builder(
-          padding: const EdgeInsets.symmetric(horizontal: 15.0),
-          itemCount: eventsController.eventsList.length,
-          itemBuilder: (context, index) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 6.0),
-              child: GestureDetector(
-                onTap: () {
-                  print('Event tapped: ${eventsController.eventsList[index].name}');
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 18),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: white80),
-                    borderRadius: BorderRadius.circular(15),
+    return Obx(() {
+      switch (eventsController.eventResource.value.status) {
+        case Status.loading:
+        // Optionally return the current list of events with a loading indicator
+          return Center(child: CircularProgressIndicator());
+
+        case Status.error:
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'assets/images/ic_event.png',
+                    width: 24,
+                    height: 24,
+                    fit: BoxFit.cover,
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          eventsController.eventsList[index].name ?? 'Unnamed Event',
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            fontFamily: "Figtree",
+                  const SizedBox(width: 8),
+                  Text(
+                    eventsController.eventResource.value.message ?? MyStrings.no_event_found,
+                    style: const TextStyle(
+                        color: blackGrey,
+                        fontSize: 20,
+                        fontFamily: "figtree_semibold"
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+
+        case Status.success:
+          final eventsList = eventsController.eventResource.value.data;
+          print("Event List-> $eventsList");
+          return ListView.builder(
+            padding: const EdgeInsets.symmetric(horizontal: 15.0),
+            itemCount: eventsList?.length ?? 0,
+            itemBuilder: (context, index) {
+              final event = eventsList![index];
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 6.0),
+                child: GestureDetector(
+                  onTap: () {
+                    print('Event tapped: ${event.name}');
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 18),
+                    decoration: BoxDecoration(
+                      color: white_color,
+                      border: Border.all(color: white80),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            event.name ?? 'Unnamed Event',
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: "Figtree",
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 10),
-                      const Icon(
-                        Icons.arrow_forward_ios_sharp,
-                        color: Colors.black,
-                      ),
-                    ],
+                        const SizedBox(width: 10),
+                        const Icon(
+                          Icons.arrow_forward_ios_sharp,
+                          color: Colors.black,
+                          size: 16.0,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            );
-          },
-        );
+              );
+            },
+          );
       }
     });
   }
@@ -175,15 +262,17 @@ class _EventsScreenState extends State<EventsScreen> {
                 Text(
                   MyStrings.uncategorized_event,
                   style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      fontFamily: "figtree_semibold"
                   ),
                 ),
                 SizedBox(width: 20),
                 Icon(
                   Icons.arrow_forward_ios_sharp,
                   color: Colors.white,
+                  size: 15,
                 ),
               ],
             ),
@@ -192,10 +281,13 @@ class _EventsScreenState extends State<EventsScreen> {
       ),
     );
   }
+
 }
 
 class SearchBar extends StatefulWidget {
-  const SearchBar({super.key});
+  final Function(String) onSearch; // Callback for search functionality
+
+  const SearchBar({super.key, required this.onSearch});
 
   @override
   _SearchBarState createState() => _SearchBarState();
@@ -211,12 +303,14 @@ class _SearchBarState extends State<SearchBar> {
       child: TextField(
         controller: _searchController,
         onChanged: (value) {
-          setState(() {}); // Triggers rebuild to show/hide the clear button
+          print("obj_.>${value}");
+          widget.onSearch(value);
+          setState(() {});
         },
         decoration: InputDecoration(
           prefixIcon: Icon(
             Icons.search,
-            color: grayNew,
+            color: Colors.grey,
             size: 35.0,
           ),
           suffixIcon: _searchController.text.isNotEmpty
@@ -225,19 +319,20 @@ class _SearchBarState extends State<SearchBar> {
             color: Colors.grey,
             onPressed: () {
               _searchController.clear();
+              widget.onSearch(''); // Reset the search filter
               setState(() {}); // Rebuild to hide the clear button
             },
           )
               : null,
-          hintText: 'Search here',
+          hintText: MyStrings.search_here,
           hintStyle: TextStyle(
             color: Colors.grey,
-            fontWeight: FontWeight.w600,
             fontSize: 16,
-            fontFamily: "Figtree",
+            fontWeight: FontWeight.w400,
+            fontFamily: "figtree_medium",
           ),
           filled: true,
-          fillColor: Colors.grey.shade200,
+          fillColor: indicatorColor,
           contentPadding: EdgeInsets.all(0.0),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(35.0),
@@ -248,3 +343,4 @@ class _SearchBarState extends State<SearchBar> {
     );
   }
 }
+
