@@ -82,3 +82,5 @@ const violet10 = Color(0xFF402F87);
 const white80 = Color(0xFFE8E8E8);
 const white_color = Color(0xFFFFFFFF);
 const blackGrey = Color(0xFF333333);
+const white20color = Color(0xFFF4F3F7);
+const blue_20 = Color(0xFF3F2E88);

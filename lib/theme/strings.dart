@@ -274,4 +274,8 @@ class MyStrings {
   static const logIn = "Log In";
   static const  search_here = 'Search here';
   static const no_event_found  = 'No Events Found!';
+  static const logIn2 = "Login";
+  static const no_user_found  = 'No User Found!';
+
+
 }

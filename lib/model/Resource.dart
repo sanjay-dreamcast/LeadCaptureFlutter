@@ -35,4 +35,8 @@ class Resource<T> {
   // Error state: Accepts both error message and optional data (default null)
   factory Resource.error(String message, {T? data}) =>
       Resource._(status: Status.error, data: data, message: message);
+
+  // Initial state: Represents the state before any API call
+  factory Resource.initial() =>
+      Resource._(status: Status.initial, data: null, message: null);
 }

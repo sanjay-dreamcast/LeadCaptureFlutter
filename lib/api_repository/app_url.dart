@@ -296,5 +296,6 @@ class AppUrl {
        "https://engagement.vehub.live/comonface_api/api/all_my_images";*/
 
   static String get eventList => '$baseUrl/event';
+  static String get verifyUserName => '$baseUrl/signin/verifyUsername';
 
 }

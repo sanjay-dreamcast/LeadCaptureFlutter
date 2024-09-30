@@ -63,4 +63,5 @@ flutter:
         - asset: assets/fonts/figtree_medium_italic.ttf
         - asset: assets/fonts/figtree_regular.ttf
         - asset: assets/fonts/figtree_semibold.ttf
+          style: italic
 

@@ -15,6 +15,7 @@ import '../model/pages_model.dart';
 import '../routes/app_pages.dart';
 import '../theme/app_colors.dart';
 import '../view/customerWidget/regularTextView.dart';
+import '../view/localDatabase/LoginController.dart';
 import '../view/localDatabase/contactDetailModel.dart';
 import '../view/localDatabase/localDataModel.dart';
 import '../view/qrCode/model/unique_code_model.dart';
@@ -217,7 +218,6 @@ class ApiService extends GetxService {
       rethrow;
     }
   }
-
   Future<EventApiResponse> getEventsList(dynamic body) async {
     // Prepare your headers
     Map<String, String> headerParams = {
@@ -242,6 +242,21 @@ class ApiService extends GetxService {
     }
 
   }
+  Future<ApiResponse> verifyUserName(dynamic body) async {
+    try {
+      final response =
+      await DigestAuthClient(DIGEST_AUTH_USERNAME, DIGEST_AUTH_PASSWORD)
+          .post(Uri.parse(AppUrl.verifyUserName),
+          headers: cphiHeaders, body: jsonEncode(body))
+          .timeout(const Duration(seconds: 20));
+      print(response.body);
+      return ApiResponse.fromJson(json.decode(response.body));
+    } catch (e) {
+      checkException(e);
+      rethrow;
+    }
+  }
+
   // Future<EventApiResponse> getEventsList(dynamic body) async {
   //   // Prepare your headers
   //   Map<String, String> headerParams = {

@@ -1,5 +1,10 @@
+import 'dart:ui';
+
 import 'package:cphi/theme/strings.dart';
 import 'package:cphi/utils/LifecycleController.dart';
+import 'package:cphi/view/customerWidget/search_bar_widget.dart';
+import 'package:cphi/view/localDatabase/LoginController.dart';
+import 'package:cphi/view/login/bottomsheet_helper.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -21,6 +26,7 @@ class EventsScreen extends StatefulWidget {
 class _EventsScreenState extends State<EventsScreen> with WidgetsBindingObserver {
   final EventsController eventsController = Get.put(EventsController(Get.find<ApiService>())); // Initialize the EventsController
   final LifecycleController lifecycleController = Get.put(LifecycleController());
+  final LoginController loginController = Get.put(LoginController(Get.find<ApiService>())); // Initialize the EventsController
 
   @override
   void initState() {
@@ -90,7 +96,7 @@ class _EventsScreenState extends State<EventsScreen> with WidgetsBindingObserver
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _loginStripUI(),
-              SearchBar(
+              SearchBarWidget(
               onSearch: (query) {
                 eventsController.filterEvents(query);
               },
@@ -144,7 +150,11 @@ class _EventsScreenState extends State<EventsScreen> with WidgetsBindingObserver
               recognizer: TapGestureRecognizer()
                 ..onTap = () {
                   print('Continue with Log In clicked');
-
+                  BottomSheetHelper.showDynamicBottomSheet(context, (email) {
+                    // This callback will be executed on successful email validation
+                    print("Email validated successfully!${email}");
+                    // loginController.verifyUser({"email": email ?? ""}, context);
+                  });
                 },
             ),
           ],
@@ -236,6 +246,10 @@ class _EventsScreenState extends State<EventsScreen> with WidgetsBindingObserver
               );
             },
           );
+
+        default:
+        // Optional: Handle any unexpected state
+        return Center(child: Text("Unexpected error"));
       }
     });
   }
@@ -282,65 +296,9 @@ class _EventsScreenState extends State<EventsScreen> with WidgetsBindingObserver
     );
   }
 
+  // {"email":"gzg@gmail.com"}
+  // https://staging-eapp.godreamcast.com/lead_capture/api/app/v1/signin/verifyUsername
+  // {"status":false,"code":422,"message":"Validation failed","body":{"email":"Hmm, no account found with this email. Perhaps it's time to create a new account?"}}@@Msg@@
 }
 
-class SearchBar extends StatefulWidget {
-  final Function(String) onSearch; // Callback for search functionality
-
-  const SearchBar({super.key, required this.onSearch});
-
-  @override
-  _SearchBarState createState() => _SearchBarState();
-}
-
-class _SearchBarState extends State<SearchBar> {
-  final TextEditingController _searchController = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(15.0),
-      child: TextField(
-        controller: _searchController,
-        onChanged: (value) {
-          print("obj_.>${value}");
-          widget.onSearch(value);
-          setState(() {});
-        },
-        decoration: InputDecoration(
-          prefixIcon: const Icon(
-            Icons.search,
-            color: Colors.grey,
-            size: 35.0,
-          ),
-          suffixIcon: _searchController.text.isNotEmpty
-              ? IconButton(
-            icon: Icon(Icons.close),
-            color: Colors.grey,
-            onPressed: () {
-              _searchController.clear();
-              widget.onSearch(''); // Reset the search filter
-              setState(() {}); // Rebuild to hide the clear button
-            },
-          )
-              : null,
-          hintText: MyStrings.search_here,
-          hintStyle: const TextStyle(
-            color: Colors.grey,
-            fontSize: 16,
-            fontWeight: FontWeight.w400,
-            fontFamily: "figtree_medium",
-          ),
-          filled: true,
-          fillColor: indicatorColor,
-          contentPadding: EdgeInsets.all(0.0),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(35.0),
-            borderSide: BorderSide.none,
-          ),
-        ),
-      ),
-    );
-  }
-}
 
