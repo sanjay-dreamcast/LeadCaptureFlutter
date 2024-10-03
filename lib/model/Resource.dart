@@ -29,7 +29,7 @@ class Resource<T> {
       Resource._(status: Status.loading, data: data, message: message);
 
   // Success state: Accepts both data and optional message (default null)
-  factory Resource.success(T data, {String? message}) =>
+  factory Resource.success({T? data,String? message}) =>
       Resource._(status: Status.success, data: data, message: message);
 
   // Error state: Accepts both error message and optional data (default null)

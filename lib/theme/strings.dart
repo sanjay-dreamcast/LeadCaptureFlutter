@@ -276,6 +276,7 @@ class MyStrings {
   static const no_event_found  = 'No Events Found!';
   static const logIn2 = "Login";
   static const no_user_found  = 'No User Found!';
-
-
+  static const someErrorOccurred = "Some Error occurred";
+  static const somethingWentWrong = 'Something Went Wrong';
+  static const NoInternetconnected = "No internet connection.";
 }

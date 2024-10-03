@@ -95,25 +95,33 @@ class _EventsScreenState extends State<EventsScreen> with WidgetsBindingObserver
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _loginStripUI(),
-              SearchBarWidget(
-              onSearch: (query) {
-                eventsController.filterEvents(query);
-              },
-            ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
-                child: Text(
-                  MyStrings.event_happening_with_dreamcast,
-                  style: TextStyle(
-                    color: grey10,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 14,
-                    fontFamily: "figtree_medium",
+              Obx(() {
+                return loginController.isLoginButtonVisible.value
+                    ? const SizedBox.shrink() // Show the login strip UI if visible
+                    : _loginStripUI();  // Or return an empty widget if not visible
+              }),
+              Column(
+                children: [
+                  SearchBarWidget(
+                    onSearch: (query) {
+                      eventsController.filterEvents(query);
+                    },
                   ),
-                ),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 0, horizontal: 15),
+                    child: Text(
+                      MyStrings.event_happening_with_dreamcast,
+                      style: TextStyle(
+                        color: grey10,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14,
+                        fontFamily: "figtree_medium",
+                      ),
+                    ),
+                  ),
+                  Expanded(child: _eventList()),
+                ]
               ),
-              Expanded(child: _eventList()),
               _uncategorizedEvent()
             ],
           ),
@@ -168,7 +176,7 @@ class _EventsScreenState extends State<EventsScreen> with WidgetsBindingObserver
       switch (eventsController.eventResource.value.status) {
         case Status.loading:
         // Optionally return the current list of events with a loading indicator
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
 
         case Status.error:
           return Padding(
@@ -204,12 +212,12 @@ class _EventsScreenState extends State<EventsScreen> with WidgetsBindingObserver
             padding: const EdgeInsets.symmetric(horizontal: 15.0),
             itemCount: eventsList?.length ?? 0,
             itemBuilder: (context, index) {
-              final event = eventsList![index];
+              final event = eventsList?[index];
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 6.0),
                 child: GestureDetector(
                   onTap: () {
-                    print('Event tapped: ${event.name}');
+                    print('Event tapped: ${event?.name}');
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 18),
@@ -224,12 +232,12 @@ class _EventsScreenState extends State<EventsScreen> with WidgetsBindingObserver
                       children: [
                         Expanded(
                           child: Text(
-                            event.name ?? 'Unnamed Event',
+                            event?.name ?? 'Unknown Event',
                             style: const TextStyle(
                               color: Colors.black,
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
-                              fontFamily: "Figtree",
+                                fontFamily: "figtree_semibold"
                             ),
                           ),
                         ),
@@ -249,7 +257,7 @@ class _EventsScreenState extends State<EventsScreen> with WidgetsBindingObserver
 
         default:
         // Optional: Handle any unexpected state
-        return Center(child: Text("Unexpected error"));
+        return const Center(child: Text("Unexpected error"));
       }
     });
   }

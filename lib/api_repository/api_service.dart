@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:cphi/model/guide_model.dart';
+import 'package:cphi/model/user_data.dart';
 import 'package:cphi/routes/my_constant.dart';
 import 'package:cphi/api_repository/app_url.dart';
 import 'package:cphi/view/localDatabase/event_data_Model.dart';
@@ -9,6 +10,8 @@ import 'package:get/get_instance/get_instance.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:get/state_manager.dart';
 import '../globalController/authentication_manager.dart';
+import '../model/BaseApiModel.dart';
+import '../model/EmailErrorbody.dart';
 import '../model/badge_model.dart';
 import '../model/common_model.dart';
 import '../model/pages_model.dart';
@@ -242,7 +245,7 @@ class ApiService extends GetxService {
     }
 
   }
-  Future<ApiResponse> verifyUserName(dynamic body) async {
+  Future<BaseApiModel<EmailErrorBody>> verifyUserName(dynamic body) async {
     try {
       final response =
       await DigestAuthClient(DIGEST_AUTH_USERNAME, DIGEST_AUTH_PASSWORD)
@@ -250,12 +253,32 @@ class ApiService extends GetxService {
           headers: cphiHeaders, body: jsonEncode(body))
           .timeout(const Duration(seconds: 20));
       print(response.body);
-      return ApiResponse.fromJson(json.decode(response.body));
+      return BaseApiModel.fromJson(
+        json.decode(response.body), (data) => EmailErrorBody.fromJson(data),
+      );
     } catch (e) {
       checkException(e);
       rethrow;
     }
   }
+  Future<BaseApiModel<UserData>> verifyOtp(dynamic body) async {
+    try {
+      final response =
+      await DigestAuthClient(DIGEST_AUTH_USERNAME, DIGEST_AUTH_PASSWORD)
+          .post(Uri.parse(AppUrl.verifyOtp),
+          headers: cphiHeaders, body: jsonEncode(body))
+          .timeout(const Duration(seconds: 20));
+      print(response.body);
+      return BaseApiModel.fromJson(
+        json.decode(response.body),
+            (data) => UserData.fromJson(data), // Convert body to UserModel
+      );
+    } catch (e) {
+      checkException(e);
+      rethrow;
+    }
+  }
+
 
   // Future<EventApiResponse> getEventsList(dynamic body) async {
   //   // Prepare your headers

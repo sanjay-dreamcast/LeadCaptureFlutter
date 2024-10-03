@@ -95,7 +95,9 @@ class UniversalAlertDialog {
       barrierDismissible: false, // Prevent dismissal on outside tap
       builder: (BuildContext context) {
         return AlertDialog(
-          title: title != null ? Center(child: Text(title)) : null, // Show title only if not null
+          title: title != null ? Center(child: Text(title,style:
+          TextStyle(fontSize: 16,fontWeight: FontWeight.bold,fontFamily: 'figtree_semibold',
+          ),)) : null, // Show title only if not null
           content: message != null && message.isNotEmpty ? Text(message) : null, // Show message only if not null and not empty
           actions: [
             Center(
@@ -112,7 +114,7 @@ class UniversalAlertDialog {
                       },
                       style: TextButton.styleFrom(
                         backgroundColor: Colors.black,
-                        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 25),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -135,7 +137,7 @@ class UniversalAlertDialog {
                       },
                       style: TextButton.styleFrom(
                         backgroundColor: Colors.black,
-                        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 25),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),

@@ -68,7 +68,7 @@ class EventsController extends GetxController {
           await _dbHelper.insertEvents(response.body ?? []);
           // Update eventResource with the successful API response
           allEvents = response.body ?? [];
-          eventResource.value = Resource.success(allEvents);
+          eventResource.value = Resource.success(data: allEvents);
           print("fetchEvents Api Success");
         } else {
           // If API fails, show error message and retain offline data
@@ -91,7 +91,7 @@ class EventsController extends GetxController {
       allEvents = events;
       print("allEventsDb $allEvents");
       if (events.isNotEmpty) {
-        eventResource.value = Resource.success(events);
+        eventResource.value = Resource.success(data: events);
       } else {
         eventResource.value = Resource.error('No events available offline.');
       }
@@ -105,7 +105,7 @@ class EventsController extends GetxController {
 
   void filterEvents(String query) {
     if (query.isEmpty) {
-      eventResource.value = Resource.success(allEvents);
+      eventResource.value = Resource.success(data: allEvents);
     } else {
       // Filter events based on the query
       final filteredEvents = allEvents.where((event) {
@@ -113,7 +113,7 @@ class EventsController extends GetxController {
         return name.contains(query.toLowerCase());
       }).toList();
       print("allEvents_filteredEvents $filteredEvents");
-      eventResource.value = Resource.success(filteredEvents);
+      eventResource.value = Resource.success(data: filteredEvents);
     }
   }
 

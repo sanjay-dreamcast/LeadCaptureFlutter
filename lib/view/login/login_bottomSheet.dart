@@ -1,5 +1,8 @@
 
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -8,6 +11,7 @@ import '../../api_repository/api_service.dart';
 import '../../model/Status.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/strings.dart';
+import '../customerWidget/text_back_button.dart';
 import '../localDatabase/LoginController.dart';
 
 class LoginBottomSheet extends StatefulWidget {
@@ -68,49 +72,6 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                // Switch statement to handle loading and error states
-                // Obx(() {
-                //   switch (loginController.verifyUserResource.value.status) {
-                //     case Status.error:
-                //     // Check if the dialog is already visible
-                //       if (!_isDialogVisible) {
-                //         _isDialogVisible = true; // Set the flag to true
-                //         FocusScope.of(context).unfocus(); // Dismiss the keyboard
-                //
-                //         // Show the AlertDialog
-                //
-                //       }
-                //       return SizedBox.shrink(); // Return an empty widget while showing the dialog
-                //
-                //     case Status.success:
-                //       return SizedBox.shrink(); // Return an empty widget if no loader or error is needed
-                //
-                //     default:
-                //       return SizedBox.shrink(); // Handle any unexpected cases
-                //   }
-                // }),
-
-
-                /*Obx(() {
-                  switch (loginController.verifyUserResource.value.status) {
-                    case Status.error:
-                      FocusScope.of(context).unfocus(); // Add this line
-                      // Show the AlertDialog
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        // _showErrorDialog(context, loginController.verifyUserResource.value.message);
-                        UniversalAlertDialog.showAlertDialog(context,
-                            message: loginController.verifyUserResource.value.message ,
-                            isNegativeButtonVisible: false);
-                      });
-                      return SizedBox.shrink(); // Return an empty widget while showing the dialog
-
-                    case Status.success:
-                    // Return an empty widget if no loader or error is needed
-                      return SizedBox.shrink();
-                    default:
-                      return SizedBox.shrink(); // Handle any unexpected cases
-                  }
-                }), */
                 // Using Obx to reactively update the UI based on isOtpVisible
                 Obx(() {
                   return loginController.isOtpVisible.value
@@ -118,8 +79,11 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
                     otpController: _otpController,
                     errorMessage: otpErrorMessage,
                     loginController: loginController,
-                    onVerify: (otp) {
-                      // Add your OTP verification logic here
+                    onVerify: () {
+                      loginController.validateOtp();
+                    },
+                    onResend: (isResendOtp) {
+                      loginController.validateEmail(loginController.emailId.value,isResendOtp:isResendOtp);
                     },
                   ) : LoginContainer(
                     emailController: emailController,
@@ -134,7 +98,8 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
             ),
           ),
           Obx(() {
-            if (loginController.verifyUserResource.value.status == Status.loading) {
+            if (loginController.verifyUserResource.value.status == Status.loading
+            ||loginController.verifyOtpResource.value.status == Status.loading) {
               return Positioned.fill(
                 child: UniversalLoader(), // Show full-screen loader
               );
@@ -150,7 +115,8 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
 class OtpContainer extends StatelessWidget {
   final TextEditingController otpController;
   final String errorMessage;
-  final ValueChanged<String> onVerify;
+  final VoidCallback onVerify;
+  final Function(bool isResend) onResend;
   final LoginController loginController;
   const OtpContainer({
     Key? key,
@@ -158,6 +124,7 @@ class OtpContainer extends StatelessWidget {
     required this.errorMessage,
     required  this.loginController,
     required this.onVerify,
+    required this.onResend,
   }) : super(key: key);
 
   @override
@@ -174,6 +141,10 @@ class OtpContainer extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           // backButton(context),
+          TextBackButton(title: 'Back',onBackPressed: (){
+            print("BackButton");
+            loginController.setOtpVisible(false);
+          }),
           const Text(
             'OTP Verification',
             textAlign: TextAlign.center,
@@ -185,35 +156,39 @@ class OtpContainer extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
-            'Please type a OTP verification code send to',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: blackGrey,
-              fontSize: 14.0,
-              fontFamily: 'figtree_regular',
-            ),
-          ),
-          const SizedBox(height: 10),
-          _otpPin(context),
-          const SizedBox(height: 16),
-          Visibility(
-            visible: errorMessage.isNotEmpty,
-            child: Text(
-              errorMessage,
+          Obx(() {
+            return  Text(
+              '${loginController.verifyUserResource.value.message}',
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Colors.red,
-                fontSize: 12.0,
-                fontFamily: 'figtree_medium',
+              style: TextStyle(
+                color: blackGrey,
+                fontSize: 14.0,
+                fontFamily: 'figtree_regular',
               ),
-            ),
-          ),
+            );
+          }),
+          const SizedBox(height: 20),
+          _otpPin(context,loginController),
+          const SizedBox(height: 16),
+          Obx(() {
+            return Visibility(
+              visible: loginController.otpErrorMessage.isNotEmpty,
+              child: Text(
+                loginController.otpErrorMessage.value,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Colors.red,
+                  fontSize: 12.0,
+                  fontFamily: 'figtree_medium',
+                ),
+              ),
+            );
+          }),
           const SizedBox(height: 5),
           GestureDetector(
             onTap: () => {
-              loginController.setOtpVisible(false)
-              // onVerify(otpController.text)
+              // loginController.setOtpVisible(false)
+              onVerify()
             },
             child: Container(
               width: double.infinity,
@@ -236,12 +211,65 @@ class OtpContainer extends StatelessWidget {
               ),
             ),
           ),
+          const SizedBox(height: 15),
+          Obx(() {
+            return Column(
+              children: [
+                RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 14.0, // Default text size
+                    ),
+                    children: [
+                      const TextSpan(text: "Didn't receive the OTP? "),
+                      loginController.isResendEnabled.value
+                          ? TextSpan(
+                        text: "Resend OTP",
+                        style: const TextStyle(
+                          decoration: TextDecoration.underline,
+                          fontFamily: 'figtree_semibold',
+                          fontWeight: FontWeight.w700,
+                          color: blackGrey,
+                          fontSize: 14
+                        ),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            onResend(true); // Call resend
+                          },
+                      )
+                          : const TextSpan(
+                        text: "Resend OTP",
+                        style: TextStyle(
+                          fontFamily: 'figtree_regular',
+                          fontWeight: FontWeight.w300,
+                          color: Colors.grey, // Disabled color
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 5),
+                if (!loginController.isResendEnabled.value)
+                  Text(
+                    "00:${loginController.resendTimer.value}",
+                    style: const TextStyle(
+                      fontFamily: 'figtree_regular',
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.w500,
+                      color: blackGrey, // Timer color
+                    ),
+                  ),
+              ],
+            );
+          })
         ],
       ),
     );
   }
 
-  Widget _otpPin(BuildContext context) {
+  Widget _otpPin(BuildContext context, LoginController loginController) {
     final defaultPinTheme = PinTheme(
       width: 46,
       height: 46,
@@ -262,7 +290,10 @@ class OtpContainer extends StatelessWidget {
       onCompleted: (pin) => {
         print("pin--> $pin")},
       onChanged: (pin) => {
-        print("pin onChanged--> $pin")},
+        loginController.updatePin(pin)
+      },
+      onSubmitted: (otp)=>{
+        print("pin onChanged--> $otp")},
     );
   }
 

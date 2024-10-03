@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cphi/splash/splash_binding.dart';
+import 'package:cphi/utils/shared_preferences_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -31,6 +32,7 @@ void main() async {
   Get.put<AuthenticationManager>(AuthenticationManager());
   Get.putAsync<ApiService>(() => ApiService().init());
   // FirebaseMessaging.onBackgroundMessage(backgroundHandler);
+  await SharedPreferencesHelper().init(); // Initialize SharedPreferences
   runApp(const MyApp());
 }
 
