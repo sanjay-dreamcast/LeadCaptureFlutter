@@ -12,6 +12,7 @@ import 'package:get/get.dart'; // Import GetX
 import '../../api_repository/api_service.dart';
 import '../../model/Status.dart';
 import '../../theme/app_colors.dart';
+import '../Dashboard/dashboardView.dart';
 import '../localDatabase/EventsController.dart';
 
 
@@ -90,6 +91,7 @@ class _EventsScreenState extends State<EventsScreen> with WidgetsBindingObserver
         resizeToAvoidBottomInset: false, // Prevent resizing
         backgroundColor: Colors.white,
         body: RefreshIndicator(
+          color: Colors.black, // Color of the spinner
           onRefresh: _onRefresh, // Call the _onRefresh method when swiped
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -97,31 +99,27 @@ class _EventsScreenState extends State<EventsScreen> with WidgetsBindingObserver
             children: [
               Obx(() {
                 return loginController.isLoginButtonVisible.value
-                    ? const SizedBox.shrink() // Show the login strip UI if visible
-                    : _loginStripUI();  // Or return an empty widget if not visible
+                    ? const SizedBox.shrink()
+                    : _loginStripUI();
               }),
-              Column(
-                children: [
-                  SearchBarWidget(
-                    onSearch: (query) {
-                      eventsController.filterEvents(query);
-                    },
+              SearchBarWidget(
+              onSearch: (query) {
+                eventsController.filterEvents(query);
+              },
+            ),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 0, horizontal: 15),
+                child: Text(
+                  MyStrings.event_happening_with_dreamcast,
+                  style: TextStyle(
+                    color: grey10,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14,
+                    fontFamily: "figtree_medium",
                   ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 0, horizontal: 15),
-                    child: Text(
-                      MyStrings.event_happening_with_dreamcast,
-                      style: TextStyle(
-                        color: grey10,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 14,
-                        fontFamily: "figtree_medium",
-                      ),
-                    ),
-                  ),
-                  Expanded(child: _eventList()),
-                ]
+                ),
               ),
+              Expanded(child: _eventList()),
               _uncategorizedEvent()
             ],
           ),
@@ -217,6 +215,7 @@ class _EventsScreenState extends State<EventsScreen> with WidgetsBindingObserver
                 padding: const EdgeInsets.symmetric(vertical: 6.0),
                 child: GestureDetector(
                   onTap: () {
+                    Get.offAndToNamed(DashboardPage.routeName);
                     print('Event tapped: ${event?.name}');
                   },
                   child: Container(
@@ -232,12 +231,12 @@ class _EventsScreenState extends State<EventsScreen> with WidgetsBindingObserver
                       children: [
                         Expanded(
                           child: Text(
-                            event?.name ?? 'Unknown Event',
+                            event?.name ?? 'Unnamed Event',
                             style: const TextStyle(
                               color: Colors.black,
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
-                                fontFamily: "figtree_semibold"
+                              fontFamily: "Figtree",
                             ),
                           ),
                         ),

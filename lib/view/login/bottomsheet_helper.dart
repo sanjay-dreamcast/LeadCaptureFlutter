@@ -9,7 +9,8 @@ import '../../theme/strings.dart';
 import 'login_bottomSheet.dart';
 
 class BottomSheetHelper {
-  static void showDynamicBottomSheet(BuildContext context,ValueChanged<String> onSuccess) {
+  static void showDynamicBottomSheet(BuildContext context,ValueChanged<String> onSuccess,
+      ) {
     // Create a StatefulWidget to manage the bottom sheet's state
     showModalBottomSheet(
       context: context,
