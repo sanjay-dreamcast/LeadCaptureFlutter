@@ -17,8 +17,11 @@ void main() async {
   context.allowLegacyUnsafeRenegotiation = true;
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     systemNavigationBarColor: Colors.black, // navigation bar color
-    statusBarColor: primaryColor, // status bar color
+    statusBarColor: Colors.white, // status bar color
+    statusBarIconBrightness: Brightness.dark, // Dark icons for a light background
+    statusBarBrightness: Brightness.light,
   ));
+
 
   // await GetStorage.init();
   WidgetsFlutterBinding.ensureInitialized();

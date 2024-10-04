@@ -38,7 +38,7 @@ class _QrProfilePageState extends State<QrProfilePage>
   void reassemble() {
     super.reassemble();
     if (Platform.isAndroid) {
-      qrViewController!.resumeCamera();
+      qrViewController?.resumeCamera();
     }
   }
 
@@ -123,18 +123,31 @@ class _QrProfilePageState extends State<QrProfilePage>
     setState(() {
       qrViewController = controller;
     });
-    if (Platform.isAndroid) {
-      qrViewController!.resumeCamera();
+    if (Platform.isAndroid&& qrViewController != null) {
+      qrViewController?.resumeCamera();
     }
     controller.scannedDataStream.listen((scanData) async {
       if (scanData.code != null && scanData.code!.isNotEmpty) {
         //qrPageController.vCard.value.uniqueCode=scanData.code.toString();
-        Future.delayed(const Duration(seconds: 2), () {
+        /*Future.delayed(const Duration(seconds: 2), () {
           controller.pauseCamera();
         });
         print("scanData.code=======");
         print(scanData.code);
-        if (scanData.code.toString().length > 20) {
+        Get.back(result: scanData.code);*/
+
+        try {
+          await qrViewController?.pauseCamera();
+          // Optional: delay for smooth transition
+          await Future.delayed(const Duration(milliseconds: 500));
+          Get.back(result: scanData.code);
+        } catch (e) {
+          // Handle any potential errors here
+          print("Error pausing camera or navigating back: $e");
+        }
+        // comment
+
+       /* if (scanData.code.toString().length > 10) {
           Map<String, dynamic> vCardData =
               VcardParser(_textSelect(scanData.code.toString().toLowerCase()))
                   .parse();
@@ -152,11 +165,11 @@ class _QrProfilePageState extends State<QrProfilePage>
           //getUserDetail(vCardData["uc"].toString().replaceAll(",", ""));
         } else {
           // getUserDetail(scanData.code.toString());
-        }
+        }*/
       } else {
         // UiHelper.showSuccessMsg(context, "NO Data found");
-      }
-    });
+
+    }});
   }
 
   void getUserDetail(String? code) async {
@@ -192,7 +205,7 @@ class _QrProfilePageState extends State<QrProfilePage>
   void dispose() {
     qrViewController?.stopCamera();
     qrViewController?.dispose();
-    print("dispose");
+    print("dispose->");
     super.dispose();
   }
 }

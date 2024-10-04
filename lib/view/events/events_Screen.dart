@@ -215,7 +215,10 @@ class _EventsScreenState extends State<EventsScreen> with WidgetsBindingObserver
                 padding: const EdgeInsets.symmetric(vertical: 6.0),
                 child: GestureDetector(
                   onTap: () {
-                    Get.offAndToNamed(DashboardPage.routeName);
+                    // Get.offAndToNamed(DashboardPage.routeName);
+                    Get.toNamed(DashboardPage.routeName,
+                      arguments: {'eventData': event?.toJson()}, // Pass the event data as a JSON map
+                    );  // Pass arguments
                     print('Event tapped: ${event?.name}');
                   },
                   child: Container(
