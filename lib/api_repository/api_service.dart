@@ -1,17 +1,22 @@
 import 'dart:convert';
+import 'package:cphi/model/LeadsBody.dart';
 import 'package:cphi/model/guide_model.dart';
 import 'package:cphi/model/user_data.dart';
 import 'package:cphi/routes/my_constant.dart';
 import 'package:cphi/api_repository/app_url.dart';
+import 'package:cphi/utils/shared_preferences_helper.dart';
+import 'package:cphi/view/localDatabase/SharedPrefController.dart';
 import 'package:cphi/view/localDatabase/event_data_Model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_instance/get_instance.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:get/state_manager.dart';
+import 'package:share_plus/share_plus.dart';
 import '../globalController/authentication_manager.dart';
 import '../model/BaseApiModel.dart';
 import '../model/EmailErrorbody.dart';
+import '../model/add_leads.dart';
 import '../model/badge_model.dart';
 import '../model/common_model.dart';
 import '../model/pages_model.dart';
@@ -36,6 +41,15 @@ ApiService apiService = Get.find<ApiService>();
 class ApiService extends GetxService {
   //late RestClient _restClient;
   late final AuthenticationManager _authManager;
+  late final SharedPreferencesHelper _sharedPrefManager;
+
+  @override
+  void onInit() {
+    super.onInit();
+    _sharedPrefManager = SharedPreferencesHelper();
+
+    print("token->>>>>>>onInitApiserivece }");
+  }
   var isDialogShow = false;
   var cphiHeaders;
   var authHeader;
@@ -44,6 +58,19 @@ class ApiService extends GetxService {
   Future<ApiService> init() async {
     DIGEST_AUTH_USERNAME = "41ab073b088c9b12b231643ff6f437d9";
     DIGEST_AUTH_PASSWORD = "9381edb30e889126282379eae2bf2aee";
+    // Call the SharedPreferences to get the user (if needed)
+    // _sharedPrefManager = Get.find();
+
+    // Fetch user data from SharedPreferences
+    // Ensure user data is loaded before accessing it
+    //   _sharedPrefManager = _sharedPrefManager.getUser(); // Wait for loading user data
+
+    // Fetch user data from SharedPreferences
+    // UserData? loginUserData = await _sharedPrefManager.getUser();
+    // print("token->>>>>>> ${loginUserData?.token}");
+    // print("loginUserData->>>>>>> ${loginUserData}");
+    // print("token->>>>>>> ${loginUserData?.token}");
+
     _authManager = Get.find();
     cphiHeaders = {
       "Content-Type": "application/json",
@@ -56,7 +83,8 @@ class ApiService extends GetxService {
       "Dc-Platform": "flutter",
       "Dc-OS-Version": _authManager.platformVersion,
       "DC-UUID": "",
-      "version": "3"
+      "version": "3",
+      // "Authorization":loginUserData?.token ??''
     };
     // _restClient = RestClient();
     // _restClient.init();
@@ -233,18 +261,14 @@ class ApiService extends GetxService {
           .get(Uri.parse(AppUrl.eventList),
           headers: headerParams,)
           .timeout(const Duration(seconds: 20));
-
-      print('Raw response body: ${response.body}'); // Log the raw response
-
-      // Attempt to parse the JSON response
       return EventApiResponse.fromJson(json.decode(response.body));
     } catch (e) {
       print('Error: $e'); // Log the error for debugging
       checkException(e);
       rethrow;
     }
-
   }
+
   Future<BaseApiModel<EmailErrorBody>> verifyUserName(dynamic body) async {
     try {
       final response =
@@ -279,6 +303,67 @@ class ApiService extends GetxService {
     }
   }
 
+  Future<BaseApiModel<BaseApiModel>> addLeads(dynamic body) async {
+    // print("cphiHeaders" +cphiHeaders);
+    print("cphiHeaders" +"Hello Worlds2-> ${getHeaderParam()}");
+    try {
+      final response =
+      await DigestAuthClient(DIGEST_AUTH_USERNAME, DIGEST_AUTH_PASSWORD)
+          .post(Uri.parse(AppUrl.addLeads),
+          headers: getHeaderParam(), body: jsonEncode(body))
+          .timeout(const Duration(seconds: 20));
+      print(response.body);
+      return BaseApiModel.fromJson(
+        json.decode(response.body),
+            (data) => BaseApiModel.fromJson(data,null), // Convert body to UserModel
+      );
+    } catch (e) {
+      checkException(e);
+      rethrow;
+    }
+  }
+  Future<BaseApiModel<LeadsBodyData>> getLeadsData(dynamic body) async {
+    try {
+      final response =
+      await DigestAuthClient(DIGEST_AUTH_USERNAME, DIGEST_AUTH_PASSWORD)
+          .post(Uri.parse(AppUrl.leadList),
+          headers: getHeaderParam(), body: jsonEncode(body))
+          .timeout(const Duration(seconds: 20));
+      print(response.body);
+      return BaseApiModel.fromJson(
+        json.decode(response.body),
+            (data) => LeadsBodyData.fromJson(data), // Convert body to UserModel
+      );
+    } catch (e) {
+      checkException(e);
+      rethrow;
+    }
+  }
+  /*
+  {"event_id":"3b9aca0c","last_insert_id":""}@@Msg@@
+2024-10-07 16:36:30.648 16414-16521 @@@@Response::          com.dc.lead                          E  --> END POST (43-byte body)@@Msg@@
+2024-10-07 16:36:30.648 16414-16521 @@@@Response::          com.dc.lead                          E  <-- 200 OK https://staging-eapp.godreamcast.com/lead_capture/api/app/v1/lead/list
+   {"status":true,"message":"OK","body":{"leads":[{"id":"3b9aca3c","user_id":"3b9aca12","event_id":"3b9aca0c","qrcode":"ACC24SPHN5F9","name":"Amartya Jha","email":"amartya@codeant.ai","country_code":"IN#91","mobile":"9150744563","avatar":"https:\/\/s3-ap-south-1.amazonaws.com\/eapp.dreamcast.co\/eapp_accel_2024\/speakers\/1721737236-669fa014a1f90.png","company":"CodeAnt AI","position":"CEO","note":"Yogesh Kumawat - ","capture_datetime":"2024-10-07 11:01:38","is_deleted":0,"deleted_by":null,"created":"2024-10-07T08:51:13Z","modified":"2024-10-07T11:01:38Z","event_name":""},{"id":"3b9aca39","user_id":"3b9aca13","event_id":"3b9aca0c","qrcode":"ACC24AT43HQA","name":"Drishti Saxena","email":"drishti.s@dreamcast.co","country_code":"91","mobile":"8650144476","avatar":"","company":"Dreamcast","position":"Sr. Manager CS","note":"Sanjay P - bxbdb","capture_datetime":"2024-10-04 08:59:10","is_deleted":0,"deleted_by":null,"created":"2024-10-04T08:59:33Z","modified":"2024-10-04T08:59:33Z","event_name":""},{"id":"3b9aca06","user_id":"3b9aca12","event_id":"3b9aca0c","qrcode":"ACC24ACU2VB7","name":"Rishi Dogra","email":"rdogra@accel.com","country_code":"91","mobile":"7406900000","avatar":"https:\/\/s3-ap-south-1.amazonaws.com\/eapp.dreamcast.co\/eapp_accel_2024\/files\/1721719645-669f5b5d10bb6.jpg","company":"Accel","position":"Partner, Marketing","note":"Yogesh Kumawat - ","capture_datetime":"2024-09-30 06:51:16","is_deleted":0,"deleted_by":null,"created":"2024-09-30T07:31:16Z","modified":"2024-09-30T07:31:16Z","event_name":""},{"id":"3b9aca05","user_id":"3b9aca12","event_id":"3b9aca0c","qrcode":"ACC24AC9B3XA","name":"Vikrant Mehra","email":"vmehra@accel.com","country_code":"91","mobile":"9910022637","avatar":"https:\/\/s3-ap-south-1.amazonaws.com\/eapp.dreamcast.co\/eapp_accel_2024\/files\/1721817346-66a0d90261aa5.jpg","company":"Accel","position":"Consultant","note":"Yogesh Kumawat - ","capture_datetime":"2024-09-30 06:51:13","is_deleted":0,"deleted_by":null,"created":"2024-09-30T07:31:16Z","modified":"2024-09-30T07:31:16Z","event_name":""},{"id":"3b9aca04","user_id":"3b9aca12","event_id":"3b9aca0c","qrcode":"ACC24AT7DI3R","name":"Anshul Gandhi","email":"anshul@dreamcast.co","country_code":"91","mobile":"8890693443","avatar":"","company":"Dreamcast","position":"Head of Client Services","note":"Yogesh Kumawat - lead scan by yogesh\nSanjay P - lead added from Sanjay","capture_datetime":"2024-09-30 06:51:08","is_deleted":0,"deleted_by":null,"created":"2024-09-30T07:31:16Z","modified":"2024-10-03T11:58:09Z","event_name":""},{"id":"3b9aca03","user_id":"3b9aca12","event_id":"3b9aca0c","qrcode":"ACC24ATFHAU5","name":"Pragya Jaiman","email":"pragya@dreamcast.co","country_code":"91","mobile":"7296956429","avatar":"","company":"Dreamcast","position":"Sales Associate","note":"Yogesh Kumawat - Testing","capture_datetime":"2024-09-30 05:23:39","is_deleted":0,"deleted_by":null,"created":"2024-09-30T07:31:16Z","modified":"2024-09-30T07:31:16Z","event_name":""}],"hasNextPage":false},"code":200}@@Msg@@
+
+
+  *
+  * */
+
+  // Function to get headers for the API requests
+  Map<String, String> getHeaderParam() {
+    UserData? userData = SharedPreferencesHelper().getUser();
+    return {
+      "Accept": "application/json",
+      "Authorization": "Bearer ${userData?.accessToken ?? ''}",
+      "X-Api-Key": "%2BiR%2Ftt9g8E1tk1%2BDCJgiO7i5XrI%3D",
+      "X-Requested-With": "XMLHttpRequest",
+      "content-type": "application/json",
+      "dc-device": "mobile",
+      "dc-os": "android",
+      "dc-platform": "mobile",
+      "dc-timezone": getCurrentTimezoneOffsetInMinutes().toString(),
+    };
+  }
 
   // Future<EventApiResponse> getEventsList(dynamic body) async {
   //   // Prepare your headers

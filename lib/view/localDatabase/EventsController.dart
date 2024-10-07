@@ -117,4 +117,15 @@ class EventsController extends GetxController {
     }
   }
 
+
+  var eventData = EventData().obs; // Observable event data
+  // setCurrent Event Data when click
+  void setEventData(EventData? data) {
+    if (data != null) {
+      eventData.value = data;
+    }
+  }
+  EventData? getEventsData() {
+    return eventData.value;
+  }
 }

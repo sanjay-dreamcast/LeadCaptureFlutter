@@ -40,7 +40,7 @@ class UniversalAlertDialog {
                         Navigator.of(context).pop(); // Close the dialog
                       },
                       style: TextButton.styleFrom(
-                        backgroundColor: Colors.black,
+                        backgroundColor: blackGrey,
                         padding: EdgeInsets.symmetric(vertical: 5, horizontal: 25),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
@@ -63,7 +63,7 @@ class UniversalAlertDialog {
                       //  Navigator.of(context).pop(); // Close the dialog
                       },
                       style: TextButton.styleFrom(
-                        backgroundColor: Colors.black,
+                        backgroundColor: blackGrey,
                         padding: EdgeInsets.symmetric(vertical: 5, horizontal: 25),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
@@ -83,123 +83,24 @@ class UniversalAlertDialog {
     );
   }
 
-  static Future<void> addLeads(
-      BuildContext context, {
-        String? message, // Changed to nullable
-        String? title = "Alert",   // Changed to nullable
-        String positiveButtonLabel = "Okay",
-        String negativeButtonLabel = "Cancel",
-        VoidCallback? onPositivePressed,
-        VoidCallback? onNegativePressed,
-        bool isPositiveButtonVisible = true,
-        bool isNegativeButtonVisible = true,
-      }) {
-    return  showDialog<void>(
-      context: context,
-      barrierDismissible: false, // Prevent dismissal on outside tap
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title:  Row(
-            children: [
 
-              // Title text
-              Center(
-                child: Text(
-                  "Add Lead",
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'figtree_bold',
-                  ),
-                ),
-              ),
-              // Another spacer to keep the right side clean
-              Spacer(),
-              // Close button on the left
-              IconButton(
-                icon: Icon(Icons.close),
-                onPressed: () {
-                  Navigator.of(context).pop(); // Close the dialog
-                },
-              ),
-
-            ],
-          ),
-          content: message != null && message.isNotEmpty ? Text(message) : null, // Show message only if not null and not empty
-          actions: [
-            Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (isNegativeButtonVisible)
-                    TextButton(
-                      onPressed: () {
-                        if (onNegativePressed != null) {
-                          onNegativePressed();
-                        }
-                        Navigator.of(context).pop(); // Close the dialog
-                      },
-                      style: TextButton.styleFrom(
-                        backgroundColor: Colors.black,
-                        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 25),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      child: Text(
-                        negativeButtonLabel,
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  if (isNegativeButtonVisible && isPositiveButtonVisible)
-                    SizedBox(width: 15), // Add spacing only if both buttons are visible
-                  if (isPositiveButtonVisible)
-                    TextButton(
-                      onPressed: () {
-                        if (onPositivePressed != null) {
-                          onPositivePressed();
-                        }
-                        Get.back();
-                        //  Navigator.of(context).pop(); // Close the dialog
-                      },
-                      style: TextButton.styleFrom(
-                        backgroundColor: Colors.black,
-                        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 25),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      child: Text(
-                        positiveButtonLabel,
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
 }
 
 
 
-class CustomDialog extends StatelessWidget {
-  final String title;
-  final String content;
-  final VoidCallback onConfirm;
+class AddLeadsDialog extends StatelessWidget {
 
-  const CustomDialog({
+  final Function(String note) onConfirm; // Correctly define the type of onConfirm
+
+  const AddLeadsDialog({
     Key? key,
-    required this.title,
-    required this.content,
     required this.onConfirm,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController noteController = TextEditingController();
+
     return Dialog(
       insetPadding: EdgeInsets.all(5),
       backgroundColor: Colors.transparent, // Make the dialog background transparent
@@ -210,11 +111,22 @@ class CustomDialog extends StatelessWidget {
           borderRadius: BorderRadius.circular(16.0),
           color: Colors.white,
         ),
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.symmetric(vertical: 15.0,horizontal: 15),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-
           children: <Widget>[
+            Align(
+              alignment: Alignment.topRight,
+              child: IconButton(
+                padding: EdgeInsets.zero, // Remove all padding
+                constraints: const BoxConstraints(), // make box constraints empty
+                style: const ButtonStyle(tapTargetSize: MaterialTapTargetSize.shrinkWrap), // And this
+                icon: Icon(Icons.close), // Close button icon
+                onPressed: () {
+                  Navigator.of(context).pop(); // Close the dialog
+                },
+              ),
+            ),
             const Center(
               child: Text(
                 "Add Lead",
@@ -238,9 +150,10 @@ class CustomDialog extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 10),
-            const TextField(
+             TextField(
+              controller: noteController,
               maxLines: 5, // Allow up to 5 lines
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: "Note",
                 border: OutlineInputBorder(),
                 hintStyle: TextStyle(color: Color(0xFF8A8A8E),
@@ -254,7 +167,7 @@ class CustomDialog extends StatelessWidget {
                   // borderRadius: BorderRadius.circular(widget.builder.borderRadius), // Match the corner radius
                 ),
               ),
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 17,
                 color: Colors.black,
                 fontFamily: 'YourFontFamily',
@@ -265,7 +178,8 @@ class CustomDialog extends StatelessWidget {
               width: double.infinity,
               child: TextButton(
                 onPressed: () {
-                  // Navigator.of(context).pop(); // Close the dialog
+                  onConfirm(noteController.text); // Pass the text to the callback
+                  Navigator.of(context).pop(); // Close the dialog
                 },
                 style: TextButton.styleFrom(
                   backgroundColor: blackGrey,

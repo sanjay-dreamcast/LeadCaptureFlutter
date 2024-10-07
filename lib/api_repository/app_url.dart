@@ -298,5 +298,7 @@ class AppUrl {
   static String get eventList => '$baseUrl/event';
   static String get verifyUserName => '$baseUrl/signin/verifyUsername';
   static String get verifyOtp => '$baseUrl/signin/byVerificationCode';
+  static String get addLeads => '$baseUrl/lead/scanQr';
+  static String get leadList => '$baseUrl/lead/list';
 
 }

@@ -13,12 +13,15 @@ class BaseApiModel<T> {
   T? get data => _data; // Getter for the body
 
   // Updated factory constructor
-  factory BaseApiModel.fromJson(Map<String, dynamic> json, T Function(Map<String, dynamic>) fromJsonT) {
+  factory BaseApiModel.fromJson(Map<String, dynamic> json, T? Function(Map<String, dynamic>)? fromJsonT) {
     return BaseApiModel(
       json["code"] as int?,
       json["message"] as String?,
       json["status"] as bool?, // Parse the new boolean field
-      fromJsonT(json["body"] ?? {}), // Convert the JSON object in "body" to the specified type
+      (fromJsonT != null && json["body"] != null)
+          ? fromJsonT(json["body"])
+          : null, // Call the function only if it is not null
+      // fromJsonT(json["body"] ?? {}), // Convert the JSON object in "body" to the specified type
     );
   }
 

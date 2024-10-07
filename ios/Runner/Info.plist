@@ -33,10 +33,12 @@
 	</dict>
 	<key>NSCalendarsUsageDescription</key>
 	<string>used for save event to device calender</string>
-	<key>NSCameraUsageDescription</key>
-	<string>Allow camera access to scan QR code to save contact</string>
 	<key>NSContactsUsageDescription</key>
 	<string>Allow contact access to save contact into your contact list</string>
+	<key>io.flutter.embedded_views_preview</key>
+    <true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Allow camera access to scan QR code to save contact</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Allow Microphone access to scan QR code to save contact</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:cphi/splash/splash_binding.dart';
 import 'package:cphi/utils/shared_preferences_helper.dart';
+import 'package:cphi/view/localDatabase/SharedPrefController.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -31,11 +32,17 @@ void main() async {
 
   await Firebase.initializeApp(
       name: "hitachi-2023", options: DefaultFirebaseOptions.currentPlatform);
+  await SharedPreferencesHelper().init(); // Initialize SharedPreferences
 
   Get.put<AuthenticationManager>(AuthenticationManager());
   Get.putAsync<ApiService>(() => ApiService().init());
+  // Initialize and register ApiService
+  // Get.putAsync<ApiService>(() async {
+  //   final apiService = ApiService();
+  //   await apiService.init(); // Wait for init to complete
+  //   return apiService;
+  // });
   // FirebaseMessaging.onBackgroundMessage(backgroundHandler);
-  await SharedPreferencesHelper().init(); // Initialize SharedPreferences
   runApp(const MyApp());
 }
 

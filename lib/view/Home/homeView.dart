@@ -2,6 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:cphi/view/customerWidget/boldTextView.dart';
 import 'package:cphi/view/customerWidget/regularTextView.dart';
 import 'package:cphi/view/customerWidget/semiBoldTextView.dart';
+import 'package:cphi/view/localDatabase/LeadsController.dart';
 import 'package:cphi/view/localDatabase/localDataModel.dart';
 import 'package:csv/csv.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,10 +10,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/simple/get_view.dart';
+import '../../api_repository/api_service.dart';
 import '../../theme/app_colors.dart';
 import '../../utils/UniversalAlertDialog.dart';
 import '../Dashboard/dashBoardController.dart';
 import '../customerWidget/toolbarTitle.dart';
+import '../localDatabase/EventsController.dart';
 import '../localDatabase/event_data_Model.dart';
 import '../localDatabase/localContactController.dart';
 import '../qrCode/view/qr_profile_page.dart';
@@ -23,7 +26,9 @@ class HomePgae extends GetView<LocalContactController> {
   HomePgae({Key? key, this.eventData}) : super(key: key);
 
   static const routeName = "/LocalContactViewPage";
-  @override
+  final LeadsController leadsController = Get.put(LeadsController(Get.find<ApiService>()));
+  final EventsController eventsController = Get.put(EventsController(Get.find<ApiService>())); // Initialize the EventsController
+
   final controller = Get.put(LocalContactController());
   final DashboardController dashboardController = Get.find();
   final textController = TextEditingController().obs;
@@ -37,6 +42,7 @@ class HomePgae extends GetView<LocalContactController> {
       'URL:www.linkedin.com/in/nitishmehta08linkedinlinkedin\n'
       'UC:SBA24DSF6AME\n'
       'END:VCARD';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,40 +61,52 @@ class HomePgae extends GetView<LocalContactController> {
       body: Container(
         color: Colors.white,
         child: GetX<LocalContactController>(builder: (_) {
-          return Stack(
-            children: [
-              Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    // QrImageView(
-                    //   data: vcardData,
-                    //   version: QrVersions.auto,
-                    //   size: 100.0,
-                    // ),
-                    GestureDetector(
-                      onTap: () async {
-                        print("Stirn");
-                        //  var result = await Get.toNamed(QRScanner.routeName);
-                        // Get.put(NewQrScan());
-                        //  var result = await dashboardController.scanQR();
-                        // var result = await Get.toNamed(QrProfilePage.routeName);/co
-                        // checkQrCode(context,eventData?.prefix,result);//co
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return CustomDialog(
-                              title: 'Confirmation',
-                              content: 'Do you want to proceed with this action?',
-                              onConfirm: () {
-                                // Handle confirmation action
-                                print('Confirmed!');
-                              },
-                            );
-                          },
-                        );
-                     /*if (result["uc"] == null) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(top: 24.0), // Adjust padding as needed
+                  child: Text(
+                    "Event Name",
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: grey20Color,
+                      fontFamily: 'figtree_medium', // Ensure font is included in pubspec.yaml
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 2.0), // Adjust padding as needed
+                  child: Obx(() {
+                    return Text(
+                      "${eventsController.eventData.value.name}", // Update the event data
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                        fontFamily: 'figtree_bold',
+                      ),
+                    );
+                  }),
+                ),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: () async {
+                          print("Stirn");
+                          //  var result = await Get.toNamed(QRScanner.routeName);
+                          // Get.put(NewQrScan());
+                          //  var result = await dashboardController.scanQR();
+                          var result = await Get.toNamed(QrProfilePage.routeName);//co
+                          checkQrCode(context,eventsController.eventData.value,result);//co
+
+                          /*if (result["uc"] == null) {
                           Get.snackbar(
                             snackPosition: SnackPosition.BOTTOM,
                             "Error",
@@ -112,106 +130,111 @@ class HomePgae extends GetView<LocalContactController> {
                         } catch (e) {
                           print("Error while processing QR code data: $e");
                         }*/
-                      },
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Center(
-                            child: Image.asset(
-                              "assets/images/home_circle.png",
-                              height: 180,
-                              width: 180,
+                        },
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Center(
+                              child: Image.asset(
+                                "assets/images/home_circle.png",
+                                height: 180,
+                                width: 180,
+                              ),
                             ),
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                                color: const Color(0xffF4F3F7),
-                                borderRadius:
-                                    const BorderRadius.all(Radius.circular(75)),
-                                border: Border.all(color: primaryColor,width: 2)),
-                            height: 150,
-                            width: 150,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset(
-                                  "assets/icons/scan_icon.png",
-                                  height: 35,
-                                  width: 35,
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                const SemiBoldTextView(
-                                  text: "Add Leads",
-                                  textSize: 20,
-                                  color: primaryColor,
-                                )
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    const RegularTextView(
-                      text: "Tap the QR button to",
-                      maxLine: 4,
-                      textSize: 18,
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    const RegularTextView(
-                      text: "start scanning",
-                      maxLine: 4,
-                      textSize: 18,
-                      textAlign: TextAlign.center,
-                    ),
-                    LeadCollectedWidget(),
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        // Get.to(LinkedinLoginPage());
-                        dashboardController.changeTabIndex(1);
-                      },
-                      child: controller.localDataList.isEmpty
-                          ? const SizedBox()
-                          : Container(
+                            Container(
                               decoration: BoxDecoration(
                                   color: const Color(0xffF4F3F7),
                                   borderRadius:
-                                      const BorderRadius.all(Radius.circular(40)),
-                                  border: Border.all(color: Colors.transparent)),
-                              width: 250,
-                              child: Row(
+                                  const BorderRadius.all(Radius.circular(75)),
+                                  border: Border.all(color: primaryColor,width: 2)),
+                              height: 150,
+                              width: 150,
+                              child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Container(
-                                    padding: const EdgeInsets.all(10),
-                                    child: Text(
-                                          "${controller.localDataList.length} Leads collected",
-                                      style: const TextStyle(
-                                        fontSize: 24,
-                                        color: blueGrey20,
-                                      ),
-                                    ),
+                                  Image.asset(
+                                    "assets/icons/scan_icon.png",
+                                    height: 35,
+                                    width: 35,
                                   ),
-                                  const Icon(CupertinoIcons.forward)
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  const SemiBoldTextView(
+                                    text: "Add Leads",
+                                    textSize: 20,
+                                    color: primaryColor,
+                                  )
                                 ],
                               ),
                             ),
-                    ),
-                  ],
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      const Text(
+                        "Tap the QR button to",
+                        style: const TextStyle(
+                          fontSize: 18,
+                          color: blueGrey20,
+                          fontFamily: 'figtree_regular',
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 2,
+                      ),
+                      const Text(
+                        "start scanning",
+                        style: const TextStyle(
+                          fontSize: 18,
+                          color: blueGrey20,
+                          fontFamily: 'figtree_regular',
+                        ),
+                      ),
+                      // LeadCollectedWidget(),
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          // Get.to(LinkedinLoginPage());
+                          dashboardController.changeTabIndex(1);
+                        },
+                        child: controller.localDataList.isEmpty
+                            ? const SizedBox()
+                            : Container(
+                          decoration: BoxDecoration(
+                              color: const Color(0xffF4F3F7),
+                              borderRadius:
+                              const BorderRadius.all(Radius.circular(40)),
+                              border: Border.all(color: Colors.transparent)),
+                          width: 250,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(10),
+                                child: Text(
+                                  "${controller.localDataList.length} Leads collected",
+                                  style: const TextStyle(
+                                    fontSize: 24,
+                                    color: blueGrey20,
+                                  ),
+                                ),
+                              ),
+                              const Icon(CupertinoIcons.forward)
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           );
         }),
       ),
@@ -219,18 +242,29 @@ class HomePgae extends GetView<LocalContactController> {
   }
 
 
-  void checkQrCode(BuildContext context, String? prefix, String? qrCodeScanned) {
+  void checkQrCode(BuildContext context, EventData? eventData, String? qrCodeScanned) {
     // Ensure both `prefix` and `qrCodeScanned` are not null or empty
-    print("qrCodeScanned: $qrCodeScanned, prefix: $prefix");
-
+    print("qrCodeScanned: $qrCodeScanned, prefix: ${eventData?.prefix}");
+    String? qrCodePrefix = eventData?.prefix;
     if (qrCodeScanned != null && qrCodeScanned.isNotEmpty &&
-        prefix != null && prefix.isNotEmpty) {
-      // Check if the scanned QR code starts with the given prefix
-      if (qrCodeScanned.startsWith(prefix)) {
+        qrCodePrefix != null && qrCodePrefix.isNotEmpty) {
+      // Check if the scanned QR code starts with the given prefix && where the QR code is valid
+      if (qrCodeScanned.startsWith(qrCodePrefix)) {
         // The QR code matches the prefix
-        print("The QR code matches the prefix.");
-        // Handle the case where the QR code is valid
-        // For example, proceed to the next step in your flow
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AddLeadsDialog(
+              onConfirm: (String notes) {
+                print("notes-> $notes");
+                leadsController.addLeads({
+                  "event_id":eventData?.id,
+                  "qrcode":qrCodeScanned
+                }, Get.context!);
+              },
+            );
+          },
+        );
       } else {
         // The QR code does not match the prefix
         print("The QR code does not match the prefix.");
@@ -245,6 +279,7 @@ class HomePgae extends GetView<LocalContactController> {
           context,
           title: title,
           message: message,
+          positiveButtonLabel: buttonText,
           isNegativeButtonVisible: false,
         ).then((_) {
           // Handle post-dialog behavior here, if needed
@@ -253,7 +288,7 @@ class HomePgae extends GetView<LocalContactController> {
       }
     } else {
       print("QR code or prefix is empty.");
-      // Handle the case where either the QR code or prefix is null/empty
+
     }
   }
 

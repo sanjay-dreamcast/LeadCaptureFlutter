@@ -23,6 +23,7 @@ class DashboardPage extends StatelessWidget {
     "Leads",
   ];
 
+
   Widget build(BuildContext context) {
     // Retrieve the passed arguments
     final args = Get.arguments as Map<String, dynamic>?;
@@ -55,22 +56,21 @@ class DashboardPage extends StatelessWidget {
                    Column(
                     children: [
                       if (controller.tabIndex == 0) ...[
-                         Text(
-                           eventData?.name ?? 'No Name', // Centered title
+                         const Text(
+                           'User Details', // Centered title
                           style: TextStyle(
                               color: grey20Color,
                               fontSize: 12,
                               fontFamily: "figtree_medium",
                             fontWeight: FontWeight.w500,
-
                           ),
                         ),
-                         Text(
+                        Text(
                           sharedPrefController.loggedInUser.value?.name ?? 'Guest', // Replace `name` with your UserData property
                           style: const TextStyle(
                             color: Colors.black,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
                             fontFamily: "figtree_bold",
                           ),
                         ),

@@ -1,4 +1,5 @@
 import 'package:contacts_service/contacts_service.dart';
+import 'package:cphi/model/Status.dart';
 import 'package:cphi/view/Dashboard/dashBoardController.dart';
 import 'package:cphi/view/customerWidget/boldTextView.dart';
 import 'package:cphi/view/customerWidget/regularTextView.dart';
@@ -17,10 +18,12 @@ import 'package:open_file/open_file.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:vcard_maintained/vcard_maintained.dart';
+import '../../api_repository/api_service.dart';
 import '../../theme/app_colors.dart';
 import '../customerWidget/customSearchView.dart';
 import '../customerWidget/toolbarTitle.dart';
 import '../qrCode/view/qr_profile_page.dart';
+import 'LeadsController.dart';
 import 'contactDetailPage.dart';
 import 'localContactController.dart';
 import 'package:path_provider/path_provider.dart';
@@ -30,6 +33,7 @@ import 'dart:io' show Directory, File, Platform;
 
 class LocalContactViewPage extends GetView<LocalContactController> {
   LocalContactViewPage({Key? key}) : super(key: key);
+  final LeadsController leadsController = Get.put(LeadsController(Get.find<ApiService>()));
 
   static const routeName = "/LocalContactViewPage";
   @override
@@ -56,13 +60,15 @@ class LocalContactViewPage extends GetView<LocalContactController> {
       body: Container(
         color: Colors.white,
         child: GetX<LocalContactController>(builder: (context) {
-          return controller.localDataList.isEmpty
-              ? const Center(
-                  child: BoldTextView(
-                    text: "No leads found",
-                  ),
-                )
-              : Stack(
+          return
+            // leadsController.leadBodyData.value.l.isEmpty
+            //   ? const Center(
+            //       child: BoldTextView(
+            //         text: "No leads found",
+            //       ),
+            //     )
+            //   :
+          Stack(
                   children: [
                     Container(
                       color: white,
@@ -80,7 +86,7 @@ class LocalContactViewPage extends GetView<LocalContactController> {
                                   padding: const EdgeInsets.all(10),
                                   child: SemiBoldTextView(
                                     text:
-                                        "Total ${controller.localDataList.length} Leads",
+                                        "Total ${leadsController.leads?.length} Leads",
                                     textSize: 24,
                                     textAlign: TextAlign.start,
                                   ),
@@ -409,7 +415,8 @@ class LocalContactViewPage extends GetView<LocalContactController> {
                         ],
                       ),
                     ),
-                    controller.loading.value
+                    // controller.loading.value
+                    leadsController.leadBodyData.value.status == Status.loading
                         ? const Center(child: CircularProgressIndicator())
                         : SizedBox()
                   ],

@@ -36,4 +36,9 @@ class Sharedprefcontroller extends GetxController {
     await SharedPreferencesHelper().removeUser();
     loggedInUser.value = null; // Clear reactive variable
   }
+  Future<UserData?> getUser() async {
+    print("loggedInUser.value ${loggedInUser.value}");
+    return loggedInUser.value; // Return the logged-in user data
+  }
+
 }
