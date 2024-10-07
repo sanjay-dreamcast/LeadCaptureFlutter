@@ -26,7 +26,7 @@ class LeadsController extends GetxController{
 
 // Getter to access the leads list
   List<LeadsData>? get leads {
-    return leadBodyData.value.data?.leads; // Return the leads list or null
+    return leadBodyData.value.data?.leads??List.empty(); // Return the leads list or null
   }
   @override
   void onInit() {
@@ -129,6 +129,29 @@ class LeadsController extends GetxController{
       leadBodyData.value = Resource.error(MyStrings.somethingWentWrong);
     }
   }
+  List<LeadsData> allLeadsData = []; // Store all events for filtering
+
+  void filterEvents(String query) {
+    // Get the current LeadsBodyData
+    final currentLeadData = leadBodyData.value.data;
+
+    if (query.isEmpty) {
+      // If the query is empty, reset to original leads
+      leadBodyData.value = Resource.success(data: currentLeadData);
+    } else {
+      // Filter the leads based on the query
+      final filteredLeads = currentLeadData?.leads?.where((lead) {
+        final name = lead.name?.toLowerCase() ?? ''; // Assuming leads have a name property
+        return name.contains(query.toLowerCase());
+      }).toList();
+      final updatedLeadBodyData = LeadsBodyData(
+        hasNextPage: currentLeadData?.hasNextPage,
+        leads: filteredLeads,
+      );
+      leadBodyData.value = Resource.success(data: updatedLeadBodyData);
+    }
+  }
+
 
 
 }
