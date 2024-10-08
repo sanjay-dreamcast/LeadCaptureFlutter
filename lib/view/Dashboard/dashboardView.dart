@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:cphi/theme/app_theme.dart';
 import 'package:cphi/view/Home/homeView.dart';
 import 'package:cphi/view/customerWidget/semiBoldTextView.dart';
 import 'package:cphi/view/localDatabase/LocalContactPage.dart';
@@ -76,7 +77,7 @@ class DashboardPage extends StatelessWidget {
                     IconButton(
                       icon: const Icon(Icons.logout_sharp, color: Colors.black),
                       onPressed: () {
-                       // _showLogoutDialog(context);
+                        _showLogoutDialog(context);
                       },
                     ),
                   if (controller.tabIndex == 1)
@@ -89,7 +90,7 @@ class DashboardPage extends StatelessWidget {
                       ),
                       child: InkWell(
                         onTap: () {
-                          // Handle export action
+                          _showExportLeadBottomSheet(context);
                         },
                         child: const Row(
                           mainAxisSize: MainAxisSize.min,
@@ -134,7 +135,7 @@ class DashboardPage extends StatelessWidget {
                     child: Container(
                       height: 2,
                       color: Colors.black,
-                      width: context.width * 0.5,
+                      width: MediaQuery.of(context).size.width * 0.5,
                     ),
                   ),
                   BottomNavigationBar(
@@ -159,7 +160,7 @@ class DashboardPage extends StatelessWidget {
   }
 
   // Method to build the bottom menu
-  buildBottomMenu() {
+  List<BottomNavigationBarItem> buildBottomMenu() {
     return [
       BottomNavigationBarItem(
         icon: Column(
@@ -210,6 +211,293 @@ class DashboardPage extends StatelessWidget {
     ];
   }
 
+  // Method to show the export lead bottom sheet
+  void _showExportLeadBottomSheet(BuildContext context) {
+    _showExportLeadBottomSheetMethod(context);
+  }
+
+  // The updated bottom sheet method with date and time selection
+  void _showExportLeadBottomSheetMethod(BuildContext context) {
+    DateTime? startDateTime;
+    DateTime? endDateTime;
+
+    // Controllers for TextFields
+    TextEditingController startDateTimeController = TextEditingController();
+    TextEditingController endDateTimeController = TextEditingController();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(25.0),
+          topRight: Radius.circular(25.0),
+        ),
+      ),
+      backgroundColor: Colors.white,
+      builder: (BuildContext context) {
+        return Padding(
+          padding: const EdgeInsets.all(20),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 50,
+                    height: 6,
+                    decoration: const BoxDecoration(
+                      color: labelColor,
+                      borderRadius: AppBorderRadius.small,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 30),
+                const Text(
+                  'Select Range',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+                const SizedBox(height: 5),
+                const Text(
+                  'Select the range you want to export leads for.',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+                const SizedBox(height: 20),
+
+                // Start Date/Time Picker
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey), // Outlined box
+                    borderRadius: AppBorderRadius.small,
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          readOnly: true, // Prevents manual editing
+                          decoration: const InputDecoration(
+                            hintText: 'Start Date/Time', // Placeholder
+                            border: InputBorder.none, // No internal border
+                            contentPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+                          ),
+                          controller: startDateTimeController,
+                          onTap: () async {
+                            // Select Date
+                            DateTime? pickedDate = await showDatePicker(
+                              context: context,
+                              initialDate: startDateTime ?? DateTime.now(),
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime(2101),
+                            );
+                            if (pickedDate != null) {
+                              // Select Time after Date
+                              TimeOfDay? pickedTime = await showTimePicker(
+                                context: context,
+                                initialTime: TimeOfDay.now(),
+                              );
+                              if (pickedTime != null) {
+                                startDateTime = DateTime(
+                                  pickedDate.year,
+                                  pickedDate.month,
+                                  pickedDate.day,
+                                  pickedTime.hour,
+                                  pickedTime.minute,
+                                );
+                                // Update controller with selected date and time
+                                startDateTimeController.text =
+                                "${pickedDate.toLocal().toString().split(' ')[0]} ${pickedTime.format(context)}";
+                              }
+                            }
+                          },
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.calendar_today, color: labelColor),
+                        onPressed: () async {
+                          // Select Date
+                          DateTime? pickedDate = await showDatePicker(
+                            context: context,
+                            initialDate: startDateTime ?? DateTime.now(),
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime(2101),
+                          );
+                          if (pickedDate != null) {
+                            // Select Time after Date
+                            TimeOfDay? pickedTime = await showTimePicker(
+                              context: context,
+                              initialTime: TimeOfDay.now(),
+                            );
+                            if (pickedTime != null) {
+                              startDateTime = DateTime(
+                                pickedDate.year,
+                                pickedDate.month,
+                                pickedDate.day,
+                                pickedTime.hour,
+                                pickedTime.minute,
+                              );
+                              // Update controller with selected date and time
+                              startDateTimeController.text =
+                              "${pickedDate.toLocal().toString().split(' ')[0]} ${pickedTime.format(context)}";
+                            }
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 15),
+
+                // End Date/Time Picker
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey), // Outlined box
+                    borderRadius: AppBorderRadius.small,
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          readOnly: true, // Prevents manual editing
+                          decoration: const InputDecoration(
+                            hintText: 'End Date/Time', // Placeholder
+                            border: InputBorder.none, // No internal border
+                            contentPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+                          ),
+                          controller: endDateTimeController,
+                          onTap: () async {
+                            // Select Date
+                            DateTime? pickedDate = await showDatePicker(
+                              context: context,
+                              initialDate: endDateTime ?? DateTime.now(),
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime(2101),
+                            );
+                            if (pickedDate != null) {
+                              // Select Time after Date
+                              TimeOfDay? pickedTime = await showTimePicker(
+                                context: context,
+                                initialTime: TimeOfDay.now(),
+                              );
+                              if (pickedTime != null) {
+                                endDateTime = DateTime(
+                                  pickedDate.year,
+                                  pickedDate.month,
+                                  pickedDate.day,
+                                  pickedTime.hour,
+                                  pickedTime.minute,
+                                );
+                                // Update controller with selected date and time
+                                endDateTimeController.text =
+                                "${pickedDate.toLocal().toString().split(' ')[0]} ${pickedTime.format(context)}";
+                              }
+                            }
+                          },
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.calendar_today, color: labelColor),
+                        onPressed: () async {
+                          // Select Date
+                          DateTime? pickedDate = await showDatePicker(
+                            context: context,
+                            initialDate: endDateTime ?? DateTime.now(),
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime(2101),
+                          );
+                          if (pickedDate != null) {
+                            // Select Time after Date
+                            TimeOfDay? pickedTime = await showTimePicker(
+                              context: context,
+                              initialTime: TimeOfDay.now(),
+                            );
+                            if (pickedTime != null) {
+                              endDateTime = DateTime(
+                                pickedDate.year,
+                                pickedDate.month,
+                                pickedDate.day,
+                                pickedTime.hour,
+                                pickedTime.minute,
+                              );
+                              // Update controller with selected date and time
+                              endDateTimeController.text =
+                              "${pickedDate.toLocal().toString().split(' ')[0]} ${pickedTime.format(context)}";
+                            }
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                // Export Lead Button
+                GestureDetector(
+                  onTap: () {
+                    // Handle export logic here
+                    if (startDateTime != null && endDateTime != null) {
+                      // Example: Validate that endDateTime is after startDateTime
+                      if (endDateTime!.isAfter(startDateTime!)) {
+                        // Proceed with export
+                        print("Exporting leads from $startDateTime to $endDateTime");
+                        // TODO: Implement your export logic here
+
+                        Get.back(); // Close the bottom sheet after export
+                      } else {
+                        // Show an error if end date is before start date
+                        Get.snackbar(
+                          'Error',
+                          'End Date/Time must be after Start Date/Time.',
+                          backgroundColor: Colors.redAccent,
+                          colorText: Colors.white,
+                        );
+                      }
+                    } else {
+                      // Show an error if dates are not selected
+                      Get.snackbar(
+                        'Error',
+                        'Please select both start and end date/time.',
+                        backgroundColor: Colors.redAccent,
+                        colorText: Colors.white,
+                      );
+                    }
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 18),
+                    decoration: const BoxDecoration(
+                      color: blackGrey,
+                      shape: BoxShape.rectangle,
+                      borderRadius: AppBorderRadius.medium
+                    ),
+                    child: const Text(
+                      "Export Lead",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: "figtree_semibold",
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   // Method to show the logout confirmation dialog
   void _showLogoutDialog(BuildContext context) {
     showDialog(
@@ -231,7 +519,6 @@ class DashboardPage extends StatelessWidget {
                 Get.offAllNamed('/EventScreen'); // Navigate to EventScreen
               },
               child: const Text('Logout'),
-
             ),
           ],
         );
