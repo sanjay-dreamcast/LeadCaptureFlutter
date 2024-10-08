@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:cphi/theme/strings.dart';
 import 'package:cphi/utils/LifecycleController.dart';
+import 'package:cphi/utils/UniversalAlertDialog.dart';
 import 'package:cphi/view/customerWidget/search_bar_widget.dart';
 import 'package:cphi/view/localDatabase/LoginController.dart';
 import 'package:cphi/view/login/bottomsheet_helper.dart';
@@ -14,20 +15,27 @@ import '../../model/Status.dart';
 import '../../theme/app_colors.dart';
 import '../Dashboard/dashboardView.dart';
 import '../localDatabase/EventsController.dart';
-
+import '../localDatabase/SharedPrefController.dart';
 
 class EventsScreen extends StatefulWidget {
   const EventsScreen({super.key});
+
   static const routeName = "/EventsPage";
 
   @override
   State<EventsScreen> createState() => _EventsScreenState();
 }
 
-class _EventsScreenState extends State<EventsScreen> with WidgetsBindingObserver {
-  final EventsController eventsController = Get.put(EventsController(Get.find<ApiService>())); // Initialize the EventsController
-  final LifecycleController lifecycleController = Get.put(LifecycleController());
-  final LoginController loginController = Get.put(LoginController(Get.find<ApiService>())); // Initialize the EventsController
+class _EventsScreenState extends State<EventsScreen>
+    with WidgetsBindingObserver {
+  final EventsController eventsController = Get.put(EventsController(
+      Get.find<ApiService>())); // Initialize the EventsController
+  final LifecycleController lifecycleController =
+      Get.put(LifecycleController());
+  final Sharedprefcontroller sharedPrefController =
+      Get.put(Sharedprefcontroller());
+  final LoginController loginController = Get.put(LoginController(
+      Get.find<ApiService>())); // Initialize the EventsController
 
   @override
   void initState() {
@@ -39,16 +47,14 @@ class _EventsScreenState extends State<EventsScreen> with WidgetsBindingObserver
   }
 
   Future<void> fetchEvents() async {
-    dynamic requestBody = {
-
-    };
-    await eventsController.fetchEvents(requestBody,isRefresh: true); // Call fetchEvents from EventsController
+    dynamic requestBody = {};
+    await eventsController.fetchEvents(requestBody,
+        isRefresh: true); // Call fetchEvents from EventsController
   }
 
   Future<void> _onRefresh() async {
     await fetchEvents();
   }
-
 
   @override
   void dispose() {
@@ -60,7 +66,8 @@ class _EventsScreenState extends State<EventsScreen> with WidgetsBindingObserver
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     // Update the lifecycle state in the LifecycleController
-    lifecycleController.updateLifecycleState(state); // Update through the controller
+    lifecycleController
+        .updateLifecycleState(state); // Update through the controller
 
     // Additional logic based on the lifecycle state
     switch (state) {
@@ -83,7 +90,6 @@ class _EventsScreenState extends State<EventsScreen> with WidgetsBindingObserver
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -103,10 +109,10 @@ class _EventsScreenState extends State<EventsScreen> with WidgetsBindingObserver
                     : _loginStripUI();
               }),
               SearchBarWidget(
-              onSearch: (query) {
-                eventsController.filterEvents(query);
-              },
-            ),
+                onSearch: (query) {
+                  eventsController.filterEvents(query);
+                },
+              ),
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 0, horizontal: 15),
                 child: Text(
@@ -173,7 +179,7 @@ class _EventsScreenState extends State<EventsScreen> with WidgetsBindingObserver
     return Obx(() {
       switch (eventsController.eventResource.value.status) {
         case Status.loading:
-        // Optionally return the current list of events with a loading indicator
+          // Optionally return the current list of events with a loading indicator
           return const Center(child: CircularProgressIndicator());
 
         case Status.error:
@@ -191,12 +197,12 @@ class _EventsScreenState extends State<EventsScreen> with WidgetsBindingObserver
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    eventsController.eventResource.value.message ?? MyStrings.no_event_found,
+                    eventsController.eventResource.value.message ??
+                        MyStrings.no_event_found,
                     style: const TextStyle(
                         color: blackGrey,
                         fontSize: 20,
-                        fontFamily: "figtree_semibold"
-                    ),
+                        fontFamily: "figtree_semibold"),
                   ),
                 ],
               ),
@@ -217,13 +223,25 @@ class _EventsScreenState extends State<EventsScreen> with WidgetsBindingObserver
                   onTap: () {
                     eventsController.setEventData(event);
                     // Get.offAndToNamed(DashboardPage.routeName);
-                    Get.toNamed(DashboardPage.routeName,
-                      arguments: {'eventData': event?.toJson()}, // Pass the event data as a JSON map
-                    );  // Pass arguments
+                    sharedPrefController.loggedInUser.value.isNull
+                        ? UniversalAlertDialog.showAlertDialog(
+                            context,
+                            title: "Alert",
+                            message: "Please Login",
+                            positiveButtonLabel: "OK",
+                            isNegativeButtonVisible: false,
+                          )
+                        : Get.toNamed(
+                            DashboardPage.routeName,
+                            arguments: {
+                              'eventData': event?.toJson()
+                            }, // Pass the event data as a JSON map
+                          ); // Pass arguments
                     print('Event tapped: ${event?.name}');
                   },
                   child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 18),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 16, horizontal: 18),
                     decoration: BoxDecoration(
                       color: white_color,
                       border: Border.all(color: white80),
@@ -259,8 +277,8 @@ class _EventsScreenState extends State<EventsScreen> with WidgetsBindingObserver
           );
 
         default:
-        // Optional: Handle any unexpected state
-        return const Center(child: Text("Unexpected error"));
+          // Optional: Handle any unexpected state
+          return const Center(child: Text("Unexpected error"));
       }
     });
   }
@@ -290,8 +308,7 @@ class _EventsScreenState extends State<EventsScreen> with WidgetsBindingObserver
                       color: Colors.white,
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
-                      fontFamily: "figtree_semibold"
-                  ),
+                      fontFamily: "figtree_semibold"),
                 ),
                 SizedBox(width: 20),
                 Icon(
@@ -307,9 +324,7 @@ class _EventsScreenState extends State<EventsScreen> with WidgetsBindingObserver
     );
   }
 
-  // {"email":"gzg@gmail.com"}
-  // https://staging-eapp.godreamcast.com/lead_capture/api/app/v1/signin/verifyUsername
-  // {"status":false,"code":422,"message":"Validation failed","body":{"email":"Hmm, no account found with this email. Perhaps it's time to create a new account?"}}@@Msg@@
+// {"email":"gzg@gmail.com"}
+// https://staging-eapp.godreamcast.com/lead_capture/api/app/v1/signin/verifyUsername
+// {"status":false,"code":422,"message":"Validation failed","body":{"email":"Hmm, no account found with this email. Perhaps it's time to create a new account?"}}@@Msg@@
 }
-
-
