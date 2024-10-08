@@ -20,12 +20,15 @@ import '../../model/Resource.dart';
 import '../../utils/UniversalAlertDialog.dart';
 import '../../utils/connectivity_helper.dart';
 import '../../utils/shared_preferences_helper.dart';
+import 'SharedPrefController.dart';
 class LoginController extends GetxController {
   final ApiService apiService;
   LoginController(this.apiService);
   var isOtpVisible = false.obs; // Observable variable to manage OTP visibility
   // Reactive variable to manage the state of the API call (loading, success, error)
   var verifyUserResource = Resource<EmailErrorBody>.initial().obs;
+  final Sharedprefcontroller sharedPrefController =
+  Get.put(Sharedprefcontroller());
   var errorMessage = ''.obs; // Observable email error message
   var otpErrorMessage = ''.obs; // Observable otp error message
   var pinCode = ''.obs; // Observable PIN code
@@ -162,6 +165,7 @@ class LoginController extends GetxController {
         print(verifyOtpResource.value.data);
         // Save UserData to SharedPreferences
         if (model.data != null) {
+          sharedPrefController.saveUser(model.data);
           await SharedPreferencesHelper().saveUser(model.data);
         }
         isLoginButtonVisible.value = true; // Show the button after login
