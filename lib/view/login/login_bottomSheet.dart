@@ -10,6 +10,7 @@ import 'package:pinput/pinput.dart';
 import '../../api_repository/api_service.dart';
 import '../../model/Status.dart';
 import '../../theme/app_colors.dart';
+import '../../theme/app_theme.dart';
 import '../../theme/strings.dart';
 import '../customerWidget/text_back_button.dart';
 import '../localDatabase/LoginController.dart';
@@ -131,11 +132,11 @@ class OtpContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      margin: EdgeInsets.only(left: 17, right: 17, top: 15, bottom: 40),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 35),
-      decoration: BoxDecoration(
+      margin: const EdgeInsets.all(20),
+      padding: const EdgeInsets.only(top: 10,left: 15,right: 15,bottom: 25),
+      decoration: const BoxDecoration(
         color: white20color,
-        borderRadius: BorderRadius.circular(12.0),
+        borderRadius: AppBorderRadius.medium,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -145,6 +146,8 @@ class OtpContainer extends StatelessWidget {
             print("BackButton");
             loginController.setOtpVisible(false);
           }),
+
+          const SizedBox(height: 10),
           const Text(
             'OTP Verification',
             textAlign: TextAlign.center,
@@ -155,7 +158,7 @@ class OtpContainer extends StatelessWidget {
               fontFamily: 'figtree_semibold',
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 20),
           Obx(() {
             return  Text(
               '${loginController.verifyUserResource.value.message}',
@@ -192,15 +195,15 @@ class OtpContainer extends StatelessWidget {
             },
             child: Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 18),
+              margin: EdgeInsets.only(top: 10),
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 18),
               decoration: const BoxDecoration(
                 color: blackGrey,
                 shape: BoxShape.rectangle,
-                borderRadius: BorderRadius.all(Radius.circular(12)),
+                borderRadius: AppBorderRadius.medium,
               ),
-              margin: EdgeInsets.only(top: 10),
               child: const Text(
-                "Verify & Proceed", // Ensure this string is defined in your MyStrings
+                "VERIFY & PROCEED", // Ensure this string is defined in your MyStrings
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.white,
@@ -220,7 +223,7 @@ class OtpContainer extends StatelessWidget {
                   text: TextSpan(
                     style: const TextStyle(
                       color: Colors.black,
-                      fontSize: 14.0, // Default text size
+                      fontSize: 12.0, // Default text size
                     ),
                     children: [
                       const TextSpan(text: "Didn't receive the OTP? "),
@@ -232,7 +235,7 @@ class OtpContainer extends StatelessWidget {
                           fontFamily: 'figtree_semibold',
                           fontWeight: FontWeight.w700,
                           color: blackGrey,
-                          fontSize: 14
+                          fontSize: 12.0, // Default text size
                         ),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
@@ -342,16 +345,15 @@ class LoginContainer extends StatelessWidget {
     required  this.loginController,
     required this.onLogin,
   }) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      margin: EdgeInsets.only(left: 17, right: 17, top: 15, bottom: 40),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 35),
-      decoration: BoxDecoration(
+      margin: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(25),
+      decoration: const BoxDecoration(
         color: white20color,
-        borderRadius: BorderRadius.circular(12.0),
+        borderRadius: AppBorderRadius.medium,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -366,24 +368,26 @@ class LoginContainer extends StatelessWidget {
               fontFamily: 'figtree_semibold',
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 15),
           const Text(
             'Welcome, Please enter your login details',
             textAlign: TextAlign.center,
             style: TextStyle(
               color: blackGrey,
-              fontSize: 14.0,
+              fontSize: 16.0,
               fontFamily: 'figtree_regular',
+              fontWeight: FontWeight.normal,
             ),
           ),
           const SizedBox(height: 10),
           TextField(
             controller: emailController,
             decoration: const InputDecoration(
-              labelText: 'Email',
+              labelText: 'Email or Phone',
               labelStyle: TextStyle(
-                color: Colors.black,
+                color: Colors.grey,
                 fontSize: 18,
+                fontWeight: FontWeight.w500,
               ),
               hintStyle: TextStyle(
                 color: Colors.grey,
@@ -405,35 +409,37 @@ class LoginContainer extends StatelessWidget {
             ),
             cursorColor: Colors.black,
           ),
-          const SizedBox(height: 16),
-          Obx(() {
-            return Visibility(
-              visible: loginController.errorMessage.isNotEmpty,
-              child: Text(
-                loginController.errorMessage.value,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.red,
-                  fontSize: 12.0,
-                  fontFamily: 'figtree_medium',
+          const SizedBox(height: 10),
+          Obx(
+                () {
+              return Visibility(
+                visible: loginController.errorMessage.isNotEmpty,
+                child: Text(
+                  loginController.errorMessage.value,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: Colors.red,
+                    fontSize: 12.0,
+                    fontFamily: 'figtree_medium',
+                  ),
                 ),
-              ),
-            );
-          }),
-          const SizedBox(height: 5),
+              );
+            },
+          ),
+          const SizedBox(height: 0),
           GestureDetector(
             onTap: () => onLogin(emailController.text),
             child: Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 18),
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 18),
               decoration: const BoxDecoration(
                 color: blackGrey,
                 shape: BoxShape.rectangle,
-                borderRadius: BorderRadius.all(Radius.circular(12)),
+                borderRadius: AppBorderRadius.medium,
               ),
-              margin: EdgeInsets.only(top: 10),
+              margin: const EdgeInsets.only(top: 20),
               child: const Text(
-                MyStrings.logIn2,
+                "GET OTP",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.white,

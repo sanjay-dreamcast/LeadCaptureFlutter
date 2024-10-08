@@ -8,8 +8,10 @@ import 'package:flutter/material.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/strings.dart';
 
+import '../../theme/app_theme.dart';
+
 class SearchBarWidget extends StatefulWidget {
-  final Function(String) onSearch; // Callback for search functionality
+  final Function(String) onSearch;
 
   const SearchBarWidget({super.key, required this.onSearch});
 
@@ -32,14 +34,17 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
           setState(() {});
         },
         decoration: InputDecoration(
-          prefixIcon: const Icon(
-            Icons.search,
-            color: Colors.grey,
-            size: 35.0,
+          prefixIcon: const Padding(
+            padding: EdgeInsets.only(left: 15, right: 6, top: 10, bottom: 10),
+            child: Icon(
+              Icons.search,
+              color: Colors.grey,
+              size: 30.0,
+            ),
           ),
           suffixIcon: _searchController.text.isNotEmpty
               ? IconButton(
-            icon: Icon(Icons.close),
+            icon: const Icon(Icons.close),
             color: Colors.grey,
             onPressed: () {
               _searchController.clear();
@@ -57,9 +62,9 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
           ),
           filled: true,
           fillColor: indicatorColor,
-          contentPadding: EdgeInsets.all(0.0),
+          contentPadding: EdgeInsets.zero,
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(35.0),
+            borderRadius: AppBorderRadius.circular(),
             borderSide: BorderSide.none,
           ),
         ),

@@ -5,6 +5,7 @@ import 'package:cphi/utils/LifecycleController.dart';
 import 'package:cphi/view/customerWidget/search_bar_widget.dart';
 import 'package:cphi/view/localDatabase/LoginController.dart';
 import 'package:cphi/view/login/bottomsheet_helper.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -12,9 +13,9 @@ import 'package:get/get.dart'; // Import GetX
 import '../../api_repository/api_service.dart';
 import '../../model/Status.dart';
 import '../../theme/app_colors.dart';
+import '../../theme/app_theme.dart';
 import '../Dashboard/dashboardView.dart';
 import '../localDatabase/EventsController.dart';
-
 
 class EventsScreen extends StatefulWidget {
   const EventsScreen({super.key});
@@ -24,10 +25,14 @@ class EventsScreen extends StatefulWidget {
   State<EventsScreen> createState() => _EventsScreenState();
 }
 
-class _EventsScreenState extends State<EventsScreen> with WidgetsBindingObserver {
-  final EventsController eventsController = Get.put(EventsController(Get.find<ApiService>())); // Initialize the EventsController
-  final LifecycleController lifecycleController = Get.put(LifecycleController());
-  final LoginController loginController = Get.put(LoginController(Get.find<ApiService>())); // Initialize the EventsController
+class _EventsScreenState extends State<EventsScreen>
+    with WidgetsBindingObserver {
+  final EventsController eventsController = Get.put(EventsController(
+      Get.find<ApiService>())); // Initialize the EventsController
+  final LifecycleController lifecycleController =
+  Get.put(LifecycleController());
+  final LoginController loginController = Get.put(LoginController(
+      Get.find<ApiService>())); // Initialize the EventsController
 
   @override
   void initState() {
@@ -39,16 +44,14 @@ class _EventsScreenState extends State<EventsScreen> with WidgetsBindingObserver
   }
 
   Future<void> fetchEvents() async {
-    dynamic requestBody = {
-
-    };
-    await eventsController.fetchEvents(requestBody,isRefresh: true); // Call fetchEvents from EventsController
+    dynamic requestBody = {};
+    await eventsController.fetchEvents(requestBody,
+        isRefresh: true); // Call fetchEvents from EventsController
   }
 
   Future<void> _onRefresh() async {
     await fetchEvents();
   }
-
 
   @override
   void dispose() {
@@ -60,7 +63,8 @@ class _EventsScreenState extends State<EventsScreen> with WidgetsBindingObserver
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     // Update the lifecycle state in the LifecycleController
-    lifecycleController.updateLifecycleState(state); // Update through the controller
+    lifecycleController
+        .updateLifecycleState(state); // Update through the controller
 
     // Additional logic based on the lifecycle state
     switch (state) {
@@ -83,7 +87,6 @@ class _EventsScreenState extends State<EventsScreen> with WidgetsBindingObserver
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -103,10 +106,10 @@ class _EventsScreenState extends State<EventsScreen> with WidgetsBindingObserver
                     : _loginStripUI();
               }),
               SearchBarWidget(
-              onSearch: (query) {
-                eventsController.filterEvents(query);
-              },
-            ),
+                onSearch: (query) {
+                  eventsController.filterEvents(query);
+                },
+              ),
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 0, horizontal: 15),
                 child: Text(
@@ -131,28 +134,25 @@ class _EventsScreenState extends State<EventsScreen> with WidgetsBindingObserver
   Widget _loginStripUI() {
     return Container(
       color: blackGrey,
-      padding: const EdgeInsets.symmetric(
-        vertical: 5.0,
-        horizontal: 40.0,
-      ),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       alignment: Alignment.center,
       child: RichText(
         text: TextSpan(
           text: MyStrings.secureLeadTitle,
           style: const TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-            fontFamily: "figtree_medium",
-          ),
+              color: Colors.white,
+              fontSize: 14,
+              fontFamily: "figtree_medium",
+              fontWeight: FontWeight.normal),
           children: [
             TextSpan(
               text: MyStrings.logIn,
               style: const TextStyle(
-                fontFamily: "figtree_medium",
-                color: Colors.white,
-                decoration: TextDecoration.underline,
-                fontSize: 14,
-              ),
+                  fontFamily: "figtree_medium",
+                  color: Colors.white,
+                  decoration: TextDecoration.underline,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500),
               recognizer: TapGestureRecognizer()
                 ..onTap = () {
                   print('Continue with Log In clicked');
@@ -170,115 +170,121 @@ class _EventsScreenState extends State<EventsScreen> with WidgetsBindingObserver
   }
 
   Widget _eventList() {
-    return Obx(() {
-      switch (eventsController.eventResource.value.status) {
-        case Status.loading:
-        // Optionally return the current list of events with a loading indicator
-          return const Center(child: CircularProgressIndicator());
+    return Obx(
+          () {
+        switch (eventsController.eventResource.value.status) {
+          case Status.loading:
+          // Optionally return the current list of events with a loading indicator
+            return const Center(child: CircularProgressIndicator());
 
-        case Status.error:
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    'assets/images/ic_event.png',
-                    width: 24,
-                    height: 24,
-                    fit: BoxFit.cover,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    eventsController.eventResource.value.message ?? MyStrings.no_event_found,
-                    style: const TextStyle(
-                        color: blackGrey,
-                        fontSize: 20,
-                        fontFamily: "figtree_semibold"
+          case Status.error:
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      'assets/images/ic_event.png',
+                      width: 24,
+                      height: 24,
+                      fit: BoxFit.cover,
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 8),
+                    Text(
+                      eventsController.eventResource.value.message ??
+                          MyStrings.no_event_found,
+                      style: const TextStyle(
+                          color: blackGrey,
+                          fontSize: 20,
+                          fontFamily: "figtree_semibold"),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          );
+            );
 
-        case Status.success:
-          final eventsList = eventsController.eventResource.value.data;
-          print("Event List-> $eventsList");
-          return ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0),
-            itemCount: eventsList?.length ?? 0,
-            itemBuilder: (context, index) {
-              final event = eventsList?[index];
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 6.0),
-                child: GestureDetector(
-                  onTap: () {
-                    eventsController.setEventData(event);
-                    // Get.offAndToNamed(DashboardPage.routeName);
-                    Get.toNamed(DashboardPage.routeName,
-                      arguments: {'eventData': event?.toJson()}, // Pass the event data as a JSON map
-                    );  // Pass arguments
-                    print('Event tapped: ${event?.name}');
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 18),
-                    decoration: BoxDecoration(
-                      color: white_color,
-                      border: Border.all(color: white80),
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            event?.name ?? 'Unnamed Event',
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: "Figtree",
+          case Status.success:
+            final eventsList = eventsController.eventResource.value.data;
+            print("Event List-> $eventsList");
+            return ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 15.0),
+              itemCount: eventsList?.length ?? 0,
+              itemBuilder: (context, index) {
+                final event = eventsList?[index];
+                return Padding(
+                  padding: const EdgeInsets.only(top: 15.0),
+                  child: GestureDetector(
+                    onTap: () {
+                      eventsController.setEventData(event);
+                      // Get.offAndToNamed(DashboardPage.routeName);
+                      Get.toNamed(
+                        DashboardPage.routeName,
+                        arguments: {
+                          'eventData': event?.toJson()
+                        }, // Pass the event data as a JSON map
+                      ); // Pass arguments
+                      print('Event tapped: ${event?.name}');
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 16, horizontal: 18),
+                      decoration: BoxDecoration(
+                        color: white_color,
+                        border: Border.all(color: white80),
+                        borderRadius: AppBorderRadius.medium,
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              event?.name ?? 'Unnamed Event',
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                fontFamily: "Figtree",
+                              ),
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 10),
-                        const Icon(
-                          Icons.arrow_forward_ios_sharp,
-                          color: Colors.black,
-                          size: 16.0,
-                        ),
-                      ],
+                          const SizedBox(width: 10),
+                          const Icon(
+                            Icons.arrow_forward_ios_sharp,
+                            color: Colors.black,
+                            size: 16.0,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              );
-            },
-          );
+                );
+              },
+            );
 
-        default:
-        // Optional: Handle any unexpected state
-        return const Center(child: Text("Unexpected error"));
-      }
-    });
+          default:
+          // Optional: Handle any unexpected state
+            return const Center(child: Text("Unexpected error"));
+        }
+      },
+    );
   }
 
   Widget _uncategorizedEvent() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 15),
+      padding: const EdgeInsets.all(15),
       child: Center(
         child: GestureDetector(
           onTap: () {
             print('Custom button pressed!');
           },
           child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 18),
+            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
             decoration: const BoxDecoration(
               color: violet10,
               shape: BoxShape.rectangle,
-              borderRadius: BorderRadius.all(Radius.circular(35)),
+              borderRadius: AppBorderRadius.medium,
             ),
             child: const Row(
               mainAxisSize: MainAxisSize.min,
@@ -290,14 +296,13 @@ class _EventsScreenState extends State<EventsScreen> with WidgetsBindingObserver
                       color: Colors.white,
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
-                      fontFamily: "figtree_semibold"
-                  ),
+                      fontFamily: "figtree_semibold"),
                 ),
-                SizedBox(width: 20),
+                SizedBox(width: 10),
                 Icon(
                   Icons.arrow_forward_ios_sharp,
                   color: Colors.white,
-                  size: 15,
+                  size: 16,
                 ),
               ],
             ),
@@ -307,9 +312,7 @@ class _EventsScreenState extends State<EventsScreen> with WidgetsBindingObserver
     );
   }
 
-  // {"email":"gzg@gmail.com"}
-  // https://staging-eapp.godreamcast.com/lead_capture/api/app/v1/signin/verifyUsername
-  // {"status":false,"code":422,"message":"Validation failed","body":{"email":"Hmm, no account found with this email. Perhaps it's time to create a new account?"}}@@Msg@@
+// {"email":"gzg@gmail.com"}
+// https://staging-eapp.godreamcast.com/lead_capture/api/app/v1/signin/verifyUsername
+// {"status":false,"code":422,"message":"Validation failed","body":{"email":"Hmm, no account found with this email. Perhaps it's time to create a new account?"}}@@Msg@@
 }
-
-

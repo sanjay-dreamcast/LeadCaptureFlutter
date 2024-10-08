@@ -20,12 +20,15 @@ import 'package:share_plus/share_plus.dart';
 import 'package:vcard_maintained/vcard_maintained.dart';
 import '../../api_repository/api_service.dart';
 import '../../theme/app_colors.dart';
+import '../../utils/UniversalAlertDialog.dart';
 import '../customerWidget/customSearchView.dart';
 import '../customerWidget/search_bar_widget.dart';
 import '../customerWidget/toolbarTitle.dart';
 import '../qrCode/view/qr_profile_page.dart';
+import 'EventsController.dart';
 import 'LeadsController.dart';
 import 'contactDetailPage.dart';
+import 'event_data_Model.dart';
 import 'localContactController.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:async';
@@ -36,6 +39,7 @@ class LocalContactViewPage extends GetView<LocalContactController> {
   LocalContactViewPage({Key? key}) : super(key: key);
   final LeadsController leadsController =
       Get.put(LeadsController(Get.find<ApiService>()));
+  final EventsController eventsController = Get.put(EventsController(Get.find<ApiService>())); // Initialize the EventsController
 
   static const routeName = "/LocalContactViewPage";
   @override
@@ -81,14 +85,6 @@ class LocalContactViewPage extends GetView<LocalContactController> {
                 ),
               );
             case Status.success:
-               if (leadsController.leadBodyData.value.data?.leads?.isEmpty ??
-                  true) {
-                return const Center(
-                  child: BoldTextView(
-                    text: "No leads found",
-                  ),
-                );
-              } else {
                 return Stack(
                   children: [
                     Container(
@@ -102,13 +98,12 @@ class LocalContactViewPage extends GetView<LocalContactController> {
                             padding: const EdgeInsets.only(
                                 left: 10, right: 10, top: 0),
                             child: Row(
-                              mainAxisAlignment:
-                              MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Container(
                                   padding: const EdgeInsets.all(10),
                                   child: Text(
-                                      "Total ${leadsController.leads?.length} Leads",
+                                      "Total ${leadsController.mainLeadsList.length} Leads",
                                       style: const TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.w700,
@@ -156,332 +151,198 @@ class LocalContactViewPage extends GetView<LocalContactController> {
                               ],
                             ),
                           ),
-                          Container(
-                            padding: const EdgeInsets.only(
-                                top: 10, left: 10, right: 10),
-                            child: SearchView(
-                              title: "Search here",
-                              textController: textController,
-                              press: () async {
-                                // controller.filterSearchResults("");
-                                controller.searchContact("");
-                              },
-                              onSubmit: (result) async {
-                                //  controller.filterSearchResults(result);
-                                controller.searchContact(result);
-                              },
-                            ),
-                          ),
                           SearchBarWidget(
                             onSearch: (query) {
                               leadsController.filterEvents(query);
                             },
                           ),
-                          const SizedBox(
-                            height: 12,
-                          ),
-                          SlidableAutoCloseBehavior(
-                            child: Expanded(
-                              child: ListView.builder(
-                                controller: _scrollController,
-                                scrollDirection: Axis.vertical,
-                                itemCount: leadsController.leads?.length,
-                                itemBuilder: (context, index) {
-                                  var data = leadsController.leads?[index];
-                                  return GestureDetector(
-                                    /*
-                                  onTap: () async {
-                                    // if (await controller.checkNetwork()) {
-                                    controller.getContactDetailApi(
-                                        {"code": data?.id ?? ""}, context);
-                                    // } else {
-                                    var localDetail = Data(
-                                        name: data?.name ?? "",
-                                        shortName:
-                                            getShortName(data?.name ?? "")
-                                                .toUpperCase(),
-                                        avatar: "",
-                                        company: data?.company ?? "",
-                                        countryCode: "",
-                                        description: "",
-                                        email: data?.email ?? "",
-                                        mobile: data?.mobile ?? "",
-                                        position: data?.title ?? "",
-                                        website: data?.website ?? "");
-                                    controller.contactDetail.value.data =
-                                        localDetail;
-                                    Get.toNamed(ContactDetailPage.routeName);
 
-                                    // ScaffoldMessenger.of(context).showSnackBar(
-                                    //     const SnackBar(
-                                    //         content: Text(
-                                    //             "No Internet connection")));
-                                    //  }
-                                  },
-                                  */
-
-                                    child: StatefulBuilder(
-                                        builder: (context, setState) {
-                                          return Container(
-                                            color: indicatorColor,
-                                            child: Slidable(
-                                              key: const ValueKey(0),
-                                              closeOnScroll: true,
-                                              endActionPane: ActionPane(
-                                                dragDismissible: false,
-                                                motion: const ScrollMotion(),
-                                                children: [
-                                                  const SizedBox(
-                                                    width: 15,
-                                                  ),
-                                                  SlidableAutoCloseBehavior(
-                                                    closeWhenTapped: true,
-                                                    closeWhenOpened: true,
-                                                    child: InkWell(
-                                                      /*
-                                                onTap: () async {
-                                                  ///Create a new vCard
-                                                  var vCard = VCard();
-
-                                                  ///Set properties
-                                                  vCard.firstName =
-                                                      data?.name.capitalize ??
-                                                          "";
-                                                  vCard.middleName = '';
-                                                  vCard.lastName = "";
-                                                  vCard.email =
-                                                      data?.email ?? "";
-                                                  vCard.workPhone =
-                                                      data?.mobile ?? "";
-                                                  vCard.organization = data
-                                                          ?.company
-                                                          .capitalize ??
-                                                      "";
-                                                  vCard.jobTitle =
-                                                      data?.title.capitalize ??
-                                                          "";
-                                                  vCard.note = '';
-                                                  shareAllVCFCard(context,
-                                                      vCard: [vCard]);
-                                                  setState(() {});
-                                                },
-                                                */
+                          leadsController.leadBodyData.value.data?.leads
+                                      ?.isEmpty ??
+                                  true
+                              ? const Center(
+                                  child: BoldTextView(
+                                  text: "No leads found",
+                                ))
+                              : SlidableAutoCloseBehavior(
+                                  child: Expanded(
+                                    child: ListView.builder(
+                                      controller: _scrollController,
+                                      scrollDirection: Axis.vertical,
+                                      itemCount: leadsController.leads?.length,
+                                      itemBuilder: (context, index) {
+                                        var data =
+                                            leadsController.leads?[index];
+                                        return GestureDetector(
+                                          child: StatefulBuilder(
+                                              builder: (context, setState) {
+                                            return Container(
+                                              color: indicatorColor,
+                                              child: Slidable(
+                                                key: const ValueKey(0),
+                                                closeOnScroll: true,
+                                                endActionPane: ActionPane(
+                                                  dragDismissible: false,
+                                                  motion: const ScrollMotion(),
+                                                  children: [
+                                                    const SizedBox(
+                                                      width: 15,
+                                                    ),
+                                                    SlidableAutoCloseBehavior(
+                                                      closeWhenTapped: true,
+                                                      closeWhenOpened: true,
+                                                      child: InkWell(
+                                                        child: Card(
+                                                          shape: RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10)),
+                                                          child: Container(
+                                                            margin:
+                                                                const EdgeInsets
+                                                                    .all(3),
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(10),
+                                                            height: 40,
+                                                            width: 40,
+                                                            child: Image.asset(
+                                                                "assets/icons/share.png"),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        showAlertDialog(
+                                                            context,
+                                                            data?.id ?? "",
+                                                            index);
+                                                      },
                                                       child: Card(
                                                         shape: RoundedRectangleBorder(
                                                             borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                                10)),
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10)),
                                                         child: Container(
                                                           margin:
-                                                          const EdgeInsets
-                                                              .all(3),
+                                                              const EdgeInsets
+                                                                  .all(3),
                                                           padding:
-                                                          const EdgeInsets
-                                                              .all(10),
+                                                              const EdgeInsets
+                                                                  .all(10),
                                                           height: 40,
                                                           width: 40,
                                                           child: Image.asset(
-                                                              "assets/icons/share.png"),
+                                                              "assets/icons/delete.png"),
                                                         ),
                                                       ),
                                                     ),
-                                                  ),
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      showAlertDialog(
-                                                          context,
-                                                          data?.id ?? "",
-                                                          index);
-                                                    },
-                                                    child: Card(
-                                                      shape:
-                                                      RoundedRectangleBorder(
-                                                          borderRadius:
-                                                          BorderRadius
-                                                              .circular(
-                                                              10)),
-                                                      child: Container(
-                                                        margin: const EdgeInsets
-                                                            .all(3),
-                                                        padding:
-                                                        const EdgeInsets
-                                                            .all(10),
-                                                        height: 40,
-                                                        width: 40,
-                                                        child: Image.asset(
-                                                            "assets/icons/delete.png"),
+                                                    InkWell(
+                                                      child: Card(
+                                                        shape: RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10)),
+                                                        child: Container(
+                                                          margin:
+                                                              const EdgeInsets
+                                                                  .all(3),
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(10),
+                                                          height: 40,
+                                                          width: 40,
+                                                          child: Image.asset(
+                                                              "assets/icons/saveto_phone.png"),
+                                                        ),
                                                       ),
-                                                    ),
-                                                  ),
-                                                  InkWell(
-                                                    /*
-                                                onTap: () async {
-                                                var contact = Contact(
-                                                    displayName:
-                                                        data?.name.capitalize ??
-                                                            "",
-                                                    familyName: "",
-                                                    company: data?.company
-                                                            .capitalize ??
-                                                        "",
-                                                    jobTitle: data?.title
-                                                            .capitalize ??
-                                                        "",
-                                                    emails: [
-                                                      Item(
-                                                          label: "email",
-                                                          value:
-                                                              data?.email ?? "")
-                                                    ],
-                                                    phones: [
-                                                      Item(
-                                                          label: "mobile",
-                                                          value: data?.mobile ??
-                                                              "")
-                                                    ]);
-
-                                                //  ContactsService.addContact(contact);
-
-                                                var result =
-                                                    await Get.to(AddContactView(
-                                                  contact: contact,
-                                                ));
-                                                if (result == "true") {
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(const SnackBar(
-                                                          content: Text(
-                                                              "Contact saved")));
-                                                }
-
-                                                // if (await ContactsService
-                                                //     .requestPermission()) {
-                                                //   final newContact = Contact()
-                                                //     ..name.first = data?.name ?? ""
-                                                //     ..displayName = data?.name ?? ""
-                                                //     ..phones = [
-                                                //       Phone(data?.mobile ?? "")
-                                                //     ]
-                                                //     ..emails = [
-                                                //       Email(data?.email ?? "")
-                                                //     ]
-                                                //     ..organizations = [
-                                                //       Organization(
-                                                //           company:
-                                                //               data?.company ?? "",
-                                                //           title: data?.title ?? "")
-                                                //     ];
-                                                //   await newContact.insert();
-                                                //   ScaffoldMessenger.of(context)
-                                                //       .showSnackBar(const SnackBar(
-                                                //           content:
-                                                //               Text("Contact saved")));
-                                                // }
-                                              },
-                                              */
-                                                    child: Card(
-                                                      shape:
-                                                      RoundedRectangleBorder(
-                                                          borderRadius:
-                                                          BorderRadius
-                                                              .circular(
-                                                              10)),
-                                                      child: Container(
-                                                        margin: const EdgeInsets
-                                                            .all(3),
-                                                        padding:
-                                                        const EdgeInsets
-                                                            .all(10),
-                                                        height: 40,
-                                                        width: 40,
-                                                        child: Image.asset(
-                                                            "assets/icons/saveto_phone.png"),
-                                                      ),
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                              child: Container(
-                                                color: white,
-                                                padding:
-                                                const EdgeInsets.all(10),
+                                                    )
+                                                  ],
+                                                ),
                                                 child: Container(
+                                                  color: white,
                                                   padding:
-                                                  const EdgeInsets.all(10),
-                                                  decoration: BoxDecoration(
-                                                      border: Border.all(
-                                                          color: const Color(
-                                                              0xffE8E8E8),
-                                                          width: 1),
-                                                      borderRadius:
-                                                      const BorderRadius
-                                                          .all(
-                                                          Radius.circular(
-                                                              15))),
-                                                  child: ListTile(
-                                                    contentPadding:
-                                                    const EdgeInsets
-                                                        .symmetric(
-                                                        vertical: 5),
-                                                    leading: circularImage(
-                                                        url: "",
-                                                        shortName: getShortName(
-                                                            data?.name ??
-                                                                "")
-                                                            .toUpperCase()),
-                                                    title: Column(
-                                                      mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .start,
-                                                      crossAxisAlignment:
-                                                      CrossAxisAlignment
-                                                          .start,
-                                                      children: [
-                                                        SemiBoldTextView(
-                                                          text: data?.name
-                                                              ?.capitalize ??
-                                                              "",
-                                                          textAlign:
-                                                          TextAlign.start,
-                                                          maxLines: 3,
-                                                          textSize: 18,
-                                                        ),
-                                                        RegularTextView(
-                                                          text: data?.company
-                                                              ?.capitalize ??
-                                                              "",
-                                                          textAlign:
-                                                          TextAlign.start,
-                                                          maxLine: 3,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    trailing: const Icon(
-                                                      CupertinoIcons.forward,
-                                                      color: black,
+                                                      const EdgeInsets.all(10),
+                                                  child: Container(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            10),
+                                                    decoration: BoxDecoration(
+                                                        border: Border.all(
+                                                            color: const Color(
+                                                                0xffE8E8E8),
+                                                            width: 1),
+                                                        borderRadius:
+                                                            const BorderRadius
+                                                                .all(
+                                                                Radius.circular(
+                                                                    15))),
+                                                    child: ListTile(
+                                                      contentPadding:
+                                                          const EdgeInsets
+                                                              .symmetric(
+                                                              vertical: 5),
+                                                      leading: circularImage(
+                                                          url: "",
+                                                          shortName: getShortName(
+                                                                  data?.name ??
+                                                                      "")
+                                                              .toUpperCase()),
+                                                      title: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          SemiBoldTextView(
+                                                            text: data?.name
+                                                                    ?.capitalize ??
+                                                                "",
+                                                            textAlign:
+                                                                TextAlign.start,
+                                                            maxLines: 3,
+                                                            textSize: 18,
+                                                          ),
+                                                          RegularTextView(
+                                                            text: data?.company
+                                                                    ?.capitalize ??
+                                                                "",
+                                                            textAlign:
+                                                                TextAlign.start,
+                                                            maxLine: 3,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      trailing: const Icon(
+                                                        CupertinoIcons.forward,
+                                                        color: black,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
                                               ),
-                                            ),
-                                          );
-                                        }),
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
+                                            );
+                                          }),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ), // Conditionally render Placeholder
                         ],
                       ),
                     ),
                     // controller.loading.value
-                    leadsController.leadBodyData.value.status ==
-                        Status.loading
+                    leadsController.leadBodyData.value.status == Status.loading
                         ? const Center(child: CircularProgressIndicator())
                         : SizedBox()
                   ],
                 );
-              } // Ensure this method returns a Widget.
             default:
               return const Center(child: Text("No leads found"));
           }
@@ -490,8 +351,7 @@ class LocalContactViewPage extends GetView<LocalContactController> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: GestureDetector(
         onTap: () async {
-          // var result = await dashboardController.scanQR();
-          //var result = await Get.toNamed(QRScanner.routeName);
+          /*
           var result = await Get.toNamed(QrProfilePage.routeName);
           print("result=======");
           print(result);
@@ -510,7 +370,9 @@ class LocalContactViewPage extends GetView<LocalContactController> {
                 title: result!["title"] ?? "",
                 website: result!['url'] ?? "",
               ),
-              context);
+              context);*/
+          var result = await Get.toNamed(QrProfilePage.routeName);//co
+          checkQrCode(context,eventsController.eventData.value,result);//co
         },
         child: Container(
           width: 150,
@@ -543,409 +405,57 @@ class LocalContactViewPage extends GetView<LocalContactController> {
     );
   }
 
-  Widget leadsList(){
-    if (leadsController.leadBodyData.value.data?.leads?.isEmpty ??
-        true) {
-      return const Center(
-        child: BoldTextView(
-          text: "No leads found",
-        ),
-      );
+
+  void checkQrCode(BuildContext context, EventData? eventData, String? qrCodeScanned) {
+    // Ensure both `prefix` and `qrCodeScanned` are not null or empty
+    print("qrCodeScanned: $qrCodeScanned, prefix: ${eventData?.prefix}");
+    String? qrCodePrefix = eventData?.prefix;
+    if (qrCodeScanned != null && qrCodeScanned.isNotEmpty &&
+        qrCodePrefix != null && qrCodePrefix.isNotEmpty) {
+      // Check if the scanned QR code starts with the given prefix && where the QR code is valid
+      if (qrCodeScanned.startsWith(qrCodePrefix)) {
+        // The QR code matches the prefix
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AddLeadsDialog(
+              onConfirm: (String notes) {
+                print("notes-> $notes");
+                leadsController.addLeads({
+                  "event_id":eventData?.id,
+                  "qrcode":qrCodeScanned
+                }, Get.context!);
+              },
+            );
+          },
+        );
+      } else {
+        // The QR code does not match the prefix
+        print("The QR code does not match the prefix.");
+
+        // Replace with localized strings if necessary
+        String title = "Invalid QR Code for Event";
+        String message = "This code does not belong to the current event. Please use a valid QR code for this event.";
+        String buttonText = "Try Again";
+
+        // Show the alert dialog
+        UniversalAlertDialog.showAlertDialog(
+          context,
+          title: title,
+          message: message,
+          positiveButtonLabel: buttonText,
+          isNegativeButtonVisible: false,
+        ).then((_) {
+          // Handle post-dialog behavior here, if needed
+          // e.g., reset input or navigate to a different screen
+        });
+      }
     } else {
-      return Stack(
-        children: [
-          Container(
-            color: white,
-            padding: const EdgeInsets.only(bottom: 8),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.only(
-                      left: 10, right: 10, top: 0),
-                  child: Row(
-                    mainAxisAlignment:
-                    MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        child: Text(
-                            "Total ${leadsController.leads?.length} Leads",
-                            style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,
-                                fontFamily: "figtree_semibold",
-                                color: blackGrey)),
-                      ),
-                      /*
-                                //EXPORT
-                                GestureDetector(
-                                  onTap: _generateCsvFile,
-                                  child: Container(
-                                    width: 120,
-                                    height: 40,
-                                    decoration: BoxDecoration(
-                                        borderRadius: const BorderRadius.all(
-                                            Radius.circular(20)),
-                                        border: Border.all(color: Colors.black)),
-                                    padding: EdgeInsets.all(10),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        const SizedBox(
-                                          width: 5,
-                                        ),
-                                        Image.asset("assets/icons/export.png",
-                                            height: 15, width: 15),
-                                        const SizedBox(
-                                          width: 5,
-                                        ),
-                                        const BoldTextView(
-                                          text: "Export",
-                                          textSize: 16,
-                                          textAlign: TextAlign.start,
-                                        ),
-                                        const SizedBox(
-                                          width: 5,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                */
-                    ],
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.only(
-                      top: 10, left: 10, right: 10),
-                  child: SearchView(
-                    title: "Search here",
-                    textController: textController,
-                    press: () async {
-                      // controller.filterSearchResults("");
-                      controller.searchContact("");
-                    },
-                    onSubmit: (result) async {
-                      //  controller.filterSearchResults(result);
-                      controller.searchContact(result);
-                    },
-                  ),
-                ),
-                SearchBarWidget(
-                  onSearch: (query) {
-                    leadsController.filterEvents(query);
-                  },
-                ),
-                const SizedBox(
-                  height: 12,
-                ),
-                SlidableAutoCloseBehavior(
-                  child: Expanded(
-                    child: ListView.builder(
-                      controller: _scrollController,
-                      scrollDirection: Axis.vertical,
-                      itemCount: leadsController.leads?.length,
-                      itemBuilder: (context, index) {
-                        var data = leadsController.leads?[index];
-                        return GestureDetector(
-                          /*
-                                    onTap: () async {
-                                      // if (await controller.checkNetwork()) {
-                                      controller.getContactDetailApi(
-                                          {"code": data?.id ?? ""}, context);
-                                      // } else {
-                                      var localDetail = Data(
-                                          name: data?.name ?? "",
-                                          shortName:
-                                              getShortName(data?.name ?? "")
-                                                  .toUpperCase(),
-                                          avatar: "",
-                                          company: data?.company ?? "",
-                                          countryCode: "",
-                                          description: "",
-                                          email: data?.email ?? "",
-                                          mobile: data?.mobile ?? "",
-                                          position: data?.title ?? "",
-                                          website: data?.website ?? "");
-                                      controller.contactDetail.value.data =
-                                          localDetail;
-                                      Get.toNamed(ContactDetailPage.routeName);
+      print("QR code or prefix is empty.");
 
-                                      // ScaffoldMessenger.of(context).showSnackBar(
-                                      //     const SnackBar(
-                                      //         content: Text(
-                                      //             "No Internet connection")));
-                                      //  }
-                                    },
-                                    */
-
-                          child: StatefulBuilder(
-                              builder: (context, setState) {
-                                return Container(
-                                  color: indicatorColor,
-                                  child: Slidable(
-                                    key: const ValueKey(0),
-                                    closeOnScroll: true,
-                                    endActionPane: ActionPane(
-                                      dragDismissible: false,
-                                      motion: const ScrollMotion(),
-                                      children: [
-                                        const SizedBox(
-                                          width: 15,
-                                        ),
-                                        SlidableAutoCloseBehavior(
-                                          closeWhenTapped: true,
-                                          closeWhenOpened: true,
-                                          child: InkWell(
-                                            /*
-                                                  onTap: () async {
-                                                    ///Create a new vCard
-                                                    var vCard = VCard();
-
-                                                    ///Set properties
-                                                    vCard.firstName =
-                                                        data?.name.capitalize ??
-                                                            "";
-                                                    vCard.middleName = '';
-                                                    vCard.lastName = "";
-                                                    vCard.email =
-                                                        data?.email ?? "";
-                                                    vCard.workPhone =
-                                                        data?.mobile ?? "";
-                                                    vCard.organization = data
-                                                            ?.company
-                                                            .capitalize ??
-                                                        "";
-                                                    vCard.jobTitle =
-                                                        data?.title.capitalize ??
-                                                            "";
-                                                    vCard.note = '';
-                                                    shareAllVCFCard(context,
-                                                        vCard: [vCard]);
-                                                    setState(() {});
-                                                  },
-                                                  */
-                                            child: Card(
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                  BorderRadius
-                                                      .circular(
-                                                      10)),
-                                              child: Container(
-                                                margin:
-                                                const EdgeInsets
-                                                    .all(3),
-                                                padding:
-                                                const EdgeInsets
-                                                    .all(10),
-                                                height: 40,
-                                                width: 40,
-                                                child: Image.asset(
-                                                    "assets/icons/share.png"),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        GestureDetector(
-                                          onTap: () {
-                                            showAlertDialog(
-                                                context,
-                                                data?.id ?? "",
-                                                index);
-                                          },
-                                          child: Card(
-                                            shape:
-                                            RoundedRectangleBorder(
-                                                borderRadius:
-                                                BorderRadius
-                                                    .circular(
-                                                    10)),
-                                            child: Container(
-                                              margin: const EdgeInsets
-                                                  .all(3),
-                                              padding:
-                                              const EdgeInsets
-                                                  .all(10),
-                                              height: 40,
-                                              width: 40,
-                                              child: Image.asset(
-                                                  "assets/icons/delete.png"),
-                                            ),
-                                          ),
-                                        ),
-                                        InkWell(
-                                          /*
-                                                  onTap: () async {
-                                                  var contact = Contact(
-                                                      displayName:
-                                                          data?.name.capitalize ??
-                                                              "",
-                                                      familyName: "",
-                                                      company: data?.company
-                                                              .capitalize ??
-                                                          "",
-                                                      jobTitle: data?.title
-                                                              .capitalize ??
-                                                          "",
-                                                      emails: [
-                                                        Item(
-                                                            label: "email",
-                                                            value:
-                                                                data?.email ?? "")
-                                                      ],
-                                                      phones: [
-                                                        Item(
-                                                            label: "mobile",
-                                                            value: data?.mobile ??
-                                                                "")
-                                                      ]);
-
-                                                  //  ContactsService.addContact(contact);
-
-                                                  var result =
-                                                      await Get.to(AddContactView(
-                                                    contact: contact,
-                                                  ));
-                                                  if (result == "true") {
-                                                    ScaffoldMessenger.of(context)
-                                                        .showSnackBar(const SnackBar(
-                                                            content: Text(
-                                                                "Contact saved")));
-                                                  }
-
-                                                  // if (await ContactsService
-                                                  //     .requestPermission()) {
-                                                  //   final newContact = Contact()
-                                                  //     ..name.first = data?.name ?? ""
-                                                  //     ..displayName = data?.name ?? ""
-                                                  //     ..phones = [
-                                                  //       Phone(data?.mobile ?? "")
-                                                  //     ]
-                                                  //     ..emails = [
-                                                  //       Email(data?.email ?? "")
-                                                  //     ]
-                                                  //     ..organizations = [
-                                                  //       Organization(
-                                                  //           company:
-                                                  //               data?.company ?? "",
-                                                  //           title: data?.title ?? "")
-                                                  //     ];
-                                                  //   await newContact.insert();
-                                                  //   ScaffoldMessenger.of(context)
-                                                  //       .showSnackBar(const SnackBar(
-                                                  //           content:
-                                                  //               Text("Contact saved")));
-                                                  // }
-                                                },
-                                                */
-                                          child: Card(
-                                            shape:
-                                            RoundedRectangleBorder(
-                                                borderRadius:
-                                                BorderRadius
-                                                    .circular(
-                                                    10)),
-                                            child: Container(
-                                              margin: const EdgeInsets
-                                                  .all(3),
-                                              padding:
-                                              const EdgeInsets
-                                                  .all(10),
-                                              height: 40,
-                                              width: 40,
-                                              child: Image.asset(
-                                                  "assets/icons/saveto_phone.png"),
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                    child: Container(
-                                      color: white,
-                                      padding:
-                                      const EdgeInsets.all(10),
-                                      child: Container(
-                                        padding:
-                                        const EdgeInsets.all(10),
-                                        decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: const Color(
-                                                    0xffE8E8E8),
-                                                width: 1),
-                                            borderRadius:
-                                            const BorderRadius
-                                                .all(
-                                                Radius.circular(
-                                                    15))),
-                                        child: ListTile(
-                                          contentPadding:
-                                          const EdgeInsets
-                                              .symmetric(
-                                              vertical: 5),
-                                          leading: circularImage(
-                                              url: "",
-                                              shortName: getShortName(
-                                                  data?.name ??
-                                                      "")
-                                                  .toUpperCase()),
-                                          title: Column(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment
-                                                .start,
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment
-                                                .start,
-                                            children: [
-                                              SemiBoldTextView(
-                                                text: data?.name
-                                                    ?.capitalize ??
-                                                    "",
-                                                textAlign:
-                                                TextAlign.start,
-                                                maxLines: 3,
-                                                textSize: 18,
-                                              ),
-                                              RegularTextView(
-                                                text: data?.company
-                                                    ?.capitalize ??
-                                                    "",
-                                                textAlign:
-                                                TextAlign.start,
-                                                maxLine: 3,
-                                              ),
-                                            ],
-                                          ),
-                                          trailing: const Icon(
-                                            CupertinoIcons.forward,
-                                            color: black,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // controller.loading.value
-          leadsController.leadBodyData.value.status ==
-              Status.loading
-              ? const Center(child: CircularProgressIndicator())
-              : SizedBox()
-        ],
-      );
     }
   }
+
   Widget circularImage({url, shortName}) {
     return SizedBox(
       height: 50,
