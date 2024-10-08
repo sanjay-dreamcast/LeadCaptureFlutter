@@ -156,22 +156,22 @@ class LocalContactViewPage extends GetView<LocalContactController> {
                               ],
                             ),
                           ),
-                          // Container(
-                          //   padding: const EdgeInsets.only(
-                          //       top: 10, left: 10, right: 10),
-                          //   child: SearchView(
-                          //     title: "Search here",
-                          //     textController: textController,
-                          //     press: () async {
-                          //       // controller.filterSearchResults("");
-                          //       controller.searchContact("");
-                          //     },
-                          //     onSubmit: (result) async {
-                          //       //  controller.filterSearchResults(result);
-                          //       controller.searchContact(result);
-                          //     },
-                          //   ),
-                          // ),
+                          Container(
+                            padding: const EdgeInsets.only(
+                                top: 10, left: 10, right: 10),
+                            child: SearchView(
+                              title: "Search here",
+                              textController: textController,
+                              press: () async {
+                                // controller.filterSearchResults("");
+                                controller.searchContact("");
+                              },
+                              onSubmit: (result) async {
+                                //  controller.filterSearchResults(result);
+                                controller.searchContact(result);
+                              },
+                            ),
+                          ),
                           SearchBarWidget(
                             onSearch: (query) {
                               leadsController.filterEvents(query);
@@ -189,10 +189,11 @@ class LocalContactViewPage extends GetView<LocalContactController> {
                                 itemBuilder: (context, index) {
                                   var data = leadsController.leads?[index];
                                   return GestureDetector(
+                                    /*
                                   onTap: () async {
                                     // if (await controller.checkNetwork()) {
-                                    //  controller.getContactDetailApi(
-                                    //      {"code": data?.id ?? ""}, context);
+                                    controller.getContactDetailApi(
+                                        {"code": data?.id ?? ""}, context);
                                     // } else {
                                     var localDetail = Data(
                                         name: data?.name ?? "",
@@ -205,8 +206,8 @@ class LocalContactViewPage extends GetView<LocalContactController> {
                                         description: "",
                                         email: data?.email ?? "",
                                         mobile: data?.mobile ?? "",
-                                        position: data?.position ?? "",
-                                        website: data?.getAvatar ?? "");
+                                        position: data?.title ?? "",
+                                        website: data?.website ?? "");
                                     controller.contactDetail.value.data =
                                         localDetail;
                                     Get.toNamed(ContactDetailPage.routeName);
@@ -217,6 +218,7 @@ class LocalContactViewPage extends GetView<LocalContactController> {
                                     //             "No Internet connection")));
                                     //  }
                                   },
+                                  */
 
                                     child: StatefulBuilder(
                                         builder: (context, setState) {
@@ -232,59 +234,59 @@ class LocalContactViewPage extends GetView<LocalContactController> {
                                                   const SizedBox(
                                                     width: 15,
                                                   ),
-                                                //   SlidableAutoCloseBehavior(
-                                                //     closeWhenTapped: true,
-                                                //     closeWhenOpened: true,
-                                                //     child: InkWell(
-                                                //       /*
-                                                // onTap: () async {
-                                                //   ///Create a new vCard
-                                                //   var vCard = VCard();
-                                                //
-                                                //   ///Set properties
-                                                //   vCard.firstName =
-                                                //       data?.name.capitalize ??
-                                                //           "";
-                                                //   vCard.middleName = '';
-                                                //   vCard.lastName = "";
-                                                //   vCard.email =
-                                                //       data?.email ?? "";
-                                                //   vCard.workPhone =
-                                                //       data?.mobile ?? "";
-                                                //   vCard.organization = data
-                                                //           ?.company
-                                                //           .capitalize ??
-                                                //       "";
-                                                //   vCard.jobTitle =
-                                                //       data?.title.capitalize ??
-                                                //           "";
-                                                //   vCard.note = '';
-                                                //   shareAllVCFCard(context,
-                                                //       vCard: [vCard]);
-                                                //   setState(() {});
-                                                // },
-                                                // */
-                                                //       child: Card(
-                                                //         shape: RoundedRectangleBorder(
-                                                //             borderRadius:
-                                                //             BorderRadius
-                                                //                 .circular(
-                                                //                 10)),
-                                                //         child: Container(
-                                                //           margin:
-                                                //           const EdgeInsets
-                                                //               .all(3),
-                                                //           padding:
-                                                //           const EdgeInsets
-                                                //               .all(10),
-                                                //           height: 40,
-                                                //           width: 40,
-                                                //           child: Image.asset(
-                                                //               "assets/icons/share.png"),
-                                                //         ),
-                                                //       ),
-                                                //     ),
-                                                //   ),
+                                                  SlidableAutoCloseBehavior(
+                                                    closeWhenTapped: true,
+                                                    closeWhenOpened: true,
+                                                    child: InkWell(
+                                                      /*
+                                                onTap: () async {
+                                                  ///Create a new vCard
+                                                  var vCard = VCard();
+
+                                                  ///Set properties
+                                                  vCard.firstName =
+                                                      data?.name.capitalize ??
+                                                          "";
+                                                  vCard.middleName = '';
+                                                  vCard.lastName = "";
+                                                  vCard.email =
+                                                      data?.email ?? "";
+                                                  vCard.workPhone =
+                                                      data?.mobile ?? "";
+                                                  vCard.organization = data
+                                                          ?.company
+                                                          .capitalize ??
+                                                      "";
+                                                  vCard.jobTitle =
+                                                      data?.title.capitalize ??
+                                                          "";
+                                                  vCard.note = '';
+                                                  shareAllVCFCard(context,
+                                                      vCard: [vCard]);
+                                                  setState(() {});
+                                                },
+                                                */
+                                                      child: Card(
+                                                        shape: RoundedRectangleBorder(
+                                                            borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                                10)),
+                                                        child: Container(
+                                                          margin:
+                                                          const EdgeInsets
+                                                              .all(3),
+                                                          padding:
+                                                          const EdgeInsets
+                                                              .all(10),
+                                                          height: 40,
+                                                          width: 40,
+                                                          child: Image.asset(
+                                                              "assets/icons/share.png"),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
                                                   GestureDetector(
                                                     onTap: () {
                                                       showAlertDialog(
@@ -312,91 +314,91 @@ class LocalContactViewPage extends GetView<LocalContactController> {
                                                       ),
                                                     ),
                                                   ),
-                                              //     InkWell(
-                                              //       /*
-                                              //   onTap: () async {
-                                              //   var contact = Contact(
-                                              //       displayName:
-                                              //           data?.name.capitalize ??
-                                              //               "",
-                                              //       familyName: "",
-                                              //       company: data?.company
-                                              //               .capitalize ??
-                                              //           "",
-                                              //       jobTitle: data?.title
-                                              //               .capitalize ??
-                                              //           "",
-                                              //       emails: [
-                                              //         Item(
-                                              //             label: "email",
-                                              //             value:
-                                              //                 data?.email ?? "")
-                                              //       ],
-                                              //       phones: [
-                                              //         Item(
-                                              //             label: "mobile",
-                                              //             value: data?.mobile ??
-                                              //                 "")
-                                              //       ]);
-                                              //
-                                              //   //  ContactsService.addContact(contact);
-                                              //
-                                              //   var result =
-                                              //       await Get.to(AddContactView(
-                                              //     contact: contact,
-                                              //   ));
-                                              //   if (result == "true") {
-                                              //     ScaffoldMessenger.of(context)
-                                              //         .showSnackBar(const SnackBar(
-                                              //             content: Text(
-                                              //                 "Contact saved")));
-                                              //   }
-                                              //
-                                              //   // if (await ContactsService
-                                              //   //     .requestPermission()) {
-                                              //   //   final newContact = Contact()
-                                              //   //     ..name.first = data?.name ?? ""
-                                              //   //     ..displayName = data?.name ?? ""
-                                              //   //     ..phones = [
-                                              //   //       Phone(data?.mobile ?? "")
-                                              //   //     ]
-                                              //   //     ..emails = [
-                                              //   //       Email(data?.email ?? "")
-                                              //   //     ]
-                                              //   //     ..organizations = [
-                                              //   //       Organization(
-                                              //   //           company:
-                                              //   //               data?.company ?? "",
-                                              //   //           title: data?.title ?? "")
-                                              //   //     ];
-                                              //   //   await newContact.insert();
-                                              //   //   ScaffoldMessenger.of(context)
-                                              //   //       .showSnackBar(const SnackBar(
-                                              //   //           content:
-                                              //   //               Text("Contact saved")));
-                                              //   // }
-                                              // },
-                                              // */
-                                              //       child: Card(
-                                              //         shape:
-                                              //         RoundedRectangleBorder(
-                                              //             borderRadius:
-                                              //             BorderRadius
-                                              //                 .circular(
-                                              //                 10)),
-                                              //         child: Container(
-                                              //           margin: const EdgeInsets
-                                              //               .all(3),
-                                              //           padding:
-                                              //           const EdgeInsets
-                                              //               .all(10),
-                                              //           height: 40,
-                                              //           width: 40,
-                                              //           child: Image.asset(
-                                              //               "assets/icons/saveto_phone.png"),
-                                              //         ),
-                                              //       ),
-                                              //     )
+                                                  InkWell(
+                                                    /*
+                                                onTap: () async {
+                                                var contact = Contact(
+                                                    displayName:
+                                                        data?.name.capitalize ??
+                                                            "",
+                                                    familyName: "",
+                                                    company: data?.company
+                                                            .capitalize ??
+                                                        "",
+                                                    jobTitle: data?.title
+                                                            .capitalize ??
+                                                        "",
+                                                    emails: [
+                                                      Item(
+                                                          label: "email",
+                                                          value:
+                                                              data?.email ?? "")
+                                                    ],
+                                                    phones: [
+                                                      Item(
+                                                          label: "mobile",
+                                                          value: data?.mobile ??
+                                                              "")
+                                                    ]);
+
+                                                //  ContactsService.addContact(contact);
+
+                                                var result =
+                                                    await Get.to(AddContactView(
+                                                  contact: contact,
+                                                ));
+                                                if (result == "true") {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(const SnackBar(
+                                                          content: Text(
+                                                              "Contact saved")));
+                                                }
+
+                                                // if (await ContactsService
+                                                //     .requestPermission()) {
+                                                //   final newContact = Contact()
+                                                //     ..name.first = data?.name ?? ""
+                                                //     ..displayName = data?.name ?? ""
+                                                //     ..phones = [
+                                                //       Phone(data?.mobile ?? "")
+                                                //     ]
+                                                //     ..emails = [
+                                                //       Email(data?.email ?? "")
+                                                //     ]
+                                                //     ..organizations = [
+                                                //       Organization(
+                                                //           company:
+                                                //               data?.company ?? "",
+                                                //           title: data?.title ?? "")
+                                                //     ];
+                                                //   await newContact.insert();
+                                                //   ScaffoldMessenger.of(context)
+                                                //       .showSnackBar(const SnackBar(
+                                                //           content:
+                                                //               Text("Contact saved")));
+                                                // }
+                                              },
+                                              */
+                                                    child: Card(
+                                                      shape:
+                                                      RoundedRectangleBorder(
+                                                          borderRadius:
+                                                          BorderRadius
+                                                              .circular(
+                                                              10)),
+                                                      child: Container(
+                                                        margin: const EdgeInsets
+                                                            .all(3),
+                                                        padding:
+                                                        const EdgeInsets
+                                                            .all(10),
+                                                        height: 40,
+                                                        width: 40,
+                                                        child: Image.asset(
+                                                            "assets/icons/saveto_phone.png"),
+                                                      ),
+                                                    ),
+                                                  )
                                                 ],
                                               ),
                                               child: Container(

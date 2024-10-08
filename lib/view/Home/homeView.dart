@@ -103,8 +103,8 @@ class HomePgae extends GetView<LocalContactController> {
                           //  var result = await Get.toNamed(QRScanner.routeName);
                           // Get.put(NewQrScan());
                           //  var result = await dashboardController.scanQR();
-                          var result = await Get.toNamed(QrProfilePage.routeName);//co
-                          checkQrCode(context,eventsController.eventData.value,result);//co
+                          var result = await Get.toNamed(QrProfilePage.routeName);
+                          checkQrCode(context,eventsController.eventData.value,result);
 
                           /*if (result["uc"] == null) {
                           Get.snackbar(

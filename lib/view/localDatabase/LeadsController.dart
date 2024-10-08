@@ -28,6 +28,8 @@ class LeadsController extends GetxController{
   List<LeadsData>? get leads {
     return leadBodyData.value.data?.leads??List.empty(); // Return the leads list or null
   }
+  var mainLeadsList = <LeadsData>[].obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -44,6 +46,7 @@ class LeadsController extends GetxController{
     bool hasInternet = await ConnectivityHelper.checkInternetConnection();
     if (!hasInternet) {
       addLeadsData.value = Resource.error(MyStrings.NoInternetconnected);
+      mainLeadsList.value = List.empty();
       return;
     }
 
@@ -107,7 +110,9 @@ class LeadsController extends GetxController{
           message: model.message,
         );
         print(leadBodyData.value.data);
+        mainLeadsList.value = leadBodyData.value.data?.leads??List.empty();
       } else {
+        mainLeadsList.value = List.empty();
         // Handle error
         leadBodyData.value = Resource.error(
           model.message ?? MyStrings.someErrorOccurred,
@@ -124,6 +129,7 @@ class LeadsController extends GetxController{
         });
       }
     } catch (e) {
+      mainLeadsList.value = List.empty();
       print("verifyOtpResource catch $e");
       // Handle exceptions or unexpected errors
       leadBodyData.value = Resource.error(MyStrings.somethingWentWrong);
@@ -132,12 +138,18 @@ class LeadsController extends GetxController{
   List<LeadsData> allLeadsData = []; // Store all events for filtering
 
   void filterEvents(String query) {
+    print("filter prints");
     // Get the current LeadsBodyData
     final currentLeadData = leadBodyData.value.data;
 
     if (query.isEmpty) {
       // If the query is empty, reset to original leads
-      leadBodyData.value = Resource.success(data: currentLeadData);
+      final emptyLeads = LeadsBodyData(
+        hasNextPage: currentLeadData?.hasNextPage,
+        leads:  mainLeadsList.value,
+      );
+      print("filter prints ${mainLeadsList.value}");
+      leadBodyData.value = Resource.success(data: emptyLeads);
     } else {
       // Filter the leads based on the query
       final filteredLeads = currentLeadData?.leads?.where((lead) {
@@ -149,9 +161,9 @@ class LeadsController extends GetxController{
         leads: filteredLeads,
       );
       leadBodyData.value = Resource.success(data: updatedLeadBodyData);
+      print("leads Body Data ${leadBodyData.value.data?.leads}");
     }
   }
-
 
 
 }

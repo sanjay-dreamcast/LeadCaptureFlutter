@@ -6,6 +6,7 @@ import 'package:cphi/utils/UniversalAlertDialog.dart';
 import 'package:cphi/view/customerWidget/search_bar_widget.dart';
 import 'package:cphi/view/localDatabase/LoginController.dart';
 import 'package:cphi/view/login/bottomsheet_helper.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -13,9 +14,11 @@ import 'package:get/get.dart'; // Import GetX
 import '../../api_repository/api_service.dart';
 import '../../model/Status.dart';
 import '../../theme/app_colors.dart';
+import '../../theme/app_theme.dart';
 import '../Dashboard/dashboardView.dart';
 import '../localDatabase/EventsController.dart';
 import '../localDatabase/SharedPrefController.dart';
+
 
 class EventsScreen extends StatefulWidget {
   const EventsScreen({super.key});
@@ -47,9 +50,10 @@ class _EventsScreenState extends State<EventsScreen>
   }
 
   Future<void> fetchEvents() async {
-    dynamic requestBody = {};
-    await eventsController.fetchEvents(requestBody,
-        isRefresh: true); // Call fetchEvents from EventsController
+    dynamic requestBody = {
+
+    };
+    await eventsController.fetchEvents(requestBody,isRefresh: true); // Call fetchEvents from EventsController
   }
 
   Future<void> _onRefresh() async {
@@ -137,28 +141,25 @@ class _EventsScreenState extends State<EventsScreen>
   Widget _loginStripUI() {
     return Container(
       color: blackGrey,
-      padding: const EdgeInsets.symmetric(
-        vertical: 5.0,
-        horizontal: 40.0,
-      ),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       alignment: Alignment.center,
       child: RichText(
         text: TextSpan(
           text: MyStrings.secureLeadTitle,
           style: const TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-            fontFamily: "figtree_medium",
-          ),
+              color: Colors.white,
+              fontSize: 14,
+              fontFamily: "figtree_medium",
+              fontWeight: FontWeight.normal),
           children: [
             TextSpan(
               text: MyStrings.logIn,
               style: const TextStyle(
-                fontFamily: "figtree_medium",
-                color: Colors.white,
-                decoration: TextDecoration.underline,
-                fontSize: 14,
-              ),
+                  fontFamily: "figtree_medium",
+                  color: Colors.white,
+                  decoration: TextDecoration.underline,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500),
               recognizer: TapGestureRecognizer()
                 ..onTap = () {
                   print('Continue with Log In clicked');
@@ -179,7 +180,7 @@ class _EventsScreenState extends State<EventsScreen>
     return Obx(() {
       switch (eventsController.eventResource.value.status) {
         case Status.loading:
-          // Optionally return the current list of events with a loading indicator
+        // Optionally return the current list of events with a loading indicator
           return const Center(child: CircularProgressIndicator());
 
         case Status.error:
@@ -197,12 +198,12 @@ class _EventsScreenState extends State<EventsScreen>
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    eventsController.eventResource.value.message ??
-                        MyStrings.no_event_found,
+                    eventsController.eventResource.value.message ?? MyStrings.no_event_found,
                     style: const TextStyle(
                         color: blackGrey,
                         fontSize: 20,
-                        fontFamily: "figtree_semibold"),
+                        fontFamily: "figtree_semibold"
+                    ),
                   ),
                 ],
               ),
@@ -225,23 +226,22 @@ class _EventsScreenState extends State<EventsScreen>
                     // Get.offAndToNamed(DashboardPage.routeName);
                     sharedPrefController.loggedInUser.value.isNull
                         ? UniversalAlertDialog.showAlertDialog(
-                            context,
-                            title: "Alert",
-                            message: "Please Login",
-                            positiveButtonLabel: "OK",
-                            isNegativeButtonVisible: false,
-                          )
+                      context,
+                      title: "Alert",
+                      message: "Please Login",
+                      positiveButtonLabel: "OK",
+                      isNegativeButtonVisible: false,
+                    )
                         : Get.toNamed(
-                            DashboardPage.routeName,
-                            arguments: {
-                              'eventData': event?.toJson()
-                            }, // Pass the event data as a JSON map
-                          ); // Pass arguments
+                      DashboardPage.routeName,
+                      arguments: {
+                        'eventData': event?.toJson()
+                      }, // Pass the event data as a JSON map
+                    ); // Pass arguments
                     print('Event tapped: ${event?.name}');
-                  },
+                    },
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 16, horizontal: 18),
+                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 18),
                     decoration: BoxDecoration(
                       color: white_color,
                       border: Border.all(color: white80),
@@ -277,26 +277,26 @@ class _EventsScreenState extends State<EventsScreen>
           );
 
         default:
-          // Optional: Handle any unexpected state
-          return const Center(child: Text("Unexpected error"));
+        // Optional: Handle any unexpected state
+        return const Center(child: Text("Unexpected error"));
       }
     });
   }
 
   Widget _uncategorizedEvent() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 15),
+      padding: const EdgeInsets.all(15),
       child: Center(
         child: GestureDetector(
           onTap: () {
             print('Custom button pressed!');
           },
           child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 18),
+            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
             decoration: const BoxDecoration(
               color: violet10,
               shape: BoxShape.rectangle,
-              borderRadius: BorderRadius.all(Radius.circular(35)),
+              borderRadius: AppBorderRadius.medium,
             ),
             child: const Row(
               mainAxisSize: MainAxisSize.min,
@@ -310,11 +310,11 @@ class _EventsScreenState extends State<EventsScreen>
                       fontWeight: FontWeight.w500,
                       fontFamily: "figtree_semibold"),
                 ),
-                SizedBox(width: 20),
+                SizedBox(width: 10),
                 Icon(
                   Icons.arrow_forward_ios_sharp,
                   color: Colors.white,
-                  size: 15,
+                  size: 16,
                 ),
               ],
             ),
@@ -324,7 +324,9 @@ class _EventsScreenState extends State<EventsScreen>
     );
   }
 
-// {"email":"gzg@gmail.com"}
-// https://staging-eapp.godreamcast.com/lead_capture/api/app/v1/signin/verifyUsername
-// {"status":false,"code":422,"message":"Validation failed","body":{"email":"Hmm, no account found with this email. Perhaps it's time to create a new account?"}}@@Msg@@
+  // {"email":"gzg@gmail.com"}
+  // https://staging-eapp.godreamcast.com/lead_capture/api/app/v1/signin/verifyUsername
+  // {"status":false,"code":422,"message":"Validation failed","body":{"email":"Hmm, no account found with this email. Perhaps it's time to create a new account?"}}@@Msg@@
 }
+
+
