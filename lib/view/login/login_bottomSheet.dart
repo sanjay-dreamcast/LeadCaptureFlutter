@@ -1,4 +1,3 @@
-
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
@@ -31,13 +30,15 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
   String otpErrorMessage = '';
   bool _isDialogVisible = false; // Add this line
 
-  final LoginController loginController = Get.put(LoginController(Get.find<ApiService>()));
+  final LoginController loginController =
+      Get.put(LoginController(Get.find<ApiService>()));
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      padding:
+          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: Stack(
         children: [
           // Main content of the bottom sheet
@@ -77,30 +78,35 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
                 Obx(() {
                   return loginController.isOtpVisible.value
                       ? OtpContainer(
-                    otpController: _otpController,
-                    errorMessage: otpErrorMessage,
-                    loginController: loginController,
-                    onVerify: () {
-                      loginController.validateOtp();
-                    },
-                    onResend: (isResendOtp) {
-                      loginController.validateEmail(loginController.emailId.value,isResendOtp:isResendOtp);
-                    },
-                  ) : LoginContainer(
-                    emailController: emailController,
-                    errorMessage: errorMessage,
-                    loginController: loginController,
-                    onLogin: (email){
-                      loginController.validateEmail(email);
-                    },
-                  );
+                          otpController: _otpController,
+                          errorMessage: otpErrorMessage,
+                          loginController: loginController,
+                          onVerify: () {
+                            loginController.validateOtp();
+                          },
+                          onResend: (isResendOtp) {
+                            loginController.validateEmail(
+                                loginController.emailId.value,
+                                isResendOtp: isResendOtp);
+                          },
+                        )
+                      : LoginContainer(
+                          emailController: emailController,
+                          errorMessage: errorMessage,
+                          loginController: loginController,
+                          onLogin: (email) {
+                            loginController.validateEmail(email);
+                          },
+                        );
                 }),
               ],
             ),
           ),
           Obx(() {
-            if (loginController.verifyUserResource.value.status == Status.loading
-            ||loginController.verifyOtpResource.value.status == Status.loading) {
+            if (loginController.verifyUserResource.value.status ==
+                    Status.loading ||
+                loginController.verifyOtpResource.value.status ==
+                    Status.loading) {
               return Positioned.fill(
                 child: UniversalLoader(), // Show full-screen loader
               );
@@ -113,6 +119,7 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
     );
   }
 }
+
 class OtpContainer extends StatelessWidget {
   final TextEditingController otpController;
   final String errorMessage;
@@ -123,7 +130,7 @@ class OtpContainer extends StatelessWidget {
     Key? key,
     required this.otpController,
     required this.errorMessage,
-    required  this.loginController,
+    required this.loginController,
     required this.onVerify,
     required this.onResend,
   }) : super(key: key);
@@ -133,7 +140,7 @@ class OtpContainer extends StatelessWidget {
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.all(20),
-      padding: const EdgeInsets.only(top: 10,left: 15,right: 15,bottom: 25),
+      padding: const EdgeInsets.all(15),
       decoration: const BoxDecoration(
         color: white20color,
         borderRadius: AppBorderRadius.medium,
@@ -142,131 +149,144 @@ class OtpContainer extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           // backButton(context),
-          TextBackButton(title: 'Back',onBackPressed: (){
-            print("BackButton");
-            loginController.setOtpVisible(false);
-          }),
-
-          const SizedBox(height: 10),
-          const Text(
-            'OTP Verification',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: blackGrey,
-              fontSize: 22.0,
-              fontWeight: FontWeight.w500,
-              fontFamily: 'figtree_semibold',
-            ),
-          ),
-          const SizedBox(height: 20),
-          Obx(() {
-            return  Text(
-              '${loginController.verifyUserResource.value.message}',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: blackGrey,
-                fontSize: 14.0,
-                fontFamily: 'figtree_regular',
-              ),
-            );
-          }),
-          const SizedBox(height: 20),
-          _otpPin(context,loginController),
-          const SizedBox(height: 16),
-          Obx(() {
-            return Visibility(
-              visible: loginController.otpErrorMessage.isNotEmpty,
-              child: Text(
-                loginController.otpErrorMessage.value,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.red,
-                  fontSize: 12.0,
-                  fontFamily: 'figtree_medium',
-                ),
-              ),
-            );
-          }),
-          const SizedBox(height: 5),
-          GestureDetector(
-            onTap: () => {
-              // loginController.setOtpVisible(false)
-              onVerify()
+          TextBackButton(
+            title: 'Back',
+            onBackPressed: () {
+              print("BackButton");
+              loginController.setOtpVisible(false);
             },
-            child: Container(
-              width: double.infinity,
-              margin: EdgeInsets.only(top: 10),
-              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 18),
-              decoration: const BoxDecoration(
-                color: blackGrey,
-                shape: BoxShape.rectangle,
-                borderRadius: AppBorderRadius.medium,
-              ),
-              child: const Text(
-                "VERIFY & PROCEED", // Ensure this string is defined in your MyStrings
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  fontFamily: "figtree_semibold",
-                ),
-              ),
-            ),
           ),
-          const SizedBox(height: 15),
-          Obx(() {
-            return Column(
+          Container(
+            padding: const EdgeInsets.all(15),
+            child: Column(
               children: [
-                RichText(
+                const Text(
+                  'OTP Verification',
                   textAlign: TextAlign.center,
-                  text: TextSpan(
+                  style: TextStyle(
+                    color: blackGrey,
+                    fontSize: 22.0,
+                    fontWeight: FontWeight.w500,
+                    fontFamily: 'figtree_semibold',
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Obx(() {
+                  return Text(
+                    '${loginController.verifyUserResource.value.message}',
+                    textAlign: TextAlign.center,
                     style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 12.0, // Default text size
+                      color: blackGrey,
+                      fontSize: 14.0,
+                      fontFamily: 'figtree_regular',
                     ),
-                    children: [
-                      const TextSpan(text: "Didn't receive the OTP? "),
-                      loginController.isResendEnabled.value
-                          ? TextSpan(
-                        text: "Resend OTP",
+                  );
+                }),
+                const SizedBox(height: 25),
+                _otpPin(context, loginController),
+                const SizedBox(height: 15),
+                Obx(
+                  () {
+                    return Visibility(
+                      visible: loginController.otpErrorMessage.isNotEmpty,
+                      child: Text(
+                        loginController.otpErrorMessage.value,
+                        textAlign: TextAlign.center,
                         style: const TextStyle(
-                          decoration: TextDecoration.underline,
-                          fontFamily: 'figtree_semibold',
-                          fontWeight: FontWeight.w700,
-                          color: blackGrey,
-                          fontSize: 12.0, // Default text size
-                        ),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            onResend(true); // Call resend
-                          },
-                      )
-                          : const TextSpan(
-                        text: "Resend OTP",
-                        style: TextStyle(
-                          fontFamily: 'figtree_regular',
-                          fontWeight: FontWeight.w300,
-                          color: Colors.grey, // Disabled color
+                          color: Colors.red,
+                          fontSize: 12.0,
+                          fontFamily: 'figtree_medium',
                         ),
                       ),
-                    ],
-                  ),
+                    );
+                  },
                 ),
-                const SizedBox(height: 5),
-                if (!loginController.isResendEnabled.value)
-                  Text(
-                    "00:${loginController.resendTimer.value}",
-                    style: const TextStyle(
-                      fontFamily: 'figtree_regular',
-                      fontSize: 14.0,
-                      fontWeight: FontWeight.w500,
-                      color: blackGrey, // Timer color
+                const SizedBox(height: 10),
+                GestureDetector(
+                  onTap: () => {
+                    // loginController.setOtpVisible(false)
+                    onVerify()
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    margin: const EdgeInsets.only(top: 0),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 16, horizontal: 18),
+                    decoration: const BoxDecoration(
+                      color: blackGrey,
+                      shape: BoxShape.rectangle,
+                      borderRadius: AppBorderRadius.medium,
+                    ),
+                    child: const Text(
+                      "VERIFY & PROCEED",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: "figtree_semibold",
+                      ),
                     ),
                   ),
+                ),
+                const SizedBox(height: 20),
+                Obx(
+                  () {
+                    return Column(
+                      children: [
+                        RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 12.0, // Default text size
+                            ),
+                            children: [
+                              const TextSpan(text: "Didn't receive the OTP? "),
+                              loginController.isResendEnabled.value
+                                  ? TextSpan(
+                                      text: "Resend OTP",
+                                      style: const TextStyle(
+                                        decoration: TextDecoration.underline,
+                                        fontFamily: 'figtree_semibold',
+                                        fontWeight: FontWeight.w700,
+                                        color: blackGrey,
+                                        fontSize: 12.0, // Default text size
+                                      ),
+                                      recognizer: TapGestureRecognizer()
+                                        ..onTap = () {
+                                          onResend(true); // Call resend
+                                        },
+                                    )
+                                  : const TextSpan(
+                                      text: "Resend OTP",
+                                      style: TextStyle(
+                                        fontFamily: 'figtree_regular',
+                                        fontWeight: FontWeight.w300,
+                                        color: Colors.grey, // Disabled color
+                                      ),
+                                    ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        if (!loginController.isResendEnabled.value)
+                          Text(
+                            "00:${loginController.resendTimer.value}",
+                            style: const TextStyle(
+                              fontFamily: 'figtree_regular',
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w500,
+                              color: blackGrey, // Timer color
+                            ),
+                          ),
+                      ],
+                    );
+                  },
+                )
               ],
-            );
-          })
+            ),
+          ),
         ],
       ),
     );
@@ -276,41 +296,40 @@ class OtpContainer extends StatelessWidget {
     final defaultPinTheme = PinTheme(
       width: 46,
       height: 46,
-      textStyle: TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.w600),
+      textStyle: const TextStyle(
+          fontSize: 16, color: Colors.black, fontWeight: FontWeight.w600),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.black),
         borderRadius: BorderRadius.circular(8),
       ),
     );
     final focusedPinTheme = defaultPinTheme.copyDecorationWith(
-      border: Border.all(color: Colors.black,width: 1.7),
+      border: Border.all(color: Colors.black, width: 1.7),
       borderRadius: BorderRadius.circular(8),
     );
     return Pinput(
       length: 6,
-        defaultPinTheme:defaultPinTheme,
+      defaultPinTheme: defaultPinTheme,
       focusedPinTheme: focusedPinTheme,
-      onCompleted: (pin) => {
-        print("pin--> $pin")},
-      onChanged: (pin) => {
-        loginController.updatePin(pin)
-      },
-      onSubmitted: (otp)=>{
-        print("pin onChanged--> $otp")},
+      onCompleted: (pin) => {print("pin--> $pin")},
+      onChanged: (pin) => {loginController.updatePin(pin)},
+      onSubmitted: (otp) => {print("pin onChanged--> $otp")},
     );
   }
 
   Widget backButton(BuildContext context) {
     return GestureDetector(
-      onTap: (){}, // Handle button press
+      onTap: () {}, // Handle button press
       child: Container(
-        margin: const EdgeInsets.only(left: -8.0, top: -5.0), // Equivalent of layout margins
+        margin: const EdgeInsets.only(
+            left: -8.0, top: -5.0), // Equivalent of layout margins
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             // Icon (ImageView equivalent)
             Container(
-              padding: const EdgeInsets.all(5.0), // Equivalent to ImageView padding
+              padding:
+                  const EdgeInsets.all(5.0), // Equivalent to ImageView padding
               child: Image.asset(
                 'assets/ic_back.png', // Use your asset image (ic_back equivalent)
                 width: 25,
@@ -323,7 +342,8 @@ class OtpContainer extends StatelessWidget {
               'Back', // Equivalent of android:text="@string/back"
               style: TextStyle(
                 fontSize: 14, // Equivalent to android:textSize
-                fontFamily: 'FigtreeSemibold', // Equivalent to android:fontFamily
+                fontFamily:
+                    'FigtreeSemibold', // Equivalent to android:fontFamily
               ),
             ),
           ],
@@ -332,6 +352,7 @@ class OtpContainer extends StatelessWidget {
     );
   }
 }
+
 class LoginContainer extends StatelessWidget {
   final TextEditingController emailController;
   final String errorMessage;
@@ -342,7 +363,7 @@ class LoginContainer extends StatelessWidget {
     Key? key,
     required this.emailController,
     required this.errorMessage,
-    required  this.loginController,
+    required this.loginController,
     required this.onLogin,
   }) : super(key: key);
   @override
@@ -411,7 +432,7 @@ class LoginContainer extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Obx(
-                () {
+            () {
               return Visibility(
                 visible: loginController.errorMessage.isNotEmpty,
                 child: Text(
@@ -455,10 +476,12 @@ class LoginContainer extends StatelessWidget {
     );
   }
 }
+
 class UniversalLoader extends StatefulWidget {
   @override
   _UniversalLoaderState createState() => _UniversalLoaderState();
 }
+
 class _UniversalLoaderState extends State<UniversalLoader> {
   @override
   Widget build(BuildContext context) {
@@ -474,7 +497,8 @@ class _UniversalLoaderState extends State<UniversalLoader> {
           ),
           child: const Center(
             child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.black), // Change color if needed
+              valueColor: AlwaysStoppedAnimation<Color>(
+                  Colors.black), // Change color if needed
             ),
           ),
         ),
