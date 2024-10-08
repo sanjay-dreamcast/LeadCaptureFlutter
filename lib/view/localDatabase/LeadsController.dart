@@ -29,6 +29,7 @@ class LeadsController extends GetxController{
     return leadBodyData.value.data?.leads??List.empty(); // Return the leads list or null
   }
   var mainLeadsList = <LeadsData>[].obs;
+  var loading = false.obs;
 
   @override
   void onInit() {
@@ -209,7 +210,7 @@ class LeadsController extends GetxController{
   Future<void> getLeadsList(dynamic body, BuildContext context) async {
     // Set to loading state initially
     leadBodyData.value = Resource.loading();
-
+    loading(true);
     bool hasInternet = await ConnectivityHelper.checkInternetConnection();
     if (!hasInternet) {
       leadBodyData.value = Resource.error(MyStrings.NoInternetconnected);
@@ -219,6 +220,7 @@ class LeadsController extends GetxController{
     try {
       // Assuming UserModel is the type for the body
       BaseApiModel<LeadsBodyData> model = await apiService.getLeadsData(body);
+      loading(false);
       if (model.status == true && model.statusCode == 200) {
         leadBodyData.value = Resource.success(
           data: model.data, // this is userdata

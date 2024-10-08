@@ -50,42 +50,42 @@ class ContactDetailPage extends GetView<LocalContactController> {
             color: Colors.black,
           ),
           actions: [
-            InkWell(
-              splashColor: textGrayColor,
-              highlightColor: white,
-              onTap: () {
-                var vCard = VCard();
-
-                ///Set properties
-                vCard.firstName =
-                    controller.contactDetail.value.data?.name?.capitalize ?? "";
-                vCard.middleName = '';
-                vCard.lastName = "";
-                vCard.email = controller.contactDetail.value.data?.email ?? "";
-                vCard.workPhone =
-                    controller.contactDetail.value.data?.mobile ?? "";
-                vCard.organization =
-                    controller.contactDetail.value.data?.company?.capitalize ??
-                        "";
-                vCard.jobTitle =
-                    controller.contactDetail.value.data?.position?.capitalize ??
-                        "";
-                vCard.note = '';
-                shareAllVCFCard(context, vCard: [vCard]);
-              },
-              child: const CircleAvatar(
-                radius: 15,
-                backgroundColor: indicatorColor,
-                child: Icon(
-                  Icons.share,
-                  size: 20,
-                  color: Colors.black,
-                ),
-              ),
-            ),
-            const SizedBox(
-              width: 15,
-            ),
+            // InkWell(
+            //   splashColor: textGrayColor,
+            //   highlightColor: white,
+            //   onTap: () {
+            //     var vCard = VCard();
+            //
+            //     ///Set properties
+            //     vCard.firstName =
+            //         controller.contactDetail.value.data?.name?.capitalize ?? "";
+            //     vCard.middleName = '';
+            //     vCard.lastName = "";
+            //     vCard.email = controller.contactDetail.value.data?.email ?? "";
+            //     vCard.workPhone =
+            //         controller.contactDetail.value.data?.mobile ?? "";
+            //     vCard.organization =
+            //         controller.contactDetail.value.data?.company?.capitalize ??
+            //             "";
+            //     vCard.jobTitle =
+            //         controller.contactDetail.value.data?.position?.capitalize ??
+            //             "";
+            //     vCard.note = '';
+            //     shareAllVCFCard(context, vCard: [vCard]);
+            //   },
+            //   child: const CircleAvatar(
+            //     radius: 15,
+            //     backgroundColor: indicatorColor,
+            //     child: Icon(
+            //       Icons.share,
+            //       size: 20,
+            //       color: Colors.black,
+            //     ),
+            //   ),
+            // ),
+            // const SizedBox(
+            //   width: 15,
+            // ),
             InkWell(
               splashColor: textGrayColor,
               highlightColor: white,

@@ -7,6 +7,7 @@ import '../../../core/vcard_parser.dart';
 
 class DashboardController extends GetxController {
   var tabIndex = 0;
+  var loading = false.obs;
   CameraController? _controller;
   Future<void>? _controllerInitialized;
   void changeTabIndex(int index) {

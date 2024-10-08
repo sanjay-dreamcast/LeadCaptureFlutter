@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../api_repository/api_service.dart';
+import '../../model/Resource.dart';
 import '../../theme/app_colors.dart';
 import '../../utils/shared_preferences_helper.dart';
 import '../localDatabase/LeadsController.dart';
@@ -465,9 +466,12 @@ class DashboardPage extends StatelessWidget {
                 const SizedBox(height: 20),
                 // Export Lead Button
                 GestureDetector(
-                  onTap: () {
-                        Get.back(); // Close the bottom sheet after export
-                    leadsController.exportLeads({"event_id" : leadsController.eventsController.eventData.value.id ?? "","start_datetime" : startDateTimeController.text,"end_datetime" : endDateTimeController.text,}, context);
+                  onTap: () async {
+                        Get.back();
+                         leadsController.loading.value = true;
+                   await leadsController.exportLeads({"event_id" : leadsController.eventsController.eventData.value.id ?? "","start_datetime" : startDateTimeController.text,"end_datetime" : endDateTimeController.text,}, context);
+                        leadsController.loading.value = false;
+                       // leadsController.leadBodyData.value =
                   },
                   child: Container(
                     width: double.infinity,
