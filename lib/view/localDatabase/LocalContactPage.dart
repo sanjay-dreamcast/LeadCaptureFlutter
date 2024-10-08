@@ -156,22 +156,22 @@ class LocalContactViewPage extends GetView<LocalContactController> {
                               ],
                             ),
                           ),
-                          Container(
-                            padding: const EdgeInsets.only(
-                                top: 10, left: 10, right: 10),
-                            child: SearchView(
-                              title: "Search here",
-                              textController: textController,
-                              press: () async {
-                                // controller.filterSearchResults("");
-                                controller.searchContact("");
-                              },
-                              onSubmit: (result) async {
-                                //  controller.filterSearchResults(result);
-                                controller.searchContact(result);
-                              },
-                            ),
-                          ),
+                          // Container(
+                          //   padding: const EdgeInsets.only(
+                          //       top: 10, left: 10, right: 10),
+                          //   child: SearchView(
+                          //     title: "Search here",
+                          //     textController: textController,
+                          //     press: () async {
+                          //       // controller.filterSearchResults("");
+                          //       controller.searchContact("");
+                          //     },
+                          //     onSubmit: (result) async {
+                          //       //  controller.filterSearchResults(result);
+                          //       controller.searchContact(result);
+                          //     },
+                          //   ),
+                          // ),
                           SearchBarWidget(
                             onSearch: (query) {
                               leadsController.filterEvents(query);
@@ -189,7 +189,6 @@ class LocalContactViewPage extends GetView<LocalContactController> {
                                 itemBuilder: (context, index) {
                                   var data = leadsController.leads?[index];
                                   return GestureDetector(
-                                    /*
                                   onTap: () async {
                                     // if (await controller.checkNetwork()) {
                                     controller.getContactDetailApi(
@@ -206,8 +205,10 @@ class LocalContactViewPage extends GetView<LocalContactController> {
                                         description: "",
                                         email: data?.email ?? "",
                                         mobile: data?.mobile ?? "",
-                                        position: data?.title ?? "",
-                                        website: data?.website ?? "");
+                                        position: data?.position ?? "",
+                                        website: data?.website ?? "",
+                                      note: data?.note ?? ""
+                                    );
                                     controller.contactDetail.value.data =
                                         localDetail;
                                     Get.toNamed(ContactDetailPage.routeName);
@@ -218,14 +219,13 @@ class LocalContactViewPage extends GetView<LocalContactController> {
                                     //             "No Internet connection")));
                                     //  }
                                   },
-                                  */
 
                                     child: StatefulBuilder(
                                         builder: (context, setState) {
                                           return Container(
                                             color: indicatorColor,
                                             child: Slidable(
-                                              key: const ValueKey(0),
+                                              key: const ValueKey(1),
                                               closeOnScroll: true,
                                               endActionPane: ActionPane(
                                                 dragDismissible: false,
@@ -234,59 +234,59 @@ class LocalContactViewPage extends GetView<LocalContactController> {
                                                   const SizedBox(
                                                     width: 15,
                                                   ),
-                                                  SlidableAutoCloseBehavior(
-                                                    closeWhenTapped: true,
-                                                    closeWhenOpened: true,
-                                                    child: InkWell(
-                                                      /*
-                                                onTap: () async {
-                                                  ///Create a new vCard
-                                                  var vCard = VCard();
-
-                                                  ///Set properties
-                                                  vCard.firstName =
-                                                      data?.name.capitalize ??
-                                                          "";
-                                                  vCard.middleName = '';
-                                                  vCard.lastName = "";
-                                                  vCard.email =
-                                                      data?.email ?? "";
-                                                  vCard.workPhone =
-                                                      data?.mobile ?? "";
-                                                  vCard.organization = data
-                                                          ?.company
-                                                          .capitalize ??
-                                                      "";
-                                                  vCard.jobTitle =
-                                                      data?.title.capitalize ??
-                                                          "";
-                                                  vCard.note = '';
-                                                  shareAllVCFCard(context,
-                                                      vCard: [vCard]);
-                                                  setState(() {});
-                                                },
-                                                */
-                                                      child: Card(
-                                                        shape: RoundedRectangleBorder(
-                                                            borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                                10)),
-                                                        child: Container(
-                                                          margin:
-                                                          const EdgeInsets
-                                                              .all(3),
-                                                          padding:
-                                                          const EdgeInsets
-                                                              .all(10),
-                                                          height: 40,
-                                                          width: 40,
-                                                          child: Image.asset(
-                                                              "assets/icons/share.png"),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
+                                                //   SlidableAutoCloseBehavior(
+                                                //     closeWhenTapped: true,
+                                                //     closeWhenOpened: true,
+                                                //     child: InkWell(
+                                                //       /*
+                                                // onTap: () async {
+                                                //   ///Create a new vCard
+                                                //   var vCard = VCard();
+                                                //
+                                                //   ///Set properties
+                                                //   vCard.firstName =
+                                                //       data?.name.capitalize ??
+                                                //           "";
+                                                //   vCard.middleName = '';
+                                                //   vCard.lastName = "";
+                                                //   vCard.email =
+                                                //       data?.email ?? "";
+                                                //   vCard.workPhone =
+                                                //       data?.mobile ?? "";
+                                                //   vCard.organization = data
+                                                //           ?.company
+                                                //           .capitalize ??
+                                                //       "";
+                                                //   vCard.jobTitle =
+                                                //       data?.title.capitalize ??
+                                                //           "";
+                                                //   vCard.note = '';
+                                                //   shareAllVCFCard(context,
+                                                //       vCard: [vCard]);
+                                                //   setState(() {});
+                                                // },
+                                                // */
+                                                //       child: Card(
+                                                //         shape: RoundedRectangleBorder(
+                                                //             borderRadius:
+                                                //             BorderRadius
+                                                //                 .circular(
+                                                //                 10)),
+                                                //         child: Container(
+                                                //           margin:
+                                                //           const EdgeInsets
+                                                //               .all(3),
+                                                //           padding:
+                                                //           const EdgeInsets
+                                                //               .all(10),
+                                                //           height: 40,
+                                                //           width: 40,
+                                                //           child: Image.asset(
+                                                //               "assets/icons/share.png"),
+                                                //         ),
+                                                //       ),
+                                                //     ),
+                                                //   ),
                                                   GestureDetector(
                                                     onTap: () {
                                                       showAlertDialog(
@@ -314,91 +314,91 @@ class LocalContactViewPage extends GetView<LocalContactController> {
                                                       ),
                                                     ),
                                                   ),
-                                                  InkWell(
-                                                    /*
-                                                onTap: () async {
-                                                var contact = Contact(
-                                                    displayName:
-                                                        data?.name.capitalize ??
-                                                            "",
-                                                    familyName: "",
-                                                    company: data?.company
-                                                            .capitalize ??
-                                                        "",
-                                                    jobTitle: data?.title
-                                                            .capitalize ??
-                                                        "",
-                                                    emails: [
-                                                      Item(
-                                                          label: "email",
-                                                          value:
-                                                              data?.email ?? "")
-                                                    ],
-                                                    phones: [
-                                                      Item(
-                                                          label: "mobile",
-                                                          value: data?.mobile ??
-                                                              "")
-                                                    ]);
-
-                                                //  ContactsService.addContact(contact);
-
-                                                var result =
-                                                    await Get.to(AddContactView(
-                                                  contact: contact,
-                                                ));
-                                                if (result == "true") {
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(const SnackBar(
-                                                          content: Text(
-                                                              "Contact saved")));
-                                                }
-
-                                                // if (await ContactsService
-                                                //     .requestPermission()) {
-                                                //   final newContact = Contact()
-                                                //     ..name.first = data?.name ?? ""
-                                                //     ..displayName = data?.name ?? ""
-                                                //     ..phones = [
-                                                //       Phone(data?.mobile ?? "")
-                                                //     ]
-                                                //     ..emails = [
-                                                //       Email(data?.email ?? "")
-                                                //     ]
-                                                //     ..organizations = [
-                                                //       Organization(
-                                                //           company:
-                                                //               data?.company ?? "",
-                                                //           title: data?.title ?? "")
-                                                //     ];
-                                                //   await newContact.insert();
-                                                //   ScaffoldMessenger.of(context)
-                                                //       .showSnackBar(const SnackBar(
-                                                //           content:
-                                                //               Text("Contact saved")));
-                                                // }
-                                              },
-                                              */
-                                                    child: Card(
-                                                      shape:
-                                                      RoundedRectangleBorder(
-                                                          borderRadius:
-                                                          BorderRadius
-                                                              .circular(
-                                                              10)),
-                                                      child: Container(
-                                                        margin: const EdgeInsets
-                                                            .all(3),
-                                                        padding:
-                                                        const EdgeInsets
-                                                            .all(10),
-                                                        height: 40,
-                                                        width: 40,
-                                                        child: Image.asset(
-                                                            "assets/icons/saveto_phone.png"),
-                                                      ),
-                                                    ),
-                                                  )
+                                              //     InkWell(
+                                              //       /*
+                                              //   onTap: () async {
+                                              //   var contact = Contact(
+                                              //       displayName:
+                                              //           data?.name.capitalize ??
+                                              //               "",
+                                              //       familyName: "",
+                                              //       company: data?.company
+                                              //               .capitalize ??
+                                              //           "",
+                                              //       jobTitle: data?.title
+                                              //               .capitalize ??
+                                              //           "",
+                                              //       emails: [
+                                              //         Item(
+                                              //             label: "email",
+                                              //             value:
+                                              //                 data?.email ?? "")
+                                              //       ],
+                                              //       phones: [
+                                              //         Item(
+                                              //             label: "mobile",
+                                              //             value: data?.mobile ??
+                                              //                 "")
+                                              //       ]);
+                                              //
+                                              //   //  ContactsService.addContact(contact);
+                                              //
+                                              //   var result =
+                                              //       await Get.to(AddContactView(
+                                              //     contact: contact,
+                                              //   ));
+                                              //   if (result == "true") {
+                                              //     ScaffoldMessenger.of(context)
+                                              //         .showSnackBar(const SnackBar(
+                                              //             content: Text(
+                                              //                 "Contact saved")));
+                                              //   }
+                                              //
+                                              //   // if (await ContactsService
+                                              //   //     .requestPermission()) {
+                                              //   //   final newContact = Contact()
+                                              //   //     ..name.first = data?.name ?? ""
+                                              //   //     ..displayName = data?.name ?? ""
+                                              //   //     ..phones = [
+                                              //   //       Phone(data?.mobile ?? "")
+                                              //   //     ]
+                                              //   //     ..emails = [
+                                              //   //       Email(data?.email ?? "")
+                                              //   //     ]
+                                              //   //     ..organizations = [
+                                              //   //       Organization(
+                                              //   //           company:
+                                              //   //               data?.company ?? "",
+                                              //   //           title: data?.title ?? "")
+                                              //   //     ];
+                                              //   //   await newContact.insert();
+                                              //   //   ScaffoldMessenger.of(context)
+                                              //   //       .showSnackBar(const SnackBar(
+                                              //   //           content:
+                                              //   //               Text("Contact saved")));
+                                              //   // }
+                                              // },
+                                              // */
+                                              //       child: Card(
+                                              //         shape:
+                                              //         RoundedRectangleBorder(
+                                              //             borderRadius:
+                                              //             BorderRadius
+                                              //                 .circular(
+                                              //                 10)),
+                                              //         child: Container(
+                                              //           margin: const EdgeInsets
+                                              //               .all(3),
+                                              //           padding:
+                                              //           const EdgeInsets
+                                              //               .all(10),
+                                              //           height: 40,
+                                              //           width: 40,
+                                              //           child: Image.asset(
+                                              //               "assets/icons/saveto_phone.png"),
+                                              //         ),
+                                              //       ),
+                                              //     )
                                                 ],
                                               ),
                                               child: Container(
@@ -495,11 +495,11 @@ class LocalContactViewPage extends GetView<LocalContactController> {
           var result = await Get.toNamed(QrProfilePage.routeName);
           print("result=======");
           print(result);
-          if (result["uc"] == null) {
-            ScaffoldMessenger.of(context!)
-                .showSnackBar(SnackBar(content: Text("Invalid Vcard")));
-            return;
-          }
+          // if (result["uc"] == null) {
+          //   ScaffoldMessenger.of(context!)
+          //       .showSnackBar(SnackBar(content: Text("Invalid Vcard")));
+          //   return;
+          // }
           controller.inserUser(
               LocalUser(
                 id: result!["uc"] ?? "",
@@ -543,409 +543,6 @@ class LocalContactViewPage extends GetView<LocalContactController> {
     );
   }
 
-  Widget leadsList(){
-    if (leadsController.leadBodyData.value.data?.leads?.isEmpty ??
-        true) {
-      return const Center(
-        child: BoldTextView(
-          text: "No leads found",
-        ),
-      );
-    } else {
-      return Stack(
-        children: [
-          Container(
-            color: white,
-            padding: const EdgeInsets.only(bottom: 8),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.only(
-                      left: 10, right: 10, top: 0),
-                  child: Row(
-                    mainAxisAlignment:
-                    MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        child: Text(
-                            "Total ${leadsController.leads?.length} Leads",
-                            style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,
-                                fontFamily: "figtree_semibold",
-                                color: blackGrey)),
-                      ),
-                      /*
-                                //EXPORT
-                                GestureDetector(
-                                  onTap: _generateCsvFile,
-                                  child: Container(
-                                    width: 120,
-                                    height: 40,
-                                    decoration: BoxDecoration(
-                                        borderRadius: const BorderRadius.all(
-                                            Radius.circular(20)),
-                                        border: Border.all(color: Colors.black)),
-                                    padding: EdgeInsets.all(10),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        const SizedBox(
-                                          width: 5,
-                                        ),
-                                        Image.asset("assets/icons/export.png",
-                                            height: 15, width: 15),
-                                        const SizedBox(
-                                          width: 5,
-                                        ),
-                                        const BoldTextView(
-                                          text: "Export",
-                                          textSize: 16,
-                                          textAlign: TextAlign.start,
-                                        ),
-                                        const SizedBox(
-                                          width: 5,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                */
-                    ],
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.only(
-                      top: 10, left: 10, right: 10),
-                  child: SearchView(
-                    title: "Search here",
-                    textController: textController,
-                    press: () async {
-                      // controller.filterSearchResults("");
-                      controller.searchContact("");
-                    },
-                    onSubmit: (result) async {
-                      //  controller.filterSearchResults(result);
-                      controller.searchContact(result);
-                    },
-                  ),
-                ),
-                SearchBarWidget(
-                  onSearch: (query) {
-                    leadsController.filterEvents(query);
-                  },
-                ),
-                const SizedBox(
-                  height: 12,
-                ),
-                SlidableAutoCloseBehavior(
-                  child: Expanded(
-                    child: ListView.builder(
-                      controller: _scrollController,
-                      scrollDirection: Axis.vertical,
-                      itemCount: leadsController.leads?.length,
-                      itemBuilder: (context, index) {
-                        var data = leadsController.leads?[index];
-                        return GestureDetector(
-                          /*
-                                    onTap: () async {
-                                      // if (await controller.checkNetwork()) {
-                                      controller.getContactDetailApi(
-                                          {"code": data?.id ?? ""}, context);
-                                      // } else {
-                                      var localDetail = Data(
-                                          name: data?.name ?? "",
-                                          shortName:
-                                              getShortName(data?.name ?? "")
-                                                  .toUpperCase(),
-                                          avatar: "",
-                                          company: data?.company ?? "",
-                                          countryCode: "",
-                                          description: "",
-                                          email: data?.email ?? "",
-                                          mobile: data?.mobile ?? "",
-                                          position: data?.title ?? "",
-                                          website: data?.website ?? "");
-                                      controller.contactDetail.value.data =
-                                          localDetail;
-                                      Get.toNamed(ContactDetailPage.routeName);
-
-                                      // ScaffoldMessenger.of(context).showSnackBar(
-                                      //     const SnackBar(
-                                      //         content: Text(
-                                      //             "No Internet connection")));
-                                      //  }
-                                    },
-                                    */
-
-                          child: StatefulBuilder(
-                              builder: (context, setState) {
-                                return Container(
-                                  color: indicatorColor,
-                                  child: Slidable(
-                                    key: const ValueKey(0),
-                                    closeOnScroll: true,
-                                    endActionPane: ActionPane(
-                                      dragDismissible: false,
-                                      motion: const ScrollMotion(),
-                                      children: [
-                                        const SizedBox(
-                                          width: 15,
-                                        ),
-                                        SlidableAutoCloseBehavior(
-                                          closeWhenTapped: true,
-                                          closeWhenOpened: true,
-                                          child: InkWell(
-                                            /*
-                                                  onTap: () async {
-                                                    ///Create a new vCard
-                                                    var vCard = VCard();
-
-                                                    ///Set properties
-                                                    vCard.firstName =
-                                                        data?.name.capitalize ??
-                                                            "";
-                                                    vCard.middleName = '';
-                                                    vCard.lastName = "";
-                                                    vCard.email =
-                                                        data?.email ?? "";
-                                                    vCard.workPhone =
-                                                        data?.mobile ?? "";
-                                                    vCard.organization = data
-                                                            ?.company
-                                                            .capitalize ??
-                                                        "";
-                                                    vCard.jobTitle =
-                                                        data?.title.capitalize ??
-                                                            "";
-                                                    vCard.note = '';
-                                                    shareAllVCFCard(context,
-                                                        vCard: [vCard]);
-                                                    setState(() {});
-                                                  },
-                                                  */
-                                            child: Card(
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                  BorderRadius
-                                                      .circular(
-                                                      10)),
-                                              child: Container(
-                                                margin:
-                                                const EdgeInsets
-                                                    .all(3),
-                                                padding:
-                                                const EdgeInsets
-                                                    .all(10),
-                                                height: 40,
-                                                width: 40,
-                                                child: Image.asset(
-                                                    "assets/icons/share.png"),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        GestureDetector(
-                                          onTap: () {
-                                            showAlertDialog(
-                                                context,
-                                                data?.id ?? "",
-                                                index);
-                                          },
-                                          child: Card(
-                                            shape:
-                                            RoundedRectangleBorder(
-                                                borderRadius:
-                                                BorderRadius
-                                                    .circular(
-                                                    10)),
-                                            child: Container(
-                                              margin: const EdgeInsets
-                                                  .all(3),
-                                              padding:
-                                              const EdgeInsets
-                                                  .all(10),
-                                              height: 40,
-                                              width: 40,
-                                              child: Image.asset(
-                                                  "assets/icons/delete.png"),
-                                            ),
-                                          ),
-                                        ),
-                                        InkWell(
-                                          /*
-                                                  onTap: () async {
-                                                  var contact = Contact(
-                                                      displayName:
-                                                          data?.name.capitalize ??
-                                                              "",
-                                                      familyName: "",
-                                                      company: data?.company
-                                                              .capitalize ??
-                                                          "",
-                                                      jobTitle: data?.title
-                                                              .capitalize ??
-                                                          "",
-                                                      emails: [
-                                                        Item(
-                                                            label: "email",
-                                                            value:
-                                                                data?.email ?? "")
-                                                      ],
-                                                      phones: [
-                                                        Item(
-                                                            label: "mobile",
-                                                            value: data?.mobile ??
-                                                                "")
-                                                      ]);
-
-                                                  //  ContactsService.addContact(contact);
-
-                                                  var result =
-                                                      await Get.to(AddContactView(
-                                                    contact: contact,
-                                                  ));
-                                                  if (result == "true") {
-                                                    ScaffoldMessenger.of(context)
-                                                        .showSnackBar(const SnackBar(
-                                                            content: Text(
-                                                                "Contact saved")));
-                                                  }
-
-                                                  // if (await ContactsService
-                                                  //     .requestPermission()) {
-                                                  //   final newContact = Contact()
-                                                  //     ..name.first = data?.name ?? ""
-                                                  //     ..displayName = data?.name ?? ""
-                                                  //     ..phones = [
-                                                  //       Phone(data?.mobile ?? "")
-                                                  //     ]
-                                                  //     ..emails = [
-                                                  //       Email(data?.email ?? "")
-                                                  //     ]
-                                                  //     ..organizations = [
-                                                  //       Organization(
-                                                  //           company:
-                                                  //               data?.company ?? "",
-                                                  //           title: data?.title ?? "")
-                                                  //     ];
-                                                  //   await newContact.insert();
-                                                  //   ScaffoldMessenger.of(context)
-                                                  //       .showSnackBar(const SnackBar(
-                                                  //           content:
-                                                  //               Text("Contact saved")));
-                                                  // }
-                                                },
-                                                */
-                                          child: Card(
-                                            shape:
-                                            RoundedRectangleBorder(
-                                                borderRadius:
-                                                BorderRadius
-                                                    .circular(
-                                                    10)),
-                                            child: Container(
-                                              margin: const EdgeInsets
-                                                  .all(3),
-                                              padding:
-                                              const EdgeInsets
-                                                  .all(10),
-                                              height: 40,
-                                              width: 40,
-                                              child: Image.asset(
-                                                  "assets/icons/saveto_phone.png"),
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                    child: Container(
-                                      color: white,
-                                      padding:
-                                      const EdgeInsets.all(10),
-                                      child: Container(
-                                        padding:
-                                        const EdgeInsets.all(10),
-                                        decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: const Color(
-                                                    0xffE8E8E8),
-                                                width: 1),
-                                            borderRadius:
-                                            const BorderRadius
-                                                .all(
-                                                Radius.circular(
-                                                    15))),
-                                        child: ListTile(
-                                          contentPadding:
-                                          const EdgeInsets
-                                              .symmetric(
-                                              vertical: 5),
-                                          leading: circularImage(
-                                              url: "",
-                                              shortName: getShortName(
-                                                  data?.name ??
-                                                      "")
-                                                  .toUpperCase()),
-                                          title: Column(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment
-                                                .start,
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment
-                                                .start,
-                                            children: [
-                                              SemiBoldTextView(
-                                                text: data?.name
-                                                    ?.capitalize ??
-                                                    "",
-                                                textAlign:
-                                                TextAlign.start,
-                                                maxLines: 3,
-                                                textSize: 18,
-                                              ),
-                                              RegularTextView(
-                                                text: data?.company
-                                                    ?.capitalize ??
-                                                    "",
-                                                textAlign:
-                                                TextAlign.start,
-                                                maxLine: 3,
-                                              ),
-                                            ],
-                                          ),
-                                          trailing: const Icon(
-                                            CupertinoIcons.forward,
-                                            color: black,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // controller.loading.value
-          leadsController.leadBodyData.value.status ==
-              Status.loading
-              ? const Center(child: CircularProgressIndicator())
-              : SizedBox()
-        ],
-      );
-    }
-  }
   Widget circularImage({url, shortName}) {
     return SizedBox(
       height: 50,
@@ -976,21 +573,19 @@ class LocalContactViewPage extends GetView<LocalContactController> {
     );
   }
 
-  String getShortName(name) {
-    List<String> names = name.split(" ");
+  String getShortName(String name) {
+    if (name.trim().isEmpty) {
+      return ''; // Return an empty string if the input name is empty
+    }
+    List<String> names = name.trim().split(" ");
     String initials = "";
-    int numWords = 1;
-    if (numWords < names.length) {
-      numWords = names.length;
-    }
-    if (names.length > 1) {
-      for (var i = 0; i < numWords; i++) {
-        initials += '${names[i][0]}';
+    // Loop through all words and collect the first character of each
+    for (var i = 0; i < names.length; i++) {
+      if (names[i].isNotEmpty) {
+        initials += names[i][0].toUpperCase(); // Get the first letter, uppercase for better formatting
       }
-      return initials;
-    } else {
-      return names[0];
     }
+    return initials;
   }
 
   void shareAllVCFCard(BuildContext context,

@@ -28,7 +28,6 @@ class HomePgae extends GetView<LocalContactController> {
   static const routeName = "/LocalContactViewPage";
   final LeadsController leadsController = Get.put(LeadsController(Get.find<ApiService>()));
   final EventsController eventsController = Get.put(EventsController(Get.find<ApiService>())); // Initialize the EventsController
-
   final controller = Get.put(LocalContactController());
   final DashboardController dashboardController = Get.find();
   final textController = TextEditingController().obs;

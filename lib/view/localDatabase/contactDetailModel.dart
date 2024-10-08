@@ -64,6 +64,7 @@ class Data {
   String? google;
   String? website;
   String? description;
+  String? note;
 
   Data(
       {this.name,
@@ -81,7 +82,7 @@ class Data {
       this.youtube,
       this.google,
       this.website,
-      this.description});
+      this.description, this.note});
 
   Data.fromJson(Map<String, dynamic> json) {
     name = json['name'];
@@ -100,6 +101,7 @@ class Data {
     google = json['google'];
     website = json['website'];
     description = json['description'];
+    note = json['note'];
   }
 
   Map<String, dynamic> toJson() {
@@ -120,6 +122,7 @@ class Data {
     data['google'] = this.google;
     data['website'] = this.website;
     data['description'] = this.description;
+    data['note'] = this.note;
     return data;
   }
 }

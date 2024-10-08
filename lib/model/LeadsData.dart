@@ -11,6 +11,7 @@ class LeadsData {
   String? countryCode;
   String? mobile;
   String? avatar;
+  String? website;
   String? company;
   String? position;
   String? note;
@@ -32,6 +33,7 @@ class LeadsData {
     this.countryCode,
     this.mobile,
     this.avatar,
+    this.website,
     this.company,
     this.position,
     this.note,
@@ -55,6 +57,7 @@ class LeadsData {
       countryCode: json['country_code'],
       mobile: json['mobile'],
       avatar: json['avatar'],
+      website: json['website'],
       company: json['company'],
       position: json['position'],
       note: json['note'],
@@ -79,6 +82,7 @@ class LeadsData {
       'country_code': countryCode,
       'mobile': mobile,
       'avatar': avatar,
+      "website":website,
       'company': company,
       'position': position,
       'note': note,

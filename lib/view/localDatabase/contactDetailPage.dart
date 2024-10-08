@@ -167,9 +167,7 @@ class ContactDetailPage extends GetView<LocalContactController> {
                                 height: 10,
                               ),
                               RegularTextView(
-                                text: controller.contactDetail.value.data
-                                        ?.company?.capitalize ??
-                                    "",
+                                text: "${controller.contactDetail.value.data?.position?.capitalize ?? ""} at ${controller.contactDetail.value.data?.company?.capitalize ?? ""}",
                                 maxLine: 5,
                                 textAlign: TextAlign.center,
                                 textSize: 16,
@@ -391,12 +389,12 @@ class ContactDetailPage extends GetView<LocalContactController> {
       children: [
         ListTile(
           title: const BoldTextView(
-            text: "About",
+            text: "Notes",
             textSize: 18,
             textAlign: TextAlign.start,
           ),
           subtitle: RegularTextView(
-            text: controller.contactDetail.value.data?.description ?? "",
+            text: controller.contactDetail.value.data?.note ?? "",
             maxLine: 100,
             textSize: 16,
           ),
