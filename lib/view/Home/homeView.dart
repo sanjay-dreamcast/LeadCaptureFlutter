@@ -60,196 +60,214 @@ class HomePgae extends GetView<LocalContactController> {
       body: Container(
         color: Colors.white,
         child: GetX<LocalContactController>(builder: (_) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const Padding(
-                  padding: EdgeInsets.only(top: 24.0), // Adjust padding as needed
-                  child: Text(
-                    "Event Name",
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: grey20Color,
-                      fontFamily: 'figtree_medium', // Ensure font is included in pubspec.yaml
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 2.0), // Adjust padding as needed
-                  child: Obx(() {
-                    return Text(
-                      "${eventsController.eventData.value.name}", // Update the event data
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                        fontFamily: 'figtree_bold',
+          return Stack(
+            alignment: Alignment.center,
+            children: [
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(top: 24.0), // Adjust padding as needed
+                      child: Text(
+                        "Event Name",
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: grey20Color,
+                          fontFamily: 'figtree_medium', // Ensure font is included in pubspec.yaml
+                        ),
                       ),
-                    );
-                  }),
-                ),
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      GestureDetector(
-                        onTap: () async {
-                          print("Stirn");
-                          //  var result = await Get.toNamed(QRScanner.routeName);
-                          // Get.put(NewQrScan());
-                          //  var result = await dashboardController.scanQR();
-                          var result = await Get.toNamed(QrProfilePage.routeName);
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 2.0), // Adjust padding as needed
+                      child: Obx(() {
+                        return Text(
+                          "${eventsController.eventData.value.name}", // Update the event data
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                            fontFamily: 'figtree_bold',
+                          ),
+                        );
+                      }),
+                    ),
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          GestureDetector(
+                            onTap: () async {
+                              print("Stirn");
+                              //  var result = await Get.toNamed(QRScanner.routeName);
+                              // Get.put(NewQrScan());
+                              //  var result = await dashboardController.scanQR();
 
-                          if (result.toString().toLowerCase().contains("begin")) {
-                            // Extracting the UC value
-                            String? ucValue = extractUCValue(result.toString());
+                             if (eventsController.eventData.value.isSync == 0) {
+                               UniversalAlertDialog.showAlertDialog(
+                                 context,
+                                 title: "Alert",
+                                 message: "You are not allow to add lead for this event, please contact to administration",
+                                 positiveButtonLabel: "OK",
+                                 isNegativeButtonVisible: false,
+                               );
+                               return;
+                             }
 
-                            if (ucValue != null) {
-                              checkQrCode(context,eventsController.eventData.value,ucValue);
-                              print('UC Value: $ucValue');
-                            } else {
-                              ScaffoldMessenger.of(context!)
-                                  .showSnackBar(SnackBar(content: Text("Invalid Vcard")));
+                              var result = await Get.toNamed(QrProfilePage.routeName);
+
+                              if (result.toString().toLowerCase().contains("begin")) {
+                                // Extracting the UC value
+                                String? ucValue = extractUCValue(result.toString());
+
+                                if (ucValue != null) {
+                                  checkQrCode(context,eventsController.eventData.value,ucValue);
+                                  print('UC Value: $ucValue');
+                                } else {
+                                  ScaffoldMessenger.of(context!)
+                                      .showSnackBar(SnackBar(content: Text("Invalid Vcard")));
+                                }
+                              } else {
+                                print("result=======");
+                                print(result);
+                                checkQrCode(context,eventsController.eventData.value,result);
+                              }
+
+                              /*if (result["uc"] == null) {
+                              Get.snackbar(
+                                snackPosition: SnackPosition.BOTTOM,
+                                "Error",
+                                "Invalid Contact Card",
+                                colorText: Colors.black,
+                              );
+                              return;
                             }
-                          } else {
-                            print("result=======");
-                            print(result);
-                            checkQrCode(context,eventsController.eventData.value,result);
-                          }
-
-                          /*if (result["uc"] == null) {
-                          Get.snackbar(
-                            snackPosition: SnackPosition.BOTTOM,
-                            "Error",
-                            "Invalid Contact Card",
-                            colorText: Colors.black,
-                          );
-                          return;
-                        }
-                        try {
-                          dashboardController.changeTabIndex(1);
-                          controller.inserUser(
-                              LocalUser(
-                                  id: result!["uc"] ?? "",
-                                  name: result!["n"] ?? "",
-                                  email: result!["email"] ?? "",
-                                  mobile: result!["tel"] ?? "",
-                                  company: result!["org"] ?? "",
-                                  title: result!["title"] ?? "",
-                                  website: result!["url"] ?? ""),
-                              null);
-                        } catch (e) {
-                          print("Error while processing QR code data: $e");
-                        }*/
-                        },
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Center(
-                              child: Image.asset(
-                                "assets/images/home_circle.png",
-                                height: 180,
-                                width: 180,
-                              ),
+                            try {
+                              dashboardController.changeTabIndex(1);
+                              controller.inserUser(
+                                  LocalUser(
+                                      id: result!["uc"] ?? "",
+                                      name: result!["n"] ?? "",
+                                      email: result!["email"] ?? "",
+                                      mobile: result!["tel"] ?? "",
+                                      company: result!["org"] ?? "",
+                                      title: result!["title"] ?? "",
+                                      website: result!["url"] ?? ""),
+                                  null);
+                            } catch (e) {
+                              print("Error while processing QR code data: $e");
+                            }*/
+                            },
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Center(
+                                  child: Image.asset(
+                                    "assets/images/home_circle.png",
+                                    height: 180,
+                                    width: 180,
+                                  ),
+                                ),
+                                Container(
+                                  decoration: BoxDecoration(
+                                      color: const Color(0xffF4F3F7),
+                                      borderRadius:
+                                      const BorderRadius.all(Radius.circular(75)),
+                                      border: Border.all(color: primaryColor,width: 2)),
+                                  height: 150,
+                                  width: 150,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Image.asset(
+                                        "assets/icons/scan_icon.png",
+                                        height: 35,
+                                        width: 35,
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      const SemiBoldTextView(
+                                        text: "Add Leads",
+                                        textSize: 20,
+                                        color: primaryColor,
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
-                            Container(
+                          ),
+                          const SizedBox(
+                            height: 30,
+                          ),
+                          const Text(
+                            "Tap the QR button to",
+                            style: const TextStyle(
+                              fontSize: 18,
+                              color: blueGrey20,
+                              fontFamily: 'figtree_regular',
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 2,
+                          ),
+                          const Text(
+                            "start scanning",
+                            style: const TextStyle(
+                              fontSize: 18,
+                              color: blueGrey20,
+                              fontFamily: 'figtree_regular',
+                            ),
+                          ),
+                          // LeadCollectedWidget(),
+                          const SizedBox(
+                            height: 30,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              // Get.to(LinkedinLoginPage());
+                              dashboardController.changeTabIndex(1);
+                            },
+                            child: controller.localDataList.isEmpty
+                                ? const SizedBox()
+                                : Container(
                               decoration: BoxDecoration(
                                   color: const Color(0xffF4F3F7),
                                   borderRadius:
-                                  const BorderRadius.all(Radius.circular(75)),
-                                  border: Border.all(color: primaryColor,width: 2)),
-                              height: 150,
-                              width: 150,
-                              child: Column(
+                                  const BorderRadius.all(Radius.circular(40)),
+                                  border: Border.all(color: Colors.transparent)),
+                              width: 250,
+                              child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Image.asset(
-                                    "assets/icons/scan_icon.png",
-                                    height: 35,
-                                    width: 35,
+                                  Container(
+                                    padding: const EdgeInsets.all(10),
+                                    child: Text(
+                                      "${controller.localDataList.length} Leads collected",
+                                      style: const TextStyle(
+                                        fontSize: 24,
+                                        color: blueGrey20,
+                                      ),
+                                    ),
                                   ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  const SemiBoldTextView(
-                                    text: "Add Leads",
-                                    textSize: 20,
-                                    color: primaryColor,
-                                  )
+                                  const Icon(CupertinoIcons.forward)
                                 ],
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 30,
-                      ),
-                      const Text(
-                        "Tap the QR button to",
-                        style: const TextStyle(
-                          fontSize: 18,
-                          color: blueGrey20,
-                          fontFamily: 'figtree_regular',
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 2,
-                      ),
-                      const Text(
-                        "start scanning",
-                        style: const TextStyle(
-                          fontSize: 18,
-                          color: blueGrey20,
-                          fontFamily: 'figtree_regular',
-                        ),
-                      ),
-                      // LeadCollectedWidget(),
-                      const SizedBox(
-                        height: 30,
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          // Get.to(LinkedinLoginPage());
-                          dashboardController.changeTabIndex(1);
-                        },
-                        child: controller.localDataList.isEmpty
-                            ? const SizedBox()
-                            : Container(
-                          decoration: BoxDecoration(
-                              color: const Color(0xffF4F3F7),
-                              borderRadius:
-                              const BorderRadius.all(Radius.circular(40)),
-                              border: Border.all(color: Colors.transparent)),
-                          width: 250,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(10),
-                                child: Text(
-                                  "${controller.localDataList.length} Leads collected",
-                                  style: const TextStyle(
-                                    fontSize: 24,
-                                    color: blueGrey20,
-                                  ),
-                                ),
-                              ),
-                              const Icon(CupertinoIcons.forward)
-                            ],
                           ),
-                        ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              controller.loading.value ? Center(child: const CircularProgressIndicator()) : const SizedBox()
+            ],
           );
         }),
       ),
@@ -284,12 +302,14 @@ class HomePgae extends GetView<LocalContactController> {
           context: context,
           builder: (BuildContext context) {
             return AddLeadsDialog(
-              onConfirm: (String notes) {
+              onConfirm: (String notes) async {
                 print("notes-> $notes");
-                leadsController.addLeads({
+                controller.loading.value = true;
+               await leadsController.addLeads({
                   "event_id":eventData?.id,
                   "qrcode":qrCodeScanned
                 }, Get.context!);
+                controller.loading.value = false;
               },
             );
           },

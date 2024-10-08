@@ -18,6 +18,7 @@ import '../../theme/app_theme.dart';
 import '../Dashboard/dashboardView.dart';
 import '../localDatabase/EventsController.dart';
 import '../localDatabase/SharedPrefController.dart';
+import '../localDatabase/event_data_Model.dart';
 
 
 class EventsScreen extends StatefulWidget {
@@ -97,6 +98,7 @@ class _EventsScreenState extends State<EventsScreen>
   @override
   Widget build(BuildContext context) {
     return SafeArea(
+      top: true,
       child: Scaffold(
         resizeToAvoidBottomInset: false, // Prevent resizing
         backgroundColor: Colors.white,
@@ -130,7 +132,7 @@ class _EventsScreenState extends State<EventsScreen>
                 ),
               ),
               Expanded(child: _eventList()),
-              _uncategorizedEvent()
+              // _uncategorizedEvent()
             ],
           ),
         ),
@@ -289,7 +291,24 @@ class _EventsScreenState extends State<EventsScreen>
       child: Center(
         child: GestureDetector(
           onTap: () {
-            print('Custom button pressed!');
+            var event = EventData(id: "3b9aca01",name: "Uncategorized",prefix: "",type: "",url: "",startDatetime: "",endDatetime: "",location: "",logoImage: "",status: 0,created: "",modified: "",isSync: 0);
+            eventsController.setEventData(event);
+            // Get.offAndToNamed(DashboardPage.routeName);
+            sharedPrefController.loggedInUser.value.isNull
+                ? UniversalAlertDialog.showAlertDialog(
+              context,
+              title: "Alert",
+              message: "Please Login",
+              positiveButtonLabel: "OK",
+              isNegativeButtonVisible: false,
+            )
+                : Get.toNamed(
+              DashboardPage.routeName,
+              arguments: {
+                'eventData': event?.toJson()
+              }, // Pass the event data as a JSON map
+            ); // Pass arguments
+            print('Event tapped: ${event?.name}');
           },
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),

@@ -152,6 +152,59 @@ class LeadsController extends GetxController{
     }
   }
 
+  Future<void> exportLeads(dynamic body, BuildContext context) async {
+    // Set to loading state initially
+    addLeadsData.value = Resource.loading();
+
+    bool hasInternet = await ConnectivityHelper.checkInternetConnection();
+    if (!hasInternet) {
+      addLeadsData.value = Resource.error(MyStrings.NoInternetconnected);
+      // mainLeadsList.value = List.empty();
+      return;
+    }
+
+    try {
+      BaseApiModel<BaseApiModel> model = await apiService.exportLeads(body);
+      if (model.status == true && model.statusCode == 200) {
+        addLeadsData.value = Resource.success(
+          data: model.data, // this is userdata
+          message: model.message,
+        );
+
+        UniversalAlertDialog.showAlertDialog(
+            Get.context!,
+            title: "Success!",
+            message: addLeadsData.value.message,
+            isNegativeButtonVisible: false,
+            positiveButtonLabel: "Done"
+
+        ).then((_) {
+        });
+
+      } else {
+        // Handle error
+        addLeadsData.value = Resource.error(
+          model.message ?? MyStrings.someErrorOccurred,
+          data: model.data,
+        );
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          UniversalAlertDialog.showAlertDialog(
+            context,
+            message: addLeadsData.value.message,
+            isNegativeButtonVisible: false,
+          ).then((_) {
+            // Reset the flag when the dialog is dismissed
+          });
+        });
+      }
+    } catch (e) {
+      print("addLeadsData catch $e");
+      // Handle exceptions or unexpected errors
+      addLeadsData.value = Resource.error(MyStrings.somethingWentWrong);
+      print("catch ${addLeadsData.value.message}");
+    }
+  }
+
 
   Future<void> getLeadsList(dynamic body, BuildContext context) async {
     // Set to loading state initially

@@ -259,11 +259,32 @@ class ApiService extends GetxService {
     try {
       final response = await DigestAuthClient(DIGEST_AUTH_USERNAME, DIGEST_AUTH_PASSWORD)
           .get(Uri.parse(AppUrl.eventList),
-          headers: headerParams,)
+          headers: getHeaderParam(),)
           .timeout(const Duration(seconds: 20));
+      print(response.body);
       return EventApiResponse.fromJson(json.decode(response.body));
     } catch (e) {
       print('Error: $e'); // Log the error for debugging
+      checkException(e);
+      rethrow;
+    }
+  }
+
+  Future<BaseApiModel<BaseApiModel>> exportLeads(dynamic body) async {
+    // print("cphiHeaders" +cphiHeaders);
+    print("cphiHeaders" +"Hello Worlds2-> ${getHeaderParam()}");
+    try {
+      final response =
+      await DigestAuthClient(DIGEST_AUTH_USERNAME, DIGEST_AUTH_PASSWORD)
+          .post(Uri.parse(AppUrl.exportData),
+          headers: getHeaderParam(), body: jsonEncode(body))
+          .timeout(const Duration(seconds: 20));
+      print(response.body);
+      return BaseApiModel.fromJson(
+        json.decode(response.body),
+            (data) => BaseApiModel.fromJson(data,null), // Convert body to UserModel
+      );
+    } catch (e) {
       checkException(e);
       rethrow;
     }

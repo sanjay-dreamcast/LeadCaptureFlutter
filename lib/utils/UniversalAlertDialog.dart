@@ -22,10 +22,10 @@ class UniversalAlertDialog {
       barrierDismissible: false, // Prevent dismissal on outside tap
       builder: (BuildContext context) {
         return AlertDialog(
-          title: title != null ? Center(child: Text(title,style:
+          title: title != null ? Center(child: Text(title,textAlign: TextAlign.center,style:
           TextStyle(fontSize: 16,fontWeight: FontWeight.bold,fontFamily: 'figtree_semibold',
           ),)) : null, // Show title only if not null
-          content: message != null && message.isNotEmpty ? Text(message) : null, // Show message only if not null and not empty
+          content: message != null && message.isNotEmpty ? Text(message,textAlign: TextAlign.center,) : null, // Show message only if not null and not empty
           actions: [
             Center(
               child: Row(

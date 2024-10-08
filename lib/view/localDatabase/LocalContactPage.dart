@@ -496,6 +496,17 @@ class LocalContactViewPage extends GetView<LocalContactController> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: GestureDetector(
         onTap: () async {
+          if (eventsController.eventData.value.isSync == 0) {
+            UniversalAlertDialog.showAlertDialog(
+              context,
+              title: "Alert",
+              message: "You are not allow to add lead for this event, please contact to administration",
+              positiveButtonLabel: "OK",
+              isNegativeButtonVisible: false,
+            );
+            return;
+          }
+
           // var result = await dashboardController.scanQR();
           //var result = await Get.toNamed(QRScanner.routeName);
           //  var result = await Get.toNamed(QrProfilePage.routeName);

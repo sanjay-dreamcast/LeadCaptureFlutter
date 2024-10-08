@@ -6,7 +6,11 @@ import 'package:cphi/view/localDatabase/LocalContactPage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import '../../api_repository/api_service.dart';
 import '../../theme/app_colors.dart';
+import '../../utils/shared_preferences_helper.dart';
+import '../localDatabase/LeadsController.dart';
 import '../localDatabase/SharedPrefController.dart';
 import '../localDatabase/event_data_Model.dart';
 import 'dashBoardController.dart';
@@ -16,7 +20,9 @@ class DashboardPage extends StatelessWidget {
   static const routeName = "/DashboardPage";
 
   final DashboardController controller = Get.put(DashboardController());
-  final Sharedprefcontroller sharedPrefController = Get.put(Sharedprefcontroller()); // Instantiate Sharedprefcontroller
+  final Sharedprefcontroller sharedPrefController = Get.put(Sharedprefcontroller());
+  final LeadsController leadsController =
+  Get.put(LeadsController(Get.find<ApiService>()));// Instantiate Sharedprefcontroller
 
   List<String> bottomTitle = [
     "Home",
@@ -296,13 +302,14 @@ class DashboardPage extends StatelessWidget {
                               context: context,
                               initialDate: startDateTime ?? DateTime.now(),
                               firstDate: DateTime(2000),
-                              lastDate: DateTime(2101),
+                              lastDate:  DateTime.now(),
                             );
                             if (pickedDate != null) {
                               // Select Time after Date
                               TimeOfDay? pickedTime = await showTimePicker(
                                 context: context,
                                 initialTime: TimeOfDay.now(),
+
                               );
                               if (pickedTime != null) {
                                 startDateTime = DateTime(
@@ -313,8 +320,12 @@ class DashboardPage extends StatelessWidget {
                                   pickedTime.minute,
                                 );
                                 // Update controller with selected date and time
-                                startDateTimeController.text =
-                                "${pickedDate.toLocal().toString().split(' ')[0]} ${pickedTime.format(context)}";
+
+                                String  formattedDateTime = DateFormat('yyyy-MM-dd HH:mm').format(startDateTime!);
+                                startDateTimeController.text = formattedDateTime;
+
+                                // startDateTimeController.text =
+                                // "${pickedDate.toLocal().toString().split(' ')[0]} ${pickedTime.format(context)}";
                               }
                             }
                           },
@@ -345,8 +356,13 @@ class DashboardPage extends StatelessWidget {
                                 pickedTime.minute,
                               );
                               // Update controller with selected date and time
-                              startDateTimeController.text =
-                              "${pickedDate.toLocal().toString().split(' ')[0]} ${pickedTime.format(context)}";
+
+                          // Format the selected date and time String
+                              String  formattedDateTime = DateFormat('yyyy-MM-dd HH:mm').format(startDateTime!);
+                              startDateTimeController.text = formattedDateTime;
+
+                              // startDateTimeController.text =
+                              // "${pickedDate.toLocal().toString().split(' ')[0]} ${pickedTime.format(context)}";
                             }
                           }
                         },
@@ -379,7 +395,7 @@ class DashboardPage extends StatelessWidget {
                               context: context,
                               initialDate: endDateTime ?? DateTime.now(),
                               firstDate: DateTime(2000),
-                              lastDate: DateTime(2101),
+                              lastDate:  DateTime.now(),
                             );
                             if (pickedDate != null) {
                               // Select Time after Date
@@ -396,8 +412,12 @@ class DashboardPage extends StatelessWidget {
                                   pickedTime.minute,
                                 );
                                 // Update controller with selected date and time
-                                endDateTimeController.text =
-                                "${pickedDate.toLocal().toString().split(' ')[0]} ${pickedTime.format(context)}";
+
+                                String  formattedDateTime = DateFormat('yyyy-MM-dd HH:mm').format(endDateTime!);
+                                endDateTimeController.text = formattedDateTime;
+
+                                // endDateTimeController.text =
+                                // "${pickedDate.toLocal().toString().split(' ')[0]} ${pickedTime.format(context)}";
                               }
                             }
                           },
@@ -428,8 +448,13 @@ class DashboardPage extends StatelessWidget {
                                 pickedTime.minute,
                               );
                               // Update controller with selected date and time
-                              endDateTimeController.text =
-                              "${pickedDate.toLocal().toString().split(' ')[0]} ${pickedTime.format(context)}";
+
+                              String  formattedDateTime = DateFormat('yyyy-MM-dd HH:mm').format(endDateTime!);
+                              endDateTimeController.text = formattedDateTime;
+
+
+                              // endDateTimeController.text =
+                              // "${pickedDate.toLocal().toString().split(' ')[0]} ${pickedTime.format(context)}";
                             }
                           }
                         },
@@ -438,37 +463,11 @@ class DashboardPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-
                 // Export Lead Button
                 GestureDetector(
                   onTap: () {
-                    // Handle export logic here
-                    if (startDateTime != null && endDateTime != null) {
-                      // Example: Validate that endDateTime is after startDateTime
-                      if (endDateTime!.isAfter(startDateTime!)) {
-                        // Proceed with export
-                        print("Exporting leads from $startDateTime to $endDateTime");
-                        // TODO: Implement your export logic here
-
                         Get.back(); // Close the bottom sheet after export
-                      } else {
-                        // Show an error if end date is before start date
-                        Get.snackbar(
-                          'Error',
-                          'End Date/Time must be after Start Date/Time.',
-                          backgroundColor: Colors.redAccent,
-                          colorText: Colors.white,
-                        );
-                      }
-                    } else {
-                      // Show an error if dates are not selected
-                      Get.snackbar(
-                        'Error',
-                        'Please select both start and end date/time.',
-                        backgroundColor: Colors.redAccent,
-                        colorText: Colors.white,
-                      );
-                    }
+                    leadsController.exportLeads({"event_id" : leadsController.eventsController.eventData.value.id ?? "","start_datetime" : startDateTimeController.text,"end_datetime" : endDateTimeController.text,}, context);
                   },
                   child: Container(
                     width: double.infinity,
@@ -490,6 +489,26 @@ class DashboardPage extends StatelessWidget {
                     ),
                   ),
                 ),
+                Center(
+                  child: GestureDetector(
+                    onTap: (){
+                      Get.back();
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      child: const Text(
+                        "Cancel Export",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          fontFamily: "figtree_semibold",
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -504,22 +523,19 @@ class DashboardPage extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Logout Confirmation'),
-          content: const Text('Are you sure you want to logout?'),
+          title: const Text('Logout Confirmation',textAlign: TextAlign.center,),
+          content: const Text('Are you sure you want to logout?',textAlign: TextAlign.center,),
           actions: [
-            TextButton(
-              onPressed: () {
-                Get.back(); // Close the dialog
+             OutlinedButton(child: const Text('Cancel'),onPressed: (){
+Get.back();
               },
-              child: const Text('Cancel'),
             ),
-            TextButton(
-              onPressed: () async {
-                await sharedPrefController.removeUser(); // Clear shared preferences
-                Get.offAllNamed('/EventScreen'); // Navigate to EventScreen
-              },
-              child: const Text('Logout'),
-            ),
+            OutlinedButton(child: const Text('Logout'),onPressed: () async {
+        await sharedPrefController.removeUser();
+        sharedPrefController.removeUser();
+        await SharedPreferencesHelper().clear();// Clear shared preferences
+        Get.offAllNamed('/EventScreen'); //
+              },),
           ],
         );
       },

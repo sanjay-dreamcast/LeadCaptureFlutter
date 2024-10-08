@@ -1,5 +1,6 @@
 
 
+import 'package:cphi/model/BaseApiModel.dart';
 import 'package:get/get.dart';
 
 import '../../api_repository/api_service.dart';
@@ -116,7 +117,6 @@ class EventsController extends GetxController {
       eventResource.value = Resource.success(data: filteredEvents);
     }
   }
-
 
   var eventData = EventData().obs; // Observable event data
   // setCurrent Event Data when click
