@@ -32,7 +32,7 @@ class ContactDetailPage extends GetView<LocalContactController> {
   static const List<Tab> myTabs = <Tab>[
     Tab(text: 'Profile'),
     Tab(text: 'Company'),
-    // Tab(text: 'Note'),
+    Tab(text: 'Note'),
   ];
 
   @override
@@ -203,7 +203,7 @@ class ContactDetailPage extends GetView<LocalContactController> {
                                         children: [
                                           profileWidget(),
                                           companyWidget(),
-                                          //noteWidget()
+                                          noteWidget()
                                         ],
                                       ),
                                     ),
