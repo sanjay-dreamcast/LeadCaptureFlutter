@@ -65,7 +65,7 @@ class EventsController extends GetxController {
         EventApiResponse response = await apiService.getEventsList(body);
 
         if (response.status == true) {
-          await _dbHelper.insertEvents(response.body ?? []);
+        //  await _dbHelper.insertEvents(response.body ?? []);
           // Update eventResource with the successful API response
           allEvents = response.body ?? [];
           eventResource.value = Resource.success(data: allEvents);
@@ -86,18 +86,18 @@ class EventsController extends GetxController {
   }
 
   Future<void> _loadEventsFromDb() async {
-    try {
-      final events = await _dbHelper.getAllEvents();
-      allEvents = events;
-      print("allEventsDb $allEvents");
-      if (events.isNotEmpty) {
-        eventResource.value = Resource.success(data: events);
-      } else {
-        eventResource.value = Resource.error('No events available offline.');
-      }
-    } catch (e) {
-      eventResource.value = Resource.error('Failed to load offline events: $e');
-    }
+    // try {
+    //   final events = await _dbHelper.getAllEvents();
+    //   allEvents = events;
+    //   print("allEventsDb $allEvents");
+    //   if (events.isNotEmpty) {
+    //     eventResource.value = Resource.success(data: events);
+    //   } else {
+    //     eventResource.value = Resource.error('No events available offline.');
+    //   }
+    // } catch (e) {
+    //   eventResource.value = Resource.error('Failed to load offline events: $e');
+    // }
   }
 
 

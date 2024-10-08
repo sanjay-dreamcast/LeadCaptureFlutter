@@ -135,9 +135,10 @@ class _QrProfilePageState extends State<QrProfilePage>
         print("scanData.code=======");
         print(scanData.code);
         Get.back(result: scanData.code);*/
-
+        print("code scannedd");
         try {
           await qrViewController?.pauseCamera();
+          print(scanData.code);
           // Optional: delay for smooth transition
           await Future.delayed(const Duration(milliseconds: 500));
           Get.back(result: scanData.code);

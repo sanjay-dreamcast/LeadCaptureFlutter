@@ -103,7 +103,23 @@ class HomePgae extends GetView<LocalContactController> {
                           // Get.put(NewQrScan());
                           //  var result = await dashboardController.scanQR();
                           var result = await Get.toNamed(QrProfilePage.routeName);
-                          checkQrCode(context,eventsController.eventData.value,result);
+
+                          if (result.toString().toLowerCase().contains("begin")) {
+                            // Extracting the UC value
+                            String? ucValue = extractUCValue(result.toString());
+
+                            if (ucValue != null) {
+                              checkQrCode(context,eventsController.eventData.value,ucValue);
+                              print('UC Value: $ucValue');
+                            } else {
+                              ScaffoldMessenger.of(context!)
+                                  .showSnackBar(SnackBar(content: Text("Invalid Vcard")));
+                            }
+                          } else {
+                            print("result=======");
+                            print(result);
+                            checkQrCode(context,eventsController.eventData.value,result);
+                          }
 
                           /*if (result["uc"] == null) {
                           Get.snackbar(
@@ -240,6 +256,20 @@ class HomePgae extends GetView<LocalContactController> {
     );
   }
 
+  String? extractUCValue(String vCardData) {
+    // Split the vCard data into lines
+    List<String> lines = vCardData.split('\n');
+
+    // Iterate through each line to find the one that contains "UC:"
+    for (String line in lines) {
+      if (line.trim().startsWith('UC:')) {
+        // Extract and return the value after "UC:"
+        return line.split(':')[1].trim();
+      }
+    }
+    // Return null if UC value is not found
+    return null;
+  }
 
   void checkQrCode(BuildContext context, EventData? eventData, String? qrCodeScanned) {
     // Ensure both `prefix` and `qrCodeScanned` are not null or empty

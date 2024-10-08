@@ -322,6 +322,27 @@ class ApiService extends GetxService {
       rethrow;
     }
   }
+
+  Future<BaseApiModel<BaseApiModel>> deleteLeads(dynamic body) async {
+    // print("cphiHeaders" +cphiHeaders);
+    print("cphiHeaders" +"Hello Worlds2-> ${getHeaderParam()}");
+    try {
+      final response =
+      await DigestAuthClient(DIGEST_AUTH_USERNAME, DIGEST_AUTH_PASSWORD)
+          .post(Uri.parse(AppUrl.deleteLeads),
+          headers: getHeaderParam(), body: jsonEncode(body))
+          .timeout(const Duration(seconds: 20));
+      print(response.body);
+      return BaseApiModel.fromJson(
+        json.decode(response.body),
+            (data) => BaseApiModel.fromJson(data,null), // Convert body to UserModel
+      );
+    } catch (e) {
+      checkException(e);
+      rethrow;
+    }
+  }
+
   Future<BaseApiModel<LeadsBodyData>> getLeadsData(dynamic body) async {
     try {
       final response =

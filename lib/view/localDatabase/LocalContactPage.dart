@@ -20,12 +20,15 @@ import 'package:share_plus/share_plus.dart';
 import 'package:vcard_maintained/vcard_maintained.dart';
 import '../../api_repository/api_service.dart';
 import '../../theme/app_colors.dart';
+import '../../utils/UniversalAlertDialog.dart';
 import '../customerWidget/customSearchView.dart';
 import '../customerWidget/search_bar_widget.dart';
 import '../customerWidget/toolbarTitle.dart';
 import '../qrCode/view/qr_profile_page.dart';
+import 'EventsController.dart';
 import 'LeadsController.dart';
 import 'contactDetailPage.dart';
+import 'event_data_Model.dart';
 import 'localContactController.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:async';
@@ -36,6 +39,8 @@ class LocalContactViewPage extends GetView<LocalContactController> {
   LocalContactViewPage({Key? key}) : super(key: key);
   final LeadsController leadsController =
       Get.put(LeadsController(Get.find<ApiService>()));
+
+  final EventsController eventsController = Get.put(EventsController(Get.find<ApiService>()));
 
   static const routeName = "/LocalContactViewPage";
   @override
@@ -191,10 +196,11 @@ class LocalContactViewPage extends GetView<LocalContactController> {
                                   return GestureDetector(
                                   onTap: () async {
                                     // if (await controller.checkNetwork()) {
-                                    controller.getContactDetailApi(
-                                        {"code": data?.id ?? ""}, context);
+                                    // controller.getContactDetailApi(
+                                    //     {"code": data?.id ?? ""}, context);
                                     // } else {
                                     var localDetail = Data(
+                                      id: data?.id  ?? "",
                                         name: data?.name ?? "",
                                         shortName:
                                             getShortName(data?.name ?? "")
@@ -492,25 +498,26 @@ class LocalContactViewPage extends GetView<LocalContactController> {
         onTap: () async {
           // var result = await dashboardController.scanQR();
           //var result = await Get.toNamed(QRScanner.routeName);
+          //  var result = await Get.toNamed(QrProfilePage.routeName);
+          // print("result=======");
+          // print(result);
           var result = await Get.toNamed(QrProfilePage.routeName);
-          print("result=======");
-          print(result);
-          // if (result["uc"] == null) {
-          //   ScaffoldMessenger.of(context!)
-          //       .showSnackBar(SnackBar(content: Text("Invalid Vcard")));
-          //   return;
-          // }
-          controller.inserUser(
-              LocalUser(
-                id: result!["uc"] ?? "",
-                name: result!["n"] ?? "",
-                email: result!["email"] ?? "",
-                mobile: result!["tel"] ?? "",
-                company: result!["org"] ?? "",
-                title: result!["title"] ?? "",
-                website: result!['url'] ?? "",
-              ),
-              context);
+          if (result.toString().toLowerCase().contains("begin")) {
+            // Extracting the UC value
+            String? ucValue = extractUCValue(result.toString());
+
+            if (ucValue != null) {
+              checkQrCode(context,eventsController.eventData.value,ucValue);
+              print('UC Value: $ucValue');
+            } else {
+              ScaffoldMessenger.of(context!)
+                  .showSnackBar(SnackBar(content: Text("Invalid Vcard")));
+            }
+          } else {
+            print("result=======");
+            print(result);
+            checkQrCode(context,eventsController.eventData.value,result);
+          }
         },
         child: Container(
           width: 150,
@@ -541,6 +548,72 @@ class LocalContactViewPage extends GetView<LocalContactController> {
         ),
       ),
     );
+  }
+
+  void checkQrCode(BuildContext context, EventData? eventData, String? qrCodeScanned) {
+    // Ensure both `prefix` and `qrCodeScanned` are not null or empty
+    print("qrCodeScanned: $qrCodeScanned, prefix: ${eventData?.prefix}");
+    String? qrCodePrefix = eventData?.prefix;
+    if (qrCodeScanned != null && qrCodeScanned.isNotEmpty &&
+        qrCodePrefix != null && qrCodePrefix.isNotEmpty) {
+      // Check if the scanned QR code starts with the given prefix && where the QR code is valid
+      if (qrCodeScanned.startsWith(qrCodePrefix)) {
+        // The QR code matches the prefix
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AddLeadsDialog(
+              onConfirm: (String notes) {
+                print("notes-> $notes");
+                leadsController.addLeads({
+                  "event_id":eventData?.id,
+                  "qrcode":qrCodeScanned,
+                  "note":notes
+                }, Get.context!);
+              },
+            );
+          },
+        );
+      } else {
+        // The QR code does not match the prefix
+        print("The QR code does not match the prefix.");
+
+        // Replace with localized strings if necessary
+        String title = "Invalid QR Code for Event";
+        String message = "This code does not belong to the current event. Please use a valid QR code for this event.";
+        String buttonText = "Try Again";
+
+        // Show the alert dialog
+        UniversalAlertDialog.showAlertDialog(
+          context,
+          title: title,
+          message: message,
+          positiveButtonLabel: buttonText,
+          isNegativeButtonVisible: false,
+        ).then((_) {
+          // Handle post-dialog behavior here, if needed
+          // e.g., reset input or navigate to a different screen
+        });
+      }
+    } else {
+      print("QR code or prefix is empty.");
+
+    }
+  }
+
+  String? extractUCValue(String vCardData) {
+    // Split the vCard data into lines
+    List<String> lines = vCardData.split('\n');
+
+    // Iterate through each line to find the one that contains "UC:"
+    for (String line in lines) {
+      if (line.trim().startsWith('UC:')) {
+        // Extract and return the value after "UC:"
+        return line.split(':')[1].trim();
+      }
+    }
+    // Return null if UC value is not found
+    return null;
   }
 
   Widget circularImage({url, shortName}) {
@@ -681,7 +754,7 @@ class LocalContactViewPage extends GetView<LocalContactController> {
                         ),
                         Center(
                           child: GestureDetector(
-                            onTap: () {
+                            onTap: () async {
                               if (index == 0 ||
                                   index == 1 ||
                                   index == 2 ||
@@ -693,12 +766,15 @@ class LocalContactViewPage extends GetView<LocalContactController> {
                                     _scrollController.position.minScrollExtent);
                               }
 
-                              controller.deleteOneRecordById(id, index);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text("Contact Deleted")));
                               Get.back();
-                              Get.back();
+                            //  controller.deleteOneRecordById(id, index);
+
+                              controller.loading.value = true;
+
+                             await leadsController.deleteLeads({"id":id}, context,index);
+                             print("lead deleted====");
+                              controller.loading.value = false;
+
                             },
                             child: Container(
                               decoration: const BoxDecoration(

@@ -7,8 +7,10 @@ import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/simple/get_view.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:vcard_maintained/vcard_maintained.dart';
+import '../../api_repository/api_service.dart';
 import '../../theme/app_colors.dart';
 import '../customerWidget/toolbarTitle.dart';
+import 'LeadsController.dart';
 import 'localContactController.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:async';
@@ -28,6 +30,8 @@ class ContactDetailPage extends GetView<LocalContactController> {
   @override
   final controller = Get.put(LocalContactController());
   final textController = TextEditingController().obs;
+  final LeadsController leadsController =
+  Get.put(LeadsController(Get.find<ApiService>()));
 
   static const List<Tab> myTabs = <Tab>[
     Tab(text: 'Profile'),
@@ -547,13 +551,21 @@ class ContactDetailPage extends GetView<LocalContactController> {
                         ),
                         Center(
                           child: GestureDetector(
-                            onTap: () {
-                              controller.deleteOneRecordById(id, index);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text("Contact Deleted")));
+                            onTap: () async {
+                              Navigator.of(context).pop();
+                              controller.loading.value = true;
+                             await  leadsController.deleteLeads({"id":controller.contactDetail.value.data?.id ??""}, context,index);
+                              print("lead deleted====");
+                              controller.loading.value = false;
                               Get.back();
                               Get.back();
+
+                              // controller.deleteOneRecordById(id, index);
+                              // ScaffoldMessenger.of(context).showSnackBar(
+                              //     const SnackBar(
+                              //         content: Text("Contact Deleted")));
+                              // Get.back();
+                              // Get.back();
                             },
                             child: Container(
                               decoration: const BoxDecoration(

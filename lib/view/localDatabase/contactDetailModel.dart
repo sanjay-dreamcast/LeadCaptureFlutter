@@ -48,6 +48,7 @@ class ContactDetail {
 }
 
 class Data {
+  String? id;
   String? name;
   String? shortName;
   String? avatar;
@@ -67,7 +68,9 @@ class Data {
   String? note;
 
   Data(
-      {this.name,
+      {
+        this.id,
+        this.name,
       this.shortName,
       this.avatar,
       this.company,
@@ -85,6 +88,7 @@ class Data {
       this.description, this.note});
 
   Data.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
     name = json['name'];
     shortName = json['short_name'];
     avatar = json['avatar'];
@@ -107,6 +111,7 @@ class Data {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['name'] = this.name;
+    data['id'] = this.id;
     data['short_name'] = this.shortName;
     data['avatar'] = this.avatar;
     data['company'] = this.company;
