@@ -98,37 +98,39 @@ class DashboardPage extends StatelessWidget {
                     },
                   ),
                 if (controller.tabIndex == 1)
-                  Container(
-                    margin: const EdgeInsets.only(right: 16),
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 7, horizontal: 15),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(color: Colors.black, width: 1),
-                      borderRadius: AppBorderRadius.circular(),
-                    ),
-                    child: InkWell(
-                      onTap: () {
-                        _showExportLeadBottomSheet(context);
-                      },
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // Icon(Icons.exit_to_app, color: Colors.black),
-                          Image.asset(
-                            'assets/icons/export.png',
-                            width: 18,
-                          ),
-                          const SizedBox(width: 8),
-                          const Text(
-                            'Export',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                                fontFamily: 'figtree_semibold',
-                                fontWeight: FontWeight.w600),
-                          ),
-                        ],
+                  Center(
+                    child: Container(
+                      margin: const EdgeInsets.only(right: 16),
+                      padding:
+                          const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(color: Colors.black, width: 1),
+                        borderRadius: AppBorderRadius.circular(),
+                      ),
+                      child: InkWell(
+                        onTap: () {
+                          _showExportLeadBottomSheet(context);
+                        },
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            // Icon(Icons.exit_to_app, color: Colors.black),
+                            Image.asset(
+                              'assets/icons/export.png',
+                              width: 18,
+                            ),
+                            const SizedBox(width: 8),
+                            const Text(
+                              'Export',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                  fontFamily: 'figtree_semibold',
+                                  fontWeight: FontWeight.w600),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),

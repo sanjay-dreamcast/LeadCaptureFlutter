@@ -97,41 +97,46 @@ class _EventsScreenState extends State<EventsScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false, // Prevent resizing
-      backgroundColor: Colors.white,
-      body: RefreshIndicator(
-        color: Colors.black, // Color of the spinner
-        onRefresh: _onRefresh, // Call the _onRefresh method when swiped
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Obx(() {
-              return loginController.isLoginButtonVisible.value
-                  ? const SizedBox.shrink()
-                  : _loginStripUI();
-            }),
-            SearchBarWidget(
-              onSearch: (query) {
-                eventsController.filterEvents(query);
-              },
-            ),
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 0, horizontal: 20),
-              child: Text(
-                MyStrings.event_happening_with_dreamcast,
-                style: TextStyle(
-                  color: grey10,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 14,
-                  fontFamily: "figtree_medium",
+    return SafeArea(
+      child: Scaffold(
+        resizeToAvoidBottomInset: true, // Prevent resizing
+        backgroundColor: Colors.white,
+        body: RefreshIndicator(
+          color: Colors.black, // Color of the spinner
+          onRefresh: _onRefresh, // Call the _onRefresh method when swiped
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Obx(() {
+                return loginController.isLoginButtonVisible.value
+                    ? const SizedBox.shrink()
+                    : _loginStripUI();
+              }),
+              Container(
+                padding: const EdgeInsets.only(top: 0),
+                child: SearchBarWidget(
+                  onSearch: (query) {
+                    eventsController.filterEvents(query);
+                  },
                 ),
               ),
-            ),
-            Expanded(child: _eventList()),
-            // _uncategorizedEvent()
-          ],
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+                child: Text(
+                  MyStrings.event_happening_with_dreamcast,
+                  style: TextStyle(
+                    color: grey10,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14,
+                    fontFamily: "figtree_medium",
+                  ),
+                ),
+              ),
+              Expanded(child: _eventList()),
+              // _uncategorizedEvent()
+            ],
+          ),
         ),
       ),
     );

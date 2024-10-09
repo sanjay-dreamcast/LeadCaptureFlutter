@@ -17,9 +17,9 @@ void main() async {
   final context = SecurityContext.defaultContext;
   context.allowLegacyUnsafeRenegotiation = true;
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    systemNavigationBarColor: Colors.black, // navigation bar color
+    systemNavigationBarColor: Colors.white, // navigation bar color
     statusBarColor: Colors.white, // status bar color
-    statusBarIconBrightness: Brightness.dark, // Dark icons for a light background
+    statusBarIconBrightness: Brightness.light, // Dark icons for a light background
     statusBarBrightness: Brightness.light,
   ));
 

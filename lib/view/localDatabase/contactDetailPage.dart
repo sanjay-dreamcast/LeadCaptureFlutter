@@ -509,7 +509,6 @@ class ContactDetailPage extends GetView<LocalContactController> {
         await getApplicationDocumentsDirectory(); // 1
     String appDocumentsPath = appDocumentsDirectory.path; // 2
     String filePath = '$appDocumentsPath/$fileName.txt'; // 3
-
     return filePath;
   }
 
@@ -521,7 +520,7 @@ class ContactDetailPage extends GetView<LocalContactController> {
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0)), //this right here
             child: SizedBox(
-              height: 330,
+              height: 400,
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Stack(
@@ -559,31 +558,40 @@ class ContactDetailPage extends GetView<LocalContactController> {
                           ),
                         ),
                         const SizedBox(
-                          height: 35,
+                          height: 15,
                         ),
                         const Center(
                           child: customTextView(
-                            text: "Are you sure you want to delete?",
-                            textSize: 16,
+                            text: "Delete Lead ?",
+                            textSize: 24,
                             maxLines: 2,
+                            weight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(
-                          height: 35,
+                          height: 15,
                         ),
+                        const Center(
+                          child: customTextView(
+                            text: "Deleting this lead will permanently remove it from your records. Are you sure you want to continue?",
+                            textSize: 18,
+                            maxLines: 20,
+                            weight: FontWeight.normal,
+                          ),
+                        ),
+                        const Divider(height: 40,thickness: 1,),
                         Center(
                           child: GestureDetector(
                             onTap: () async {
-                              Navigator.of(context).pop();
+                              Get.back();
+                              Get.back();
                               controller.loading.value = true;
                               await leadsController.deleteLeads({
                                 "id": controller.contactDetail.value.data?.id ??
                                     ""
                               }, context, index);
-                              print("lead deleted====");
                               controller.loading.value = false;
-                              Get.back();
-                              Get.back();
+                             // Get.back();
 
                               // controller.deleteOneRecordById(id, index);
                               // ScaffoldMessenger.of(context).showSnackBar(

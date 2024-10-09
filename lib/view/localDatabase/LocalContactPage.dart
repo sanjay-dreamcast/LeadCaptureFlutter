@@ -172,6 +172,7 @@ class LocalContactViewPage extends GetView<LocalContactController> {
                             SlidableAutoCloseBehavior(
                               child: Expanded(
                                 child: ListView.builder(
+                                  physics: const BouncingScrollPhysics(),
                                   controller: _scrollController,
                                   scrollDirection: Axis.vertical,
                                   itemCount: leadsController.leads?.length,
@@ -458,12 +459,12 @@ class LocalContactViewPage extends GetView<LocalContactController> {
                         ),
                       ),
                       // controller.loading.value
-                      leadsController.loading.value
+                      controller.loading.value
                           ? const Center(child: CircularProgressIndicator())
                           : leadsController.leadBodyData.value.data?.leads
                                       ?.isEmpty ??
                                   true
-                              ? Center(
+                              ? const Center(
                                   child: BoldTextView(
                                   text: "No leads found",
                                 ))
@@ -517,8 +518,6 @@ class LocalContactViewPage extends GetView<LocalContactController> {
               });
             }
           } else {
-            print("result=======");
-            print(result);
             checkQrCode(context, eventsController.eventData.value, result);
           }
         },
@@ -556,8 +555,6 @@ class LocalContactViewPage extends GetView<LocalContactController> {
   Future<void> checkQrCode(
       BuildContext context, EventData? eventData, String? qrCodeScanned) async {
     final deviceId = await getDeviceIdentifier();
-    print("deviceId=======");
-    print(deviceId);
     // Ensure both `prefix` and `qrCodeScanned` are not null or empty
     print("qrCodeScanned: $qrCodeScanned, prefix: ${eventData?.prefix}");
     String? qrCodePrefix = eventData?.prefix;
@@ -573,6 +570,7 @@ class LocalContactViewPage extends GetView<LocalContactController> {
           builder: (BuildContext context2) {
             return AddLeadsDialog(
               onConfirm: (String notes) {
+                controller.loading.value = true;
                 print("notes-> $notes");
                 leadsController.addLeads({
                   "event_id": eventData?.id,
@@ -580,6 +578,7 @@ class LocalContactViewPage extends GetView<LocalContactController> {
                   "note": notes,
                   "device_id": deviceId
                 }, context);
+                controller.loading.value = false;
               },
             );
           },
@@ -664,7 +663,6 @@ class LocalContactViewPage extends GetView<LocalContactController> {
             ) /*CircleAvatar(backgroundImage: NetworkImage(url))*/
           : Container(
               decoration: BoxDecoration(
-                shape: BoxShape.rectangle,
                 color: indicatorColor,
                 borderRadius: AppBorderRadius.circular(),
                 border: Border.all(color: Colors.transparent, width: 0),
@@ -738,7 +736,7 @@ class LocalContactViewPage extends GetView<LocalContactController> {
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0)), //this right here
             child: SizedBox(
-              height: 330,
+              height: 400,
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Stack(
@@ -776,18 +774,28 @@ class LocalContactViewPage extends GetView<LocalContactController> {
                           ),
                         ),
                         const SizedBox(
-                          height: 35,
+                          height: 15,
                         ),
                         const Center(
                           child: customTextView(
-                            text: "Are you sure you want to delete?",
-                            textSize: 16,
+                            text: "Delete Lead ?",
+                            textSize: 24,
                             maxLines: 2,
+                           weight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(
-                          height: 35,
+                          height: 15,
                         ),
+                        const Center(
+                          child: customTextView(
+                            text: "Deleting this lead will permanently remove it from your records. Are you sure you want to continue?",
+                            textSize: 18,
+                            maxLines: 20,
+                            weight: FontWeight.normal,
+                          ),
+                        ),
+                        const Divider(height: 40,thickness: 1,),
                         Center(
                           child: GestureDetector(
                             onTap: () async {

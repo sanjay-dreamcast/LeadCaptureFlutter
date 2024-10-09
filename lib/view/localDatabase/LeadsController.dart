@@ -45,7 +45,7 @@ class LeadsController extends GetxController{
     print(body);
     // Set to loading state initially
     addLeadsData.value = Resource.loading();
-
+loading(true);
     bool hasInternet = await ConnectivityHelper.checkInternetConnection();
     if (!hasInternet) {
       addLeadsData.value = Resource.error(MyStrings.NoInternetconnected);
@@ -55,6 +55,7 @@ class LeadsController extends GetxController{
 
     try {
       BaseApiModel<BaseApiModel> model = await apiService.addLeads(body);
+      loading(false);
       if (model.status == true && model.statusCode == 200) {
         addLeadsData.value = Resource.success(
           data: model.data, // this is userdata
@@ -103,7 +104,6 @@ class LeadsController extends GetxController{
   Future<void> deleteLeads(dynamic body, BuildContext context,int index) async {
     // Set to loading state initially
     addLeadsData.value = Resource.loading();
-
     bool hasInternet = await ConnectivityHelper.checkInternetConnection();
     if (!hasInternet) {
       addLeadsData.value = Resource.error(MyStrings.NoInternetconnected);
@@ -120,7 +120,7 @@ class LeadsController extends GetxController{
         );
 
         UniversalAlertDialog.showAlertDialog(
-            context,
+            Get.context!,
             title: "Success!",
             message: addLeadsData.value.message,
             isNegativeButtonVisible: false,
@@ -142,7 +142,7 @@ class LeadsController extends GetxController{
         );
         WidgetsBinding.instance.addPostFrameCallback((_) {
           UniversalAlertDialog.showAlertDialog(
-            context,
+            Get.context!,
             message: addLeadsData.value.message,
             isNegativeButtonVisible: false,
           ).then((_) {
@@ -161,7 +161,6 @@ class LeadsController extends GetxController{
   Future<void> exportLeads(dynamic body, BuildContext context) async {
     // Set to loading state initially
     addLeadsData.value = Resource.loading();
-
     bool hasInternet = await ConnectivityHelper.checkInternetConnection();
     if (!hasInternet) {
       addLeadsData.value = Resource.error(MyStrings.NoInternetconnected);
@@ -176,14 +175,12 @@ class LeadsController extends GetxController{
           data: model.data, // this is userdata
           message: model.message,
         );
-
         UniversalAlertDialog.showAlertDialog(
-            context,
+            Get.context!,
             title: "Success!",
             message: addLeadsData.value.message,
             isNegativeButtonVisible: false,
             positiveButtonLabel: "Done"
-
         ).then((_) {
         });
 
@@ -195,7 +192,7 @@ class LeadsController extends GetxController{
         );
         WidgetsBinding.instance.addPostFrameCallback((_) {
           UniversalAlertDialog.showAlertDialog(
-            context,
+            Get.context!,
             message: addLeadsData.value.message,
             isNegativeButtonVisible: false,
           ).then((_) {

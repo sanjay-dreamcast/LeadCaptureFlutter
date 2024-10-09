@@ -130,8 +130,15 @@ class HomePgae extends GetView<LocalContactController> {
                                   checkQrCode(context,eventsController.eventData.value,ucValue);
                                   print('UC Value: $ucValue');
                                 } else {
-                                  ScaffoldMessenger.of(context!)
-                                      .showSnackBar(SnackBar(content: Text("Invalid Vcard")));
+                                  UniversalAlertDialog.showAlertDialog(
+                                      context,
+                                      title: "Success!",
+                                      message: "Unique code not found. A valid unique code is necessary to add a lead",
+                                      isNegativeButtonVisible: false,
+                                      positiveButtonLabel: "Ok"
+                                  ).then((_) {
+                                    // Reset the flag when the dialog is dismissed
+                                  });
                                 }
                               } else {
                                 print("result=======");
