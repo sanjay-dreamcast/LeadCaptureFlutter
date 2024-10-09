@@ -99,29 +99,34 @@ class DashboardPage extends StatelessWidget {
                   ),
                 if (controller.tabIndex == 1)
                   Container(
+                    margin: const EdgeInsets.only(right: 16),
                     padding:
-                        const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+                        const EdgeInsets.symmetric(vertical: 7, horizontal: 15),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       border: Border.all(color: Colors.black, width: 1),
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: AppBorderRadius.circular(),
                     ),
                     child: InkWell(
                       onTap: () {
                         _showExportLeadBottomSheet(context);
                       },
-                      child: const Row(
+                      child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.exit_to_app, color: Colors.black),
-                          SizedBox(width: 5),
-                          Text(
+                          // Icon(Icons.exit_to_app, color: Colors.black),
+                          Image.asset(
+                            'assets/icons/export.png',
+                            width: 18,
+                          ),
+                          const SizedBox(width: 8),
+                          const Text(
                             'Export',
                             style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
-                              fontFamily: 'figtree_semibold',
-                            ),
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontFamily: 'figtree_semibold',
+                                fontWeight: FontWeight.w600),
                           ),
                         ],
                       ),
@@ -282,16 +287,17 @@ class DashboardPage extends StatelessWidget {
                 const Text(
                   'Select Range',
                   style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w600,
-                  ),
+                      fontSize: 22,
+                      fontFamily: 'figtree_semibold',
+                      fontWeight: FontWeight.w600),
                   textAlign: TextAlign.left,
                 ),
                 const SizedBox(height: 5),
                 const Text(
-                  'Select the range you want to export leads for.',
+                  'Select range you want to export leads for.',
                   style: TextStyle(
                     fontSize: 16,
+                    fontFamily: "figtree_medium",
                     fontWeight: FontWeight.w500,
                   ),
                   textAlign: TextAlign.left,

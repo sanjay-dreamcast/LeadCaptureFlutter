@@ -9,6 +9,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:vcard_maintained/vcard_maintained.dart';
 import '../../api_repository/api_service.dart';
 import '../../theme/app_colors.dart';
+import '../customerWidget/customTextView.dart';
 import '../customerWidget/toolbarTitle.dart';
 import 'LeadsController.dart';
 import 'localContactController.dart';
@@ -31,7 +32,7 @@ class ContactDetailPage extends GetView<LocalContactController> {
   final controller = Get.put(LocalContactController());
   final textController = TextEditingController().obs;
   final LeadsController leadsController =
-  Get.put(LeadsController(Get.find<ApiService>()));
+      Get.put(LeadsController(Get.find<ApiService>()));
 
   static const List<Tab> myTabs = <Tab>[
     Tab(text: 'Profile'),
@@ -44,73 +45,80 @@ class ContactDetailPage extends GetView<LocalContactController> {
     return Scaffold(
       backgroundColor: white,
       appBar: AppBar(
-          centerTitle: false,
-          title: const ToolbarTitle(
-            title: "Profile",
-            color: Colors.black,
-          ),
-          actions: [
-            // InkWell(
-            //   splashColor: textGrayColor,
-            //   highlightColor: white,
-            //   onTap: () {
-            //     var vCard = VCard();
-            //
-            //     ///Set properties
-            //     vCard.firstName =
-            //         controller.contactDetail.value.data?.name?.capitalize ?? "";
-            //     vCard.middleName = '';
-            //     vCard.lastName = "";
-            //     vCard.email = controller.contactDetail.value.data?.email ?? "";
-            //     vCard.workPhone =
-            //         controller.contactDetail.value.data?.mobile ?? "";
-            //     vCard.organization =
-            //         controller.contactDetail.value.data?.company?.capitalize ??
-            //             "";
-            //     vCard.jobTitle =
-            //         controller.contactDetail.value.data?.position?.capitalize ??
-            //             "";
-            //     vCard.note = '';
-            //     shareAllVCFCard(context, vCard: [vCard]);
-            //   },
-            //   child: const CircleAvatar(
-            //     radius: 15,
-            //     backgroundColor: indicatorColor,
-            //     child: Icon(
-            //       Icons.share,
-            //       size: 20,
-            //       color: Colors.black,
-            //     ),
-            //   ),
-            // ),
-            // const SizedBox(
-            //   width: 15,
-            // ),
-            InkWell(
-              splashColor: textGrayColor,
-              highlightColor: white,
-              onTap: () {
-                showAlertDialog(context, id.toString() ?? "", index);
-              },
-              child: CircleAvatar(
-                radius: 15,
-                backgroundColor: indicatorColor,
-                child: Image.asset(
-                  "assets/icons/delete.png",
-                  height: 18,
-                  width: 18,
-                ),
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: const ToolbarTitle(
+          title: "Profile",
+          color: Colors.black,
+        ),
+        actions: [
+          // InkWell(
+          //   splashColor: textGrayColor,
+          //   highlightColor: white,
+          //   onTap: () {
+          //     var vCard = VCard();
+          //
+          //     ///Set properties
+          //     vCard.firstName =
+          //         controller.contactDetail.value.data?.name?.capitalize ?? "";
+          //     vCard.middleName = '';
+          //     vCard.lastName = "";
+          //     vCard.email = controller.contactDetail.value.data?.email ?? "";
+          //     vCard.workPhone =
+          //         controller.contactDetail.value.data?.mobile ?? "";
+          //     vCard.organization =
+          //         controller.contactDetail.value.data?.company?.capitalize ??
+          //             "";
+          //     vCard.jobTitle =
+          //         controller.contactDetail.value.data?.position?.capitalize ??
+          //             "";
+          //     vCard.note = '';
+          //     shareAllVCFCard(context, vCard: [vCard]);
+          //   },
+          //   child: const CircleAvatar(
+          //     radius: 15,
+          //     backgroundColor: indicatorColor,
+          //     child: Icon(
+          //       Icons.share,
+          //       size: 20,
+          //       color: Colors.black,
+          //     ),
+          //   ),
+          // ),
+          // const SizedBox(
+          //   width: 15,
+          // ),
+          InkWell(
+            splashColor: textGrayColor,
+            highlightColor: white,
+            onTap: () {
+              showAlertDialog(context, id.toString() ?? "", index);
+            },
+            child: CircleAvatar(
+              radius: 15,
+              backgroundColor: indicatorColor,
+              child: Image.asset(
+                "assets/icons/delete.png",
+                height: 18,
+                width: 18,
               ),
             ),
-            const SizedBox(
-              width: 15,
-            )
-          ],
-          shape:
-              const Border(bottom: BorderSide(color: indicatorColor, width: 0)),
-          elevation: 0,
-          backgroundColor: appBarColor,
-          iconTheme: const IconThemeData(color: Colors.black)),
+          ),
+          const SizedBox(
+            width: 15,
+          )
+        ],
+        shape:
+            const Border(bottom: BorderSide(color: indicatorColor, width: 0)),
+        elevation: 0,
+        backgroundColor: appBarColor,
+        iconTheme: const IconThemeData(color: appIconColor),
+      ),
       body: GetX<LocalContactController>(builder: (context) {
         return controller.loading.value
             ? const Center(
@@ -171,7 +179,8 @@ class ContactDetailPage extends GetView<LocalContactController> {
                                 height: 10,
                               ),
                               RegularTextView(
-                                text: "${controller.contactDetail.value.data?.position?.capitalize ?? ""} at ${controller.contactDetail.value.data?.company?.capitalize ?? ""}",
+                                text:
+                                    "${controller.contactDetail.value.data?.position?.capitalize ?? ""} at ${controller.contactDetail.value.data?.company?.capitalize ?? ""}",
                                 maxLine: 5,
                                 textAlign: TextAlign.center,
                                 textSize: 16,
@@ -189,13 +198,17 @@ class ContactDetailPage extends GetView<LocalContactController> {
                                     child: Scaffold(
                                       backgroundColor: white,
                                       appBar: TabBar(
+                                          padding: EdgeInsets.zero,
                                           isScrollable: false,
                                           tabAlignment: TabAlignment.fill,
                                           labelColor: textColor,
-                                          unselectedLabelColor: textGrayColor,
-                                          indicatorColor: Colors.black,
+                                          unselectedLabelColor: grey10,
+                                          indicatorColor: textColor,
+                                          indicatorSize:
+                                              TabBarIndicatorSize.tab,
                                           labelStyle: const TextStyle(
-                                              fontSize: 20,
+                                              fontSize: 18,
+                                              fontFamily: "figtree_medium",
                                               fontWeight: FontWeight.w500),
                                           onTap: (index) {},
                                           tabs: myTabs),
@@ -245,13 +258,14 @@ class ContactDetailPage extends GetView<LocalContactController> {
             ),
             subtitle: RegularTextView(
               text: controller.contactDetail.value.data?.name?.capitalize ?? "",
-              textSize: 18,
+              textSize: 16,
               maxLine: 3,
               color: textColor,
             ),
           ),
           const Divider(
             thickness: 1,
+            color: BorderLight,
           ),
           ListTile(
             title: const BoldTextView(
@@ -269,6 +283,7 @@ class ContactDetailPage extends GetView<LocalContactController> {
           ),
           const Divider(
             thickness: 1,
+            color: BorderLight,
           ),
           ListTile(
             title: const BoldTextView(
@@ -286,6 +301,7 @@ class ContactDetailPage extends GetView<LocalContactController> {
           ),
           const Divider(
             thickness: 1,
+            color: BorderLight,
           ),
           ListTile(
             title: const BoldTextView(
@@ -304,6 +320,7 @@ class ContactDetailPage extends GetView<LocalContactController> {
           ),
           const Divider(
             thickness: 1,
+            color: BorderLight,
           )
         ],
       ),
@@ -331,6 +348,7 @@ class ContactDetailPage extends GetView<LocalContactController> {
           ),
           const Divider(
             thickness: 1,
+            color: BorderLight,
           ),
           ListTile(
             title: const BoldTextView(
@@ -365,6 +383,7 @@ class ContactDetailPage extends GetView<LocalContactController> {
           ),
           const Divider(
             thickness: 1,
+            color: BorderLight,
           ),
           ListTile(
             title: const BoldTextView(
@@ -382,6 +401,7 @@ class ContactDetailPage extends GetView<LocalContactController> {
           ),
           const Divider(
             thickness: 1,
+            color: BorderLight,
           ),
         ],
       ),
@@ -405,6 +425,7 @@ class ContactDetailPage extends GetView<LocalContactController> {
         ),
         const Divider(
           thickness: 1,
+          color: BorderLight,
         ),
       ],
     );
@@ -541,11 +562,12 @@ class ContactDetailPage extends GetView<LocalContactController> {
                           height: 35,
                         ),
                         const Center(
-                            child: BoldTextView(
-                          text: "Are you sure you want to delete?",
-                          textSize: 18,
-                          maxLines: 2,
-                        )),
+                          child: customTextView(
+                            text: "Are you sure you want to delete?",
+                            textSize: 16,
+                            maxLines: 2,
+                          ),
+                        ),
                         const SizedBox(
                           height: 35,
                         ),
@@ -554,7 +576,10 @@ class ContactDetailPage extends GetView<LocalContactController> {
                             onTap: () async {
                               Navigator.of(context).pop();
                               controller.loading.value = true;
-                             await  leadsController.deleteLeads({"id":controller.contactDetail.value.data?.id ??""}, context,index);
+                              await leadsController.deleteLeads({
+                                "id": controller.contactDetail.value.data?.id ??
+                                    ""
+                              }, context, index);
                               print("lead deleted====");
                               controller.loading.value = false;
                               Get.back();

@@ -22,8 +22,10 @@ import 'package:share_plus/share_plus.dart';
 import 'package:vcard_maintained/vcard_maintained.dart';
 import '../../api_repository/api_service.dart';
 import '../../theme/app_colors.dart';
+import '../../theme/app_theme.dart';
 import '../../utils/UniversalAlertDialog.dart';
 import '../customerWidget/customSearchView.dart';
+import '../customerWidget/customTextView.dart';
 import '../customerWidget/search_bar_widget.dart';
 import '../customerWidget/toolbarTitle.dart';
 import '../qrCode/view/qr_profile_page.dart';
@@ -42,7 +44,8 @@ class LocalContactViewPage extends GetView<LocalContactController> {
   final LeadsController leadsController =
       Get.put(LeadsController(Get.find<ApiService>()));
 
-  final EventsController eventsController = Get.put(EventsController(Get.find<ApiService>()));
+  final EventsController eventsController =
+      Get.put(EventsController(Get.find<ApiService>()));
 
   static const routeName = "/LocalContactViewPage";
   @override
@@ -56,18 +59,19 @@ class LocalContactViewPage extends GetView<LocalContactController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          toolbarHeight: 0,
-          centerTitle: false,
-          title: const ToolbarTitle(
-            title: "My Contact",
-            color: Colors.black,
-          ),
-          shape:
-              const Border(bottom: BorderSide(color: indicatorColor, width: 0)),
-          elevation: 0,
-          backgroundColor: appBarColor,
-          iconTheme: const IconThemeData(color: appIconColor)),
-      body:  Stack(
+        toolbarHeight: 0,
+        centerTitle: false,
+        title: const ToolbarTitle(
+          title: "My Contact",
+          color: Colors.black,
+        ),
+        shape:
+            const Border(bottom: BorderSide(color: indicatorColor, width: 0)),
+        elevation: 0,
+        backgroundColor: appBarColor,
+        iconTheme: const IconThemeData(color: appIconColor),
+      ),
+      body: Stack(
         children: [
           Container(
             color: Colors.white,
@@ -90,33 +94,33 @@ class LocalContactViewPage extends GetView<LocalContactController> {
                     ),
                   );
                 case Status.success:
-                    return Stack(
-                      children: [
-                        Container(
-                          color: white,
-                          padding: const EdgeInsets.only(bottom: 8),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.only(
-                                    left: 10, right: 10, top: 0),
-                                child: Row(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.all(10),
-                                      child: Text(
-                                          "Total ${leadsController.leads?.length} Leads",
-                                          style: const TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w700,
-                                              fontFamily: "figtree_semibold",
-                                              color: blackGrey)),
-                                    ),
-                                    /*
+                  return Stack(
+                    children: [
+                      Container(
+                        color: white,
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.only(
+                                  left: 10, right: 10, top: 0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(10),
+                                    child: Text(
+                                        "Total ${leadsController.leads?.length} Leads",
+                                        style: const TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w700,
+                                            fontFamily: "figtree_semibold",
+                                            color: blackGrey)),
+                                  ),
+                                  /*
                                   //EXPORT
                                   GestureDetector(
                                     onTap: _generateCsvFile,
@@ -154,33 +158,33 @@ class LocalContactViewPage extends GetView<LocalContactController> {
                                     ),
                                   ),
                                   */
-                                  ],
-                                ),
+                                ],
                               ),
-                              SearchBarWidget(
-                                onSearch: (query) {
-                                  leadsController.filterEvents(query);
-                                },
-                              ),
-                              const SizedBox(
-                                height: 12,
-                              ),
-                              SlidableAutoCloseBehavior(
-                                child: Expanded(
-                                  child: ListView.builder(
-                                    controller: _scrollController,
-                                    scrollDirection: Axis.vertical,
-                                    itemCount: leadsController.leads?.length,
-                                    itemBuilder: (context, index) {
-                                      var data = leadsController.leads?[index];
-                                      return GestureDetector(
+                            ),
+                            SearchBarWidget(
+                              onSearch: (query) {
+                                leadsController.filterEvents(query);
+                              },
+                            ),
+                            const SizedBox(
+                              height: 1,
+                            ),
+                            SlidableAutoCloseBehavior(
+                              child: Expanded(
+                                child: ListView.builder(
+                                  controller: _scrollController,
+                                  scrollDirection: Axis.vertical,
+                                  itemCount: leadsController.leads?.length,
+                                  itemBuilder: (context, index) {
+                                    var data = leadsController.leads?[index];
+                                    return GestureDetector(
                                       onTap: () async {
                                         // if (await controller.checkNetwork()) {
                                         // controller.getContactDetailApi(
                                         //     {"code": data?.id ?? ""}, context);
                                         // } else {
                                         var localDetail = Data(
-                                          id: data?.id  ?? "",
+                                            id: data?.id ?? "",
                                             name: data?.name ?? "",
                                             shortName:
                                                 getShortName(data?.name ?? "")
@@ -193,11 +197,11 @@ class LocalContactViewPage extends GetView<LocalContactController> {
                                             mobile: data?.mobile ?? "",
                                             position: data?.position ?? "",
                                             website: data?.website ?? "",
-                                          note: data?.note ?? ""
-                                        );
+                                            note: data?.note ?? "");
                                         controller.contactDetail.value.data =
                                             localDetail;
-                                        Get.toNamed(ContactDetailPage.routeName);
+                                        Get.toNamed(
+                                            ContactDetailPage.routeName);
 
                                         // ScaffoldMessenger.of(context).showSnackBar(
                                         //     const SnackBar(
@@ -205,271 +209,267 @@ class LocalContactViewPage extends GetView<LocalContactController> {
                                         //             "No Internet connection")));
                                         //  }
                                       },
-
-                                        child: StatefulBuilder(
-                                            builder: (context, setState) {
-                                              return Container(
-                                                color: indicatorColor,
-                                                child: Slidable(
-                                                  key: const ValueKey(1),
-                                                  closeOnScroll: true,
-                                                  endActionPane: ActionPane(
-                                                    dragDismissible: false,
-                                                    motion: const ScrollMotion(),
-                                                    children: [
-                                                      const SizedBox(
-                                                        width: 15,
-                                                      ),
-                                                    //   SlidableAutoCloseBehavior(
-                                                    //     closeWhenTapped: true,
-                                                    //     closeWhenOpened: true,
-                                                    //     child: InkWell(
-                                                    //       /*
-                                                    // onTap: () async {
-                                                    //   ///Create a new vCard
-                                                    //   var vCard = VCard();
-                                                    //
-                                                    //   ///Set properties
-                                                    //   vCard.firstName =
-                                                    //       data?.name.capitalize ??
-                                                    //           "";
-                                                    //   vCard.middleName = '';
-                                                    //   vCard.lastName = "";
-                                                    //   vCard.email =
-                                                    //       data?.email ?? "";
-                                                    //   vCard.workPhone =
-                                                    //       data?.mobile ?? "";
-                                                    //   vCard.organization = data
-                                                    //           ?.company
-                                                    //           .capitalize ??
-                                                    //       "";
-                                                    //   vCard.jobTitle =
-                                                    //       data?.title.capitalize ??
-                                                    //           "";
-                                                    //   vCard.note = '';
-                                                    //   shareAllVCFCard(context,
-                                                    //       vCard: [vCard]);
-                                                    //   setState(() {});
-                                                    // },
-                                                    // */
-                                                    //       child: Card(
-                                                    //         shape: RoundedRectangleBorder(
-                                                    //             borderRadius:
-                                                    //             BorderRadius
-                                                    //                 .circular(
-                                                    //                 10)),
-                                                    //         child: Container(
-                                                    //           margin:
-                                                    //           const EdgeInsets
-                                                    //               .all(3),
-                                                    //           padding:
-                                                    //           const EdgeInsets
-                                                    //               .all(10),
-                                                    //           height: 40,
-                                                    //           width: 40,
-                                                    //           child: Image.asset(
-                                                    //               "assets/icons/share.png"),
-                                                    //         ),
-                                                    //       ),
-                                                    //     ),
-                                                    //   ),
-                                                      GestureDetector(
-                                                        onTap: () {
-                                                          showAlertDialog(
-                                                              context,
-                                                              data?.id ?? "",
-                                                              index);
-                                                        },
-                                                        child: Card(
-                                                          shape:
-                                                          RoundedRectangleBorder(
-                                                              borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                  10)),
-                                                          child: Container(
-                                                            margin: const EdgeInsets
-                                                                .all(3),
-                                                            padding:
-                                                            const EdgeInsets
-                                                                .all(10),
-                                                            height: 40,
-                                                            width: 40,
-                                                            child: Image.asset(
-                                                                "assets/icons/delete.png"),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                  //     InkWell(
-                                                  //       /*
-                                                  //   onTap: () async {
-                                                  //   var contact = Contact(
-                                                  //       displayName:
-                                                  //           data?.name.capitalize ??
-                                                  //               "",
-                                                  //       familyName: "",
-                                                  //       company: data?.company
-                                                  //               .capitalize ??
-                                                  //           "",
-                                                  //       jobTitle: data?.title
-                                                  //               .capitalize ??
-                                                  //           "",
-                                                  //       emails: [
-                                                  //         Item(
-                                                  //             label: "email",
-                                                  //             value:
-                                                  //                 data?.email ?? "")
-                                                  //       ],
-                                                  //       phones: [
-                                                  //         Item(
-                                                  //             label: "mobile",
-                                                  //             value: data?.mobile ??
-                                                  //                 "")
-                                                  //       ]);
-                                                  //
-                                                  //   //  ContactsService.addContact(contact);
-                                                  //
-                                                  //   var result =
-                                                  //       await Get.to(AddContactView(
-                                                  //     contact: contact,
-                                                  //   ));
-                                                  //   if (result == "true") {
-                                                  //     ScaffoldMessenger.of(context)
-                                                  //         .showSnackBar(const SnackBar(
-                                                  //             content: Text(
-                                                  //                 "Contact saved")));
-                                                  //   }
-                                                  //
-                                                  //   // if (await ContactsService
-                                                  //   //     .requestPermission()) {
-                                                  //   //   final newContact = Contact()
-                                                  //   //     ..name.first = data?.name ?? ""
-                                                  //   //     ..displayName = data?.name ?? ""
-                                                  //   //     ..phones = [
-                                                  //   //       Phone(data?.mobile ?? "")
-                                                  //   //     ]
-                                                  //   //     ..emails = [
-                                                  //   //       Email(data?.email ?? "")
-                                                  //   //     ]
-                                                  //   //     ..organizations = [
-                                                  //   //       Organization(
-                                                  //   //           company:
-                                                  //   //               data?.company ?? "",
-                                                  //   //           title: data?.title ?? "")
-                                                  //   //     ];
-                                                  //   //   await newContact.insert();
-                                                  //   //   ScaffoldMessenger.of(context)
-                                                  //   //       .showSnackBar(const SnackBar(
-                                                  //   //           content:
-                                                  //   //               Text("Contact saved")));
-                                                  //   // }
-                                                  // },
-                                                  // */
-                                                  //       child: Card(
-                                                  //         shape:
-                                                  //         RoundedRectangleBorder(
-                                                  //             borderRadius:
-                                                  //             BorderRadius
-                                                  //                 .circular(
-                                                  //                 10)),
-                                                  //         child: Container(
-                                                  //           margin: const EdgeInsets
-                                                  //               .all(3),
-                                                  //           padding:
-                                                  //           const EdgeInsets
-                                                  //               .all(10),
-                                                  //           height: 40,
-                                                  //           width: 40,
-                                                  //           child: Image.asset(
-                                                  //               "assets/icons/saveto_phone.png"),
-                                                  //         ),
-                                                  //       ),
-                                                  //     )
-                                                    ],
-                                                  ),
-                                                  child: Container(
-                                                    color: white,
-                                                    padding:
-                                                    const EdgeInsets.all(10),
+                                      child: StatefulBuilder(
+                                          builder: (context, setState) {
+                                        return Container(
+                                          color: indicatorColor,
+                                          child: Slidable(
+                                            key: const ValueKey(1),
+                                            closeOnScroll: true,
+                                            endActionPane: ActionPane(
+                                              dragDismissible: false,
+                                              motion: const ScrollMotion(),
+                                              children: [
+                                                const SizedBox(
+                                                  width: 15,
+                                                ),
+                                                //   SlidableAutoCloseBehavior(
+                                                //     closeWhenTapped: true,
+                                                //     closeWhenOpened: true,
+                                                //     child: InkWell(
+                                                //       /*
+                                                // onTap: () async {
+                                                //   ///Create a new vCard
+                                                //   var vCard = VCard();
+                                                //
+                                                //   ///Set properties
+                                                //   vCard.firstName =
+                                                //       data?.name.capitalize ??
+                                                //           "";
+                                                //   vCard.middleName = '';
+                                                //   vCard.lastName = "";
+                                                //   vCard.email =
+                                                //       data?.email ?? "";
+                                                //   vCard.workPhone =
+                                                //       data?.mobile ?? "";
+                                                //   vCard.organization = data
+                                                //           ?.company
+                                                //           .capitalize ??
+                                                //       "";
+                                                //   vCard.jobTitle =
+                                                //       data?.title.capitalize ??
+                                                //           "";
+                                                //   vCard.note = '';
+                                                //   shareAllVCFCard(context,
+                                                //       vCard: [vCard]);
+                                                //   setState(() {});
+                                                // },
+                                                // */
+                                                //       child: Card(
+                                                //         shape: RoundedRectangleBorder(
+                                                //             borderRadius:
+                                                //             BorderRadius
+                                                //                 .circular(
+                                                //                 10)),
+                                                //         child: Container(
+                                                //           margin:
+                                                //           const EdgeInsets
+                                                //               .all(3),
+                                                //           padding:
+                                                //           const EdgeInsets
+                                                //               .all(10),
+                                                //           height: 40,
+                                                //           width: 40,
+                                                //           child: Image.asset(
+                                                //               "assets/icons/share.png"),
+                                                //         ),
+                                                //       ),
+                                                //     ),
+                                                //   ),
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    showAlertDialog(context,
+                                                        data?.id ?? "", index);
+                                                  },
+                                                  child: Card(
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10)),
                                                     child: Container(
+                                                      margin:
+                                                          const EdgeInsets.all(
+                                                              3),
                                                       padding:
-                                                      const EdgeInsets.all(10),
-                                                      decoration: BoxDecoration(
-                                                          border: Border.all(
-                                                              color: const Color(
-                                                                  0xffE8E8E8),
-                                                              width: 1),
-                                                          borderRadius:
-                                                          const BorderRadius
-                                                              .all(
-                                                              Radius.circular(
-                                                                  15))),
-                                                      child: ListTile(
-                                                        contentPadding:
-                                                        const EdgeInsets
-                                                            .symmetric(
-                                                            vertical: 5),
-                                                        leading: circularImage(
-                                                            url: "",
-                                                            shortName: getShortName(
-                                                                data?.name ??
-                                                                    "")
-                                                                .toUpperCase()),
-                                                        title: Column(
-                                                          mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                          crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                          children: [
-                                                            SemiBoldTextView(
-                                                              text: data?.name
-                                                                  ?.capitalize ??
-                                                                  "",
-                                                              textAlign:
-                                                              TextAlign.start,
-                                                              maxLines: 3,
-                                                              textSize: 18,
-                                                            ),
-                                                            RegularTextView(
-                                                              text: data?.company
-                                                                  ?.capitalize ??
-                                                                  "",
-                                                              textAlign:
-                                                              TextAlign.start,
-                                                              maxLine: 3,
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        trailing: const Icon(
-                                                          CupertinoIcons.forward,
-                                                          color: black,
-                                                        ),
-                                                      ),
+                                                          const EdgeInsets.all(
+                                                              10),
+                                                      height: 40,
+                                                      width: 40,
+                                                      child: Image.asset(
+                                                          "assets/icons/delete.png"),
                                                     ),
                                                   ),
                                                 ),
-                                              );
-                                            }),
-                                      );
-                                    },
-                                  ),
+                                                //     InkWell(
+                                                //       /*
+                                                //   onTap: () async {
+                                                //   var contact = Contact(
+                                                //       displayName:
+                                                //           data?.name.capitalize ??
+                                                //               "",
+                                                //       familyName: "",
+                                                //       company: data?.company
+                                                //               .capitalize ??
+                                                //           "",
+                                                //       jobTitle: data?.title
+                                                //               .capitalize ??
+                                                //           "",
+                                                //       emails: [
+                                                //         Item(
+                                                //             label: "email",
+                                                //             value:
+                                                //                 data?.email ?? "")
+                                                //       ],
+                                                //       phones: [
+                                                //         Item(
+                                                //             label: "mobile",
+                                                //             value: data?.mobile ??
+                                                //                 "")
+                                                //       ]);
+                                                //
+                                                //   //  ContactsService.addContact(contact);
+                                                //
+                                                //   var result =
+                                                //       await Get.to(AddContactView(
+                                                //     contact: contact,
+                                                //   ));
+                                                //   if (result == "true") {
+                                                //     ScaffoldMessenger.of(context)
+                                                //         .showSnackBar(const SnackBar(
+                                                //             content: Text(
+                                                //                 "Contact saved")));
+                                                //   }
+                                                //
+                                                //   // if (await ContactsService
+                                                //   //     .requestPermission()) {
+                                                //   //   final newContact = Contact()
+                                                //   //     ..name.first = data?.name ?? ""
+                                                //   //     ..displayName = data?.name ?? ""
+                                                //   //     ..phones = [
+                                                //   //       Phone(data?.mobile ?? "")
+                                                //   //     ]
+                                                //   //     ..emails = [
+                                                //   //       Email(data?.email ?? "")
+                                                //   //     ]
+                                                //   //     ..organizations = [
+                                                //   //       Organization(
+                                                //   //           company:
+                                                //   //               data?.company ?? "",
+                                                //   //           title: data?.title ?? "")
+                                                //   //     ];
+                                                //   //   await newContact.insert();
+                                                //   //   ScaffoldMessenger.of(context)
+                                                //   //       .showSnackBar(const SnackBar(
+                                                //   //           content:
+                                                //   //               Text("Contact saved")));
+                                                //   // }
+                                                // },
+                                                // */
+                                                //       child: Card(
+                                                //         shape:
+                                                //         RoundedRectangleBorder(
+                                                //             borderRadius:
+                                                //             BorderRadius
+                                                //                 .circular(
+                                                //                 10)),
+                                                //         child: Container(
+                                                //           margin: const EdgeInsets
+                                                //               .all(3),
+                                                //           padding:
+                                                //           const EdgeInsets
+                                                //               .all(10),
+                                                //           height: 40,
+                                                //           width: 40,
+                                                //           child: Image.asset(
+                                                //               "assets/icons/saveto_phone.png"),
+                                                //         ),
+                                                //       ),
+                                                //     )
+                                              ],
+                                            ),
+                                            child: Container(
+                                              color: white,
+                                              padding: const EdgeInsets.all(10),
+                                              child: Container(
+                                                padding:
+                                                    const EdgeInsets.all(10),
+                                                decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        color: const Color(
+                                                            0xffE8E8E8),
+                                                        width: 1),
+                                                    borderRadius:
+                                                        AppBorderRadius.medium),
+                                                child: ListTile(
+                                                  contentPadding:
+                                                      const EdgeInsets
+                                                          .symmetric(
+                                                          vertical: 0,
+                                                          horizontal: 10),
+                                                  leading: circularImage(
+                                                      url: "",
+                                                      shortName: getShortName(
+                                                              data?.name ?? "")
+                                                          .toUpperCase()),
+                                                  title: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      SemiBoldTextView(
+                                                        text: data?.name
+                                                                ?.capitalize ??
+                                                            "",
+                                                        textAlign:
+                                                            TextAlign.start,
+                                                        maxLines: 3,
+                                                        textSize: 18,
+                                                      ),
+                                                      RegularTextView(
+                                                        text: data?.company
+                                                                ?.capitalize ??
+                                                            "",
+                                                        textAlign:
+                                                            TextAlign.start,
+                                                        maxLine: 3,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  trailing: const Icon(
+                                                    CupertinoIcons.forward,
+                                                    color: black,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      }),
+                                    );
+                                  },
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                        // controller.loading.value
-                        leadsController.loading.value
-                            ? const Center(child: CircularProgressIndicator())
-                            : leadsController.leadBodyData.value.data?.leads?.isEmpty ??
-                            true ? Center(
-                            child: BoldTextView(
-                              text: "No leads found",
-                            )) : SizedBox()
-                      ],
-                    );// Ensure this method returns a Widget.
+                      ),
+                      // controller.loading.value
+                      leadsController.loading.value
+                          ? const Center(child: CircularProgressIndicator())
+                          : leadsController.leadBodyData.value.data?.leads
+                                      ?.isEmpty ??
+                                  true
+                              ? Center(
+                                  child: BoldTextView(
+                                  text: "No leads found",
+                                ))
+                              : SizedBox()
+                    ],
+                  ); // Ensure this method returns a Widget.
                 default:
                   return const Center(child: Text("No leads found"));
               }
@@ -484,7 +484,8 @@ class LocalContactViewPage extends GetView<LocalContactController> {
             UniversalAlertDialog.showAlertDialog(
               context,
               title: "Alert",
-              message: "You are not allow to add lead for this event, please contact to administration",
+              message:
+                  "You are not allow to add lead for this event, please contact to administration",
               positiveButtonLabel: "OK",
               isNegativeButtonVisible: false,
             );
@@ -502,24 +503,23 @@ class LocalContactViewPage extends GetView<LocalContactController> {
             String? ucValue = extractUCValue(result.toString());
 
             if (ucValue != null) {
-              checkQrCode(context,eventsController.eventData.value,ucValue);
+              checkQrCode(context, eventsController.eventData.value, ucValue);
               print('UC Value: $ucValue');
             } else {
-              UniversalAlertDialog.showAlertDialog(
-                  context,
-                  title: "Success!",
-                  message: "Unique code not found. A valid unique code is necessary to add a lead",
-                  isNegativeButtonVisible: false,
-                  positiveButtonLabel: "Ok"
-              ).then((_) {
+              UniversalAlertDialog.showAlertDialog(context,
+                      title: "Success!",
+                      message:
+                          "Unique code not found. A valid unique code is necessary to add a lead",
+                      isNegativeButtonVisible: false,
+                      positiveButtonLabel: "Ok")
+                  .then((_) {
                 // Reset the flag when the dialog is dismissed
               });
-
             }
           } else {
             print("result=======");
             print(result);
-            checkQrCode(context,eventsController.eventData.value,result);
+            checkQrCode(context, eventsController.eventData.value, result);
           }
         },
         child: Container(
@@ -553,42 +553,45 @@ class LocalContactViewPage extends GetView<LocalContactController> {
     );
   }
 
-  Future<void> checkQrCode(BuildContext context, EventData? eventData, String? qrCodeScanned) async {
-
+  Future<void> checkQrCode(
+      BuildContext context, EventData? eventData, String? qrCodeScanned) async {
     final deviceId = await getDeviceIdentifier();
     print("deviceId=======");
     print(deviceId);
     // Ensure both `prefix` and `qrCodeScanned` are not null or empty
     print("qrCodeScanned: $qrCodeScanned, prefix: ${eventData?.prefix}");
     String? qrCodePrefix = eventData?.prefix;
-    if (qrCodeScanned != null && qrCodeScanned.isNotEmpty &&
-        qrCodePrefix != null && qrCodePrefix.isNotEmpty) {
+    if (qrCodeScanned != null &&
+        qrCodeScanned.isNotEmpty &&
+        qrCodePrefix != null &&
+        qrCodePrefix.isNotEmpty) {
       // Check if the scanned QR code starts with the given prefix && where the QR code is valid
       if (qrCodeScanned.startsWith(qrCodePrefix)) {
-          // The QR code matches the prefix
-          showDialog(
-            context: context,
-            builder: (BuildContext context2) {
-              return AddLeadsDialog(
-                onConfirm: (String notes) {
-                  print("notes-> $notes");
-                  leadsController.addLeads({
-                    "event_id": eventData?.id,
-                    "qrcode": qrCodeScanned,
-                    "note": notes,
-                    "device_id": deviceId
-                  }, context);
-                },
-              );
-            },
-          );
+        // The QR code matches the prefix
+        showDialog(
+          context: context,
+          builder: (BuildContext context2) {
+            return AddLeadsDialog(
+              onConfirm: (String notes) {
+                print("notes-> $notes");
+                leadsController.addLeads({
+                  "event_id": eventData?.id,
+                  "qrcode": qrCodeScanned,
+                  "note": notes,
+                  "device_id": deviceId
+                }, context);
+              },
+            );
+          },
+        );
       } else {
         // The QR code does not match the prefix
         print("The QR code does not match the prefix.");
 
         // Replace with localized strings if necessary
         String title = "Invalid QR Code for Event";
-        String message = "This code does not belong to the current event. Please use a valid QR code for this event.";
+        String message =
+            "This code does not belong to the current event. Please use a valid QR code for this event.";
         String buttonText = "Try Again";
 
         // Show the alert dialog
@@ -605,7 +608,6 @@ class LocalContactViewPage extends GetView<LocalContactController> {
       }
     } else {
       print("QR code or prefix is empty.");
-
     }
   }
 
@@ -622,7 +624,9 @@ class LocalContactViewPage extends GetView<LocalContactController> {
     } else if (kIsWeb) {
       // The web doesnt have a device UID, so use a combination fingerprint as an example
       WebBrowserInfo webInfo = await deviceInfo.webBrowserInfo;
-      deviceIdentifier = webInfo.vendor! + webInfo.userAgent!  + webInfo.hardwareConcurrency.toString();
+      deviceIdentifier = webInfo.vendor! +
+          webInfo.userAgent! +
+          webInfo.hardwareConcurrency.toString();
     } else if (Platform.isLinux) {
       LinuxDeviceInfo linuxInfo = await deviceInfo.linuxInfo;
       deviceIdentifier = linuxInfo.machineId;
@@ -648,30 +652,30 @@ class LocalContactViewPage extends GetView<LocalContactController> {
 
   Widget circularImage({url, shortName}) {
     return SizedBox(
-      height: 50,
-      width: 50,
+      height: 60,
+      width: 60,
       child: url != null && url.toString().isNotEmpty
           ? Container(
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.transparent, width: 0),
-                shape: BoxShape.rectangle,
-                borderRadius: const BorderRadius.all(Radius.circular(25)),
-              ),
+                  border: Border.all(color: Colors.transparent, width: 0),
+                  shape: BoxShape.rectangle,
+                  borderRadius: AppBorderRadius.circular()),
               child: CircleAvatar(backgroundImage: NetworkImage(url)),
             ) /*CircleAvatar(backgroundImage: NetworkImage(url))*/
           : Container(
               decoration: BoxDecoration(
                 shape: BoxShape.rectangle,
                 color: indicatorColor,
-                borderRadius: const BorderRadius.all(Radius.circular(25)),
+                borderRadius: AppBorderRadius.circular(),
                 border: Border.all(color: Colors.transparent, width: 0),
               ),
               child: Center(
-                  child: BoldTextView(
-                text: shortName ?? "",
-                textAlign: TextAlign.center,
-                textSize: 20,
-              )),
+                child: BoldTextView(
+                  text: shortName ?? "",
+                  textAlign: TextAlign.center,
+                  textSize: 20,
+                ),
+              ),
             ),
     );
   }
@@ -685,7 +689,8 @@ class LocalContactViewPage extends GetView<LocalContactController> {
     // Loop through all words and collect the first character of each
     for (var i = 0; i < names.length; i++) {
       if (names[i].isNotEmpty) {
-        initials += names[i][0].toUpperCase(); // Get the first letter, uppercase for better formatting
+        initials += names[i][0]
+            .toUpperCase(); // Get the first letter, uppercase for better formatting
       }
     }
     return initials;
@@ -774,11 +779,12 @@ class LocalContactViewPage extends GetView<LocalContactController> {
                           height: 35,
                         ),
                         const Center(
-                            child: BoldTextView(
-                          text: "Are you sure you want to delete?",
-                          textSize: 18,
-                          maxLines: 2,
-                        )),
+                          child: customTextView(
+                            text: "Are you sure you want to delete?",
+                            textSize: 16,
+                            maxLines: 2,
+                          ),
+                        ),
                         const SizedBox(
                           height: 35,
                         ),
@@ -797,14 +803,14 @@ class LocalContactViewPage extends GetView<LocalContactController> {
                               }
 
                               Get.back();
-                            //  controller.deleteOneRecordById(id, index);
+                              //  controller.deleteOneRecordById(id, index);
 
                               controller.loading.value = true;
 
-                             await leadsController.deleteLeads({"id":id}, context,index);
-                             print("lead deleted====");
+                              await leadsController
+                                  .deleteLeads({"id": id}, context, index);
+                              print("lead deleted====");
                               controller.loading.value = false;
-
                             },
                             child: Container(
                               decoration: const BoxDecoration(
