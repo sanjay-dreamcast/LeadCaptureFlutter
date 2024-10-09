@@ -58,62 +58,66 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
                 const SizedBox(height: 30),
                 Image.asset(
                   'assets/images/bg_dreamcast_logo.png',
-                  width: 200,
-                  height: 45,
+                  width: 194,
+                  // height: 45,
                   fit: BoxFit.cover,
                 ),
-                const SizedBox(height: 1),
+                const SizedBox(height: 6),
                 const Text(
                   'Lead Capture',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: blue_20,
-                    fontSize: 18.0,
-                    fontStyle: FontStyle.italic,
-                    fontFamily: 'figtree_medium_italic',
-                  ),
+                      color: blue_20,
+                      fontSize: 16.0,
+                      fontStyle: FontStyle.italic,
+                      fontFamily: "figtree_medium",
+                      fontWeight: FontWeight.w500),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 0),
                 // Using Obx to reactively update the UI based on isOtpVisible
-                Obx(() {
-                  return loginController.isOtpVisible.value
-                      ? OtpContainer(
-                          otpController: _otpController,
-                          errorMessage: otpErrorMessage,
-                          loginController: loginController,
-                          onVerify: () {
-                            loginController.validateOtp();
-                          },
-                          onResend: (isResendOtp) {
-                            loginController.validateEmail(
-                                loginController.emailId.value,
-                                isResendOtp: isResendOtp);
-                          },
-                        )
-                      : LoginContainer(
-                          emailController: emailController,
-                          errorMessage: errorMessage,
-                          loginController: loginController,
-                          onLogin: (email) {
-                            loginController.validateEmail(email);
-                          },
-                        );
-                }),
+                Obx(
+                  () {
+                    return loginController.isOtpVisible.value
+                        ? OtpContainer(
+                            otpController: _otpController,
+                            errorMessage: otpErrorMessage,
+                            loginController: loginController,
+                            onVerify: () {
+                              loginController.validateOtp();
+                            },
+                            onResend: (isResendOtp) {
+                              loginController.validateEmail(
+                                  loginController.emailId.value,
+                                  isResendOtp: isResendOtp);
+                            },
+                          )
+                        : LoginContainer(
+                            emailController: emailController,
+                            errorMessage: errorMessage,
+                            loginController: loginController,
+                            onLogin: (email) {
+                              loginController.validateEmail(email);
+                            },
+                          );
+                  },
+                ),
               ],
             ),
           ),
-          Obx(() {
-            if (loginController.verifyUserResource.value.status ==
-                    Status.loading ||
-                loginController.verifyOtpResource.value.status ==
-                    Status.loading) {
-              return Positioned.fill(
-                child: UniversalLoader(), // Show full-screen loader
-              );
-            } else {
-              return SizedBox.shrink(); // Hide when not loading
-            }
-          }),
+          Obx(
+            () {
+              if (loginController.verifyUserResource.value.status ==
+                      Status.loading ||
+                  loginController.verifyOtpResource.value.status ==
+                      Status.loading) {
+                return Positioned.fill(
+                  child: UniversalLoader(), // Show full-screen loader
+                );
+              } else {
+                return SizedBox.shrink(); // Hide when not loading
+              }
+            },
+          ),
         ],
       ),
     );
@@ -157,7 +161,7 @@ class OtpContainer extends StatelessWidget {
             },
           ),
           Container(
-            padding: const EdgeInsets.all(15),
+            padding: const EdgeInsets.all(10),
             child: Column(
               children: [
                 const Text(
@@ -166,7 +170,7 @@ class OtpContainer extends StatelessWidget {
                   style: TextStyle(
                     color: blackGrey,
                     fontSize: 22.0,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
                     fontFamily: 'figtree_semibold',
                   ),
                 ),
@@ -177,14 +181,14 @@ class OtpContainer extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       color: blackGrey,
-                      fontSize: 14.0,
+                      fontSize: 16.0,
                       fontFamily: 'figtree_regular',
                     ),
                   );
                 }),
-                const SizedBox(height: 25),
+                const SizedBox(height: 30),
                 _otpPin(context, loginController),
-                const SizedBox(height: 15),
+                const SizedBox(height: 20),
                 Obx(
                   () {
                     return Visibility(
@@ -193,10 +197,10 @@ class OtpContainer extends StatelessWidget {
                         loginController.otpErrorMessage.value,
                         textAlign: TextAlign.center,
                         style: const TextStyle(
-                          color: Colors.red,
-                          fontSize: 12.0,
-                          fontFamily: 'figtree_medium',
-                        ),
+                            color: Colors.red,
+                            fontSize: 12.0,
+                            fontFamily: 'figtree_medium',
+                            fontWeight: FontWeight.w500),
                       ),
                     );
                   },
@@ -223,7 +227,7 @@ class OtpContainer extends StatelessWidget {
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 16,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w600,
                         fontFamily: "figtree_semibold",
                       ),
                     ),
@@ -238,9 +242,10 @@ class OtpContainer extends StatelessWidget {
                           textAlign: TextAlign.center,
                           text: TextSpan(
                             style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 12.0, // Default text size
-                            ),
+                                color: Colors.black,
+                                fontSize: 13.0,
+                                fontFamily: 'figtree_regular',
+                                fontWeight: FontWeight.w400),
                             children: [
                               const TextSpan(text: "Didn't receive the OTP? "),
                               loginController.isResendEnabled.value
@@ -249,9 +254,9 @@ class OtpContainer extends StatelessWidget {
                                       style: const TextStyle(
                                         decoration: TextDecoration.underline,
                                         fontFamily: 'figtree_semibold',
-                                        fontWeight: FontWeight.w700,
+                                        fontWeight: FontWeight.w600,
                                         color: blackGrey,
-                                        fontSize: 12.0, // Default text size
+                                        fontSize: 13.0, // Default text size
                                       ),
                                       recognizer: TapGestureRecognizer()
                                         ..onTap = () {
@@ -294,8 +299,8 @@ class OtpContainer extends StatelessWidget {
 
   Widget _otpPin(BuildContext context, LoginController loginController) {
     final defaultPinTheme = PinTheme(
-      width: 46,
-      height: 46,
+      width: 40,
+      height: 40,
       textStyle: const TextStyle(
           fontSize: 16, color: Colors.black, fontWeight: FontWeight.w600),
       decoration: BoxDecoration(
@@ -339,11 +344,11 @@ class OtpContainer extends StatelessWidget {
             const SizedBox(width: 5), // Space between the icon and text
             // Text
             const Text(
-              'Back', // Equivalent of android:text="@string/back"
+              'Back',
               style: TextStyle(
-                fontSize: 14, // Equivalent to android:textSize
-                fontFamily:
-                    'FigtreeSemibold', // Equivalent to android:fontFamily
+                fontSize: 14,
+                fontFamily: 'FigtreeSemibold',
+                fontWeight: FontWeight.w600
               ),
             ),
           ],
@@ -385,7 +390,7 @@ class LoginContainer extends StatelessWidget {
             style: TextStyle(
               color: blackGrey,
               fontSize: 25.0,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w600,
               fontFamily: 'figtree_semibold',
             ),
           ),
@@ -395,7 +400,7 @@ class LoginContainer extends StatelessWidget {
             textAlign: TextAlign.center,
             style: TextStyle(
               color: blackGrey,
-              fontSize: 16.0,
+              fontSize: 14.0,
               fontFamily: 'figtree_regular',
               fontWeight: FontWeight.normal,
             ),
@@ -414,7 +419,7 @@ class LoginContainer extends StatelessWidget {
               hintStyle: TextStyle(
                 color: Colors.grey,
                 fontSize: 16,
-                fontWeight: FontWeight.w400,
+                fontWeight: FontWeight.w500,
                 fontFamily: "figtree_medium",
               ),
               enabledBorder: UnderlineInputBorder(
@@ -442,6 +447,7 @@ class LoginContainer extends StatelessWidget {
                   style: const TextStyle(
                     color: Colors.red,
                     fontSize: 12.0,
+                    fontWeight: FontWeight.w500,
                     fontFamily: 'figtree_medium',
                   ),
                 ),
@@ -461,12 +467,12 @@ class LoginContainer extends StatelessWidget {
               ),
               margin: const EdgeInsets.only(top: 20),
               child: const Text(
-                "GET OTP",
+                "Next",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 18,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w600,
                   fontFamily: "figtree_semibold",
                 ),
               ),

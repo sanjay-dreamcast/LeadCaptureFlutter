@@ -25,7 +25,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(15.0),
+      padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 18),
       child: TextField(
         controller: _searchController,
         onChanged: (value) {
@@ -35,7 +35,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
         },
         decoration: InputDecoration(
           prefixIcon: const Padding(
-            padding: EdgeInsets.only(left: 15, right: 6, top: 10, bottom: 10),
+            padding: EdgeInsets.only(left: 15, right: 6, top: 12, bottom: 12),
             child: Icon(
               Icons.search,
               color: Colors.grey,
@@ -56,9 +56,9 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
           hintText: MyStrings.search_here,
           hintStyle: const TextStyle(
             color: Colors.grey,
-            fontSize: 16,
+            fontSize: 18,
             fontWeight: FontWeight.w400,
-            fontFamily: "figtree_medium",
+            fontFamily: "figtree",
           ),
           filled: true,
           fillColor: indicatorColor,
