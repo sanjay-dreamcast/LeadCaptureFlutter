@@ -1,3 +1,4 @@
+
 import 'package:camera/camera.dart';
 import 'package:cphi/view/customerWidget/boldTextView.dart';
 import 'package:cphi/view/customerWidget/regularTextView.dart';
@@ -5,7 +6,9 @@ import 'package:cphi/view/customerWidget/semiBoldTextView.dart';
 import 'package:cphi/view/localDatabase/LeadsController.dart';
 import 'package:cphi/view/localDatabase/localDataModel.dart';
 import 'package:csv/csv.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -19,7 +22,7 @@ import '../localDatabase/EventsController.dart';
 import '../localDatabase/event_data_Model.dart';
 import '../localDatabase/localContactController.dart';
 import '../qrCode/view/qr_profile_page.dart';
-import 'package:flutter/widgets.dart';
+import 'dart:io' show Directory, File, Platform;
 
 class HomePgae extends GetView<LocalContactController> {
   final EventData? eventData;
@@ -289,7 +292,9 @@ class HomePgae extends GetView<LocalContactController> {
     return null;
   }
 
-  void checkQrCode(BuildContext context, EventData? eventData, String? qrCodeScanned) {
+  Future<void> checkQrCode(BuildContext context, EventData? eventData, String? qrCodeScanned) async {
+
+    final deviceId = await getDeviceIdentifier();
     // Ensure both `prefix` and `qrCodeScanned` are not null or empty
     print("qrCodeScanned: $qrCodeScanned, prefix: ${eventData?.prefix}");
     String? qrCodePrefix = eventData?.prefix;
@@ -307,7 +312,9 @@ class HomePgae extends GetView<LocalContactController> {
                 controller.loading.value = true;
                await leadsController.addLeads({
                   "event_id":eventData?.id,
-                  "qrcode":qrCodeScanned
+                  "qrcode":qrCodeScanned,
+                 "device_id":deviceId,
+                 "note":notes,
                 }, Get.context!);
                 controller.loading.value = false;
               },
@@ -337,10 +344,30 @@ class HomePgae extends GetView<LocalContactController> {
       }
     } else {
       print("QR code or prefix is empty.");
-
     }
   }
 
+  Future<String?> getDeviceIdentifier() async {
+    String? deviceIdentifier = "unknown";
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+
+    if (Platform.isAndroid) {
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      deviceIdentifier = androidInfo.id;
+    } else if (Platform.isIOS) {
+      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+      deviceIdentifier = iosInfo.identifierForVendor;
+    } else if (kIsWeb) {
+      // The web doesnt have a device UID, so use a combination fingerprint as an example
+      WebBrowserInfo webInfo = await deviceInfo.webBrowserInfo;
+      deviceIdentifier = webInfo.vendor! + webInfo.userAgent!  + webInfo.hardwareConcurrency.toString();
+    } else if (Platform.isLinux) {
+      LinuxDeviceInfo linuxInfo = await deviceInfo.linuxInfo;
+      deviceIdentifier = linuxInfo.machineId;
+    }
+    print("id=====${deviceIdentifier}");
+    return deviceIdentifier;
+  }
 
 }
 

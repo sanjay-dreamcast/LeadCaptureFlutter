@@ -172,7 +172,8 @@ class LoginController extends GetxController {
         // Await the getUser method to retrieve the saved user data
         UserData? savedUser = await SharedPreferencesHelper().getUser();
         print("userSaved: ${savedUser != null ? savedUser.toJson() : 'No user data found'}");
-        Navigator.of(context).pop();
+       // Navigator.of(context).pop();
+        Get.offAllNamed('/EventScreen'); //
 
       } else {
         // Handle error

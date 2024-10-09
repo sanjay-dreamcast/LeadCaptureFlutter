@@ -211,7 +211,6 @@ class _EventsScreenState extends State<EventsScreen>
               ),
             ),
           );
-
         case Status.success:
           final eventsList = eventsController.eventResource.value.data;
           print("Event List-> $eventsList");

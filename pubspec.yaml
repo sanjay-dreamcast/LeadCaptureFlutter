@@ -37,6 +37,7 @@ dependencies:
   firebase_core: ^2.2.0 #connet to firebase service
   firebase_database: ^10.0.5 #for firebase chat database manage
   firebase_messaging: ^14.1.2 #used for get firebase notifications its working like a background service
+  device_info_plus: any
   pinput: 5.0.0
 dev_dependencies:
   flutter_test:

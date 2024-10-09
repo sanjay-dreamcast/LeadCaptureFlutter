@@ -78,20 +78,20 @@ class AuthenticationManager extends GetxController {
   }
 
   void fcmSubscribe() {
-    print("firebase calling=====");
-    _firebaseDatabase.databaseURL =
-        "https://dreamcast-event--2024-default-rtdb.firebaseio.com/";
-    firebaseDatabase
-        .ref("${AppUrl.defaultFirebaseNode}/endPoint")
-        .onValue
-        .listen((event) {
-      if (event.snapshot.value != null) {
-        final json = event.snapshot.value as Map<dynamic, dynamic>;
-        if (json["flutter"] != null && json["flutter"].toString().isNotEmpty) {
-          AppUrl.baseUrl = json["flutter"];
-        }
-      }
-    });
+    // print("firebase calling=====");
+    // _firebaseDatabase.databaseURL =
+    //     "https://dreamcast-event--2024-default-rtdb.firebaseio.com/";
+    // firebaseDatabase
+    //     .ref("${AppUrl.defaultFirebaseNode}/endPoint")
+    //     .onValue
+    //     .listen((event) {
+    //   if (event.snapshot.value != null) {
+    //     final json = event.snapshot.value as Map<dynamic, dynamic>;
+    //     if (json["flutter"] != null && json["flutter"].toString().isNotEmpty) {
+    //       AppUrl.baseUrl = json["flutter"];
+    //     }
+    //   }
+    // });
   }
 
   // Future<void> getConfigDetail() async {

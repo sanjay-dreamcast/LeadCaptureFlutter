@@ -41,6 +41,8 @@ class LeadsController extends GetxController{
     );
   }
   Future<void> addLeads(dynamic body, BuildContext context) async {
+
+    print(body);
     // Set to loading state initially
     addLeadsData.value = Resource.loading();
 
@@ -58,8 +60,9 @@ class LeadsController extends GetxController{
           data: model.data, // this is userdata
           message: model.message,
         );
+
         UniversalAlertDialog.showAlertDialog(
-          Get.context!,
+            context,
           title: "Success!",
           message: addLeadsData.value.message,
           isNegativeButtonVisible: false,
@@ -77,6 +80,7 @@ class LeadsController extends GetxController{
           model.message ?? MyStrings.someErrorOccurred,
           data: model.data,
         );
+
         WidgetsBinding.instance.addPostFrameCallback((_) {
           UniversalAlertDialog.showAlertDialog(
             context,
@@ -86,6 +90,7 @@ class LeadsController extends GetxController{
             // Reset the flag when the dialog is dismissed
           });
         });
+        update();
       }
     } catch (e) {
       print("addLeadsData catch $e");
@@ -115,7 +120,7 @@ class LeadsController extends GetxController{
         );
 
         UniversalAlertDialog.showAlertDialog(
-            Get.context!,
+            context,
             title: "Success!",
             message: addLeadsData.value.message,
             isNegativeButtonVisible: false,
@@ -173,7 +178,7 @@ class LeadsController extends GetxController{
         );
 
         UniversalAlertDialog.showAlertDialog(
-            Get.context!,
+            context,
             title: "Success!",
             message: addLeadsData.value.message,
             isNegativeButtonVisible: false,

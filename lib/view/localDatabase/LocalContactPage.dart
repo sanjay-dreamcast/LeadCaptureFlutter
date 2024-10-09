@@ -9,7 +9,9 @@ import 'package:cphi/view/localDatabase/contactDetailModel.dart';
 import 'package:cphi/view/localDatabase/localDataModel.dart';
 import 'package:cphi/view/qrCode/view/camera_qr.dart';
 import 'package:csv/csv.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
@@ -88,14 +90,6 @@ class LocalContactViewPage extends GetView<LocalContactController> {
                     ),
                   );
                 case Status.success:
-                   if (leadsController.leadBodyData.value.data?.leads?.isEmpty ??
-                      true) {
-                    return const Center(
-                      child: BoldTextView(
-                        text: "No leads found",
-                      ),
-                    );
-                  } else {
                     return Stack(
                       children: [
                         Container(
@@ -163,22 +157,6 @@ class LocalContactViewPage extends GetView<LocalContactController> {
                                   ],
                                 ),
                               ),
-                              // Container(
-                              //   padding: const EdgeInsets.only(
-                              //       top: 10, left: 10, right: 10),
-                              //   child: SearchView(
-                              //     title: "Search here",
-                              //     textController: textController,
-                              //     press: () async {
-                              //       // controller.filterSearchResults("");
-                              //       controller.searchContact("");
-                              //     },
-                              //     onSubmit: (result) async {
-                              //       //  controller.filterSearchResults(result);
-                              //       controller.searchContact(result);
-                              //     },
-                              //   ),
-                              // ),
                               SearchBarWidget(
                                 onSearch: (query) {
                                   leadsController.filterEvents(query);
@@ -485,10 +463,13 @@ class LocalContactViewPage extends GetView<LocalContactController> {
                         // controller.loading.value
                         leadsController.loading.value
                             ? const Center(child: CircularProgressIndicator())
-                            : SizedBox()
+                            : leadsController.leadBodyData.value.data?.leads?.isEmpty ??
+                            true ? Center(
+                            child: BoldTextView(
+                              text: "No leads found",
+                            )) : SizedBox()
                       ],
-                    );
-                  } // Ensure this method returns a Widget.
+                    );// Ensure this method returns a Widget.
                 default:
                   return const Center(child: Text("No leads found"));
               }
@@ -524,8 +505,16 @@ class LocalContactViewPage extends GetView<LocalContactController> {
               checkQrCode(context,eventsController.eventData.value,ucValue);
               print('UC Value: $ucValue');
             } else {
-              ScaffoldMessenger.of(context!)
-                  .showSnackBar(SnackBar(content: Text("Invalid Vcard")));
+              UniversalAlertDialog.showAlertDialog(
+                  context,
+                  title: "Success!",
+                  message: "Unique code not found. A valid unique code is necessary to add a lead",
+                  isNegativeButtonVisible: false,
+                  positiveButtonLabel: "Ok"
+              ).then((_) {
+                // Reset the flag when the dialog is dismissed
+              });
+
             }
           } else {
             print("result=======");
@@ -564,7 +553,11 @@ class LocalContactViewPage extends GetView<LocalContactController> {
     );
   }
 
-  void checkQrCode(BuildContext context, EventData? eventData, String? qrCodeScanned) {
+  Future<void> checkQrCode(BuildContext context, EventData? eventData, String? qrCodeScanned) async {
+
+    final deviceId = await getDeviceIdentifier();
+    print("deviceId=======");
+    print(deviceId);
     // Ensure both `prefix` and `qrCodeScanned` are not null or empty
     print("qrCodeScanned: $qrCodeScanned, prefix: ${eventData?.prefix}");
     String? qrCodePrefix = eventData?.prefix;
@@ -572,22 +565,23 @@ class LocalContactViewPage extends GetView<LocalContactController> {
         qrCodePrefix != null && qrCodePrefix.isNotEmpty) {
       // Check if the scanned QR code starts with the given prefix && where the QR code is valid
       if (qrCodeScanned.startsWith(qrCodePrefix)) {
-        // The QR code matches the prefix
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AddLeadsDialog(
-              onConfirm: (String notes) {
-                print("notes-> $notes");
-                leadsController.addLeads({
-                  "event_id":eventData?.id,
-                  "qrcode":qrCodeScanned,
-                  "note":notes
-                }, Get.context!);
-              },
-            );
-          },
-        );
+          // The QR code matches the prefix
+          showDialog(
+            context: context,
+            builder: (BuildContext context2) {
+              return AddLeadsDialog(
+                onConfirm: (String notes) {
+                  print("notes-> $notes");
+                  leadsController.addLeads({
+                    "event_id": eventData?.id,
+                    "qrcode": qrCodeScanned,
+                    "note": notes,
+                    "device_id": deviceId
+                  }, context);
+                },
+              );
+            },
+          );
       } else {
         // The QR code does not match the prefix
         print("The QR code does not match the prefix.");
@@ -613,6 +607,28 @@ class LocalContactViewPage extends GetView<LocalContactController> {
       print("QR code or prefix is empty.");
 
     }
+  }
+
+  Future<String?> getDeviceIdentifier() async {
+    String? deviceIdentifier = "unknown";
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+
+    if (Platform.isAndroid) {
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      deviceIdentifier = androidInfo.id;
+    } else if (Platform.isIOS) {
+      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+      deviceIdentifier = iosInfo.identifierForVendor;
+    } else if (kIsWeb) {
+      // The web doesnt have a device UID, so use a combination fingerprint as an example
+      WebBrowserInfo webInfo = await deviceInfo.webBrowserInfo;
+      deviceIdentifier = webInfo.vendor! + webInfo.userAgent!  + webInfo.hardwareConcurrency.toString();
+    } else if (Platform.isLinux) {
+      LinuxDeviceInfo linuxInfo = await deviceInfo.linuxInfo;
+      deviceIdentifier = linuxInfo.machineId;
+    }
+    print("id=====${deviceIdentifier}");
+    return deviceIdentifier;
   }
 
   String? extractUCValue(String vCardData) {

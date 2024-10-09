@@ -147,7 +147,6 @@ class MyStrings {
   static const String session_detail = "Agenda Details";
 
   static const String bookSeats = "Book Seat";
-
   static const String speakers = "Speakers";
   static const String contacts = "Contacts";
 

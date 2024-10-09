@@ -403,6 +403,7 @@ class LoginContainer extends StatelessWidget {
           const SizedBox(height: 10),
           TextField(
             controller: emailController,
+            keyboardType: TextInputType.emailAddress,
             decoration: const InputDecoration(
               labelText: 'Email or Phone',
               labelStyle: TextStyle(

@@ -12,6 +12,7 @@ ${BUILT_PRODUCTS_DIR}/MTBBarcodeScanner/MTBBarcodeScanner.framework
 ${BUILT_PRODUCTS_DIR}/PromisesObjC/FBLPromises.framework
 ${BUILT_PRODUCTS_DIR}/camera_avfoundation/camera_avfoundation.framework
 ${BUILT_PRODUCTS_DIR}/contacts_service/contacts_service.framework
+${BUILT_PRODUCTS_DIR}/device_info_plus/device_info_plus.framework
 ${BUILT_PRODUCTS_DIR}/flutter_barcode_scanner/flutter_barcode_scanner.framework
 ${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework
 ${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework
