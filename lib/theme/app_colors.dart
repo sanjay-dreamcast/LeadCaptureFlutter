@@ -77,7 +77,7 @@ const indicatorColor = Color(0xffF4F3F7);
 
 const profileBg = Color(0xffF0F0F0);
 const address_color = Color(0xffC4C4C6);
-const grey10 = Color(0xFF898989);
+const grey10 = Color(0xFF8A8A8E);
 const grey20Color = Color(0xFF7B7B7B);
 
 

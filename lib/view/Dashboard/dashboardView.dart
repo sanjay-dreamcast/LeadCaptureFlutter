@@ -21,9 +21,10 @@ class DashboardPage extends StatelessWidget {
   static const routeName = "/DashboardPage";
 
   final DashboardController controller = Get.put(DashboardController());
-  final Sharedprefcontroller sharedPrefController = Get.put(Sharedprefcontroller());
-  final LeadsController leadsController =
-  Get.put(LeadsController(Get.find<ApiService>()));// Instantiate Sharedprefcontroller
+  final Sharedprefcontroller sharedPrefController =
+      Get.put(Sharedprefcontroller());
+  final LeadsController leadsController = Get.put(LeadsController(
+      Get.find<ApiService>())); // Instantiate Sharedprefcontroller
 
   List<String> bottomTitle = [
     "Home",
@@ -34,7 +35,8 @@ class DashboardPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final args = Get.arguments as Map<String, dynamic>?;
     final eventDataJson = args?['eventData'] as Map<String, dynamic>?;
-    final eventData = eventDataJson != null ? EventData.fromJson(eventDataJson) : null;
+    final eventData =
+        eventDataJson != null ? EventData.fromJson(eventDataJson) : null;
 
     return WillPopScope(
       onWillPop: () async {
@@ -47,77 +49,85 @@ class DashboardPage extends StatelessWidget {
               backgroundColor: Colors.white,
               elevation: 0,
               automaticallyImplyLeading: false,
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              centerTitle: true,
+              leading: IconButton(
+                // icon: const Icon(Icons.arrow_back_ios_sharp, color: Colors.black),
+                icon: Image.asset(
+                  'assets/icons/ic_back.png',
+                  width: 14,
+                ),
+                onPressed: () {
+                  Get.back();
+                },
+              ),
+              title: Column(
                 children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back_ios_sharp, color: Colors.black),
-                    onPressed: () {
-                      Get.back();
-                    },
-                  ),
-                  Column(
-                    children: [
-                      if (controller.tabIndex == 0) ...[
-                        const Text(
-                          'User Details',
-                          style: TextStyle(
-                            color: grey20Color,
-                            fontSize: 12,
-                            fontFamily: "figtree_medium",
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        Text(
-                          sharedPrefController.loggedInUser.value?.name ?? 'Guest',
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                            fontFamily: "figtree_bold",
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                  if (controller.tabIndex == 0)
-                    IconButton(
-                      icon: const Icon(Icons.logout_sharp, color: Colors.black),
-                      onPressed: () {
-                        _showLogoutDialog(context);
-                      },
-                    ),
-                  if (controller.tabIndex == 1)
-                    Container(
-                      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(color: Colors.black, width: 1),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: InkWell(
-                        onTap: () {
-                          _showExportLeadBottomSheet(context);
-                        },
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.exit_to_app, color: Colors.black),
-                            SizedBox(width: 5),
-                            Text(
-                              'Export',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                                fontFamily: 'figtree_semibold',
-                              ),
-                            ),
-                          ],
-                        ),
+                  if (controller.tabIndex == 0) ...[
+                    const Text(
+                      'User Details',
+                      style: TextStyle(
+                        color: grey20Color,
+                        fontSize: 12,
+                        fontFamily: "figtree_medium",
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
+                    Text(
+                      sharedPrefController.loggedInUser.value?.name ?? 'Guest',
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: "figtree_bold",
+                      ),
+                    ),
+                  ],
                 ],
               ),
+              actions: [
+                if (controller.tabIndex == 0)
+                  IconButton(
+                    // icon: const Icon(Icons.logout_sharp, color: Colors.black),
+                    padding: const EdgeInsets.only(right: 8),
+                    icon: Image.asset(
+                      'assets/icons/exit.png',
+                      width: 26,
+                    ),
+                    onPressed: () {
+                      _showLogoutDialog(context);
+                    },
+                  ),
+                if (controller.tabIndex == 1)
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(color: Colors.black, width: 1),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: InkWell(
+                      onTap: () {
+                        _showExportLeadBottomSheet(context);
+                      },
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.exit_to_app, color: Colors.black),
+                          SizedBox(width: 5),
+                          Text(
+                            'Export',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontFamily: 'figtree_semibold',
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+              ],
             ),
             body: Stack(
               children: [
@@ -138,7 +148,9 @@ class DashboardPage extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Align(
-                    alignment: controller.tabIndex == 0 ? Alignment.bottomLeft : Alignment.bottomRight,
+                    alignment: controller.tabIndex == 0
+                        ? Alignment.bottomLeft
+                        : Alignment.bottomRight,
                     child: Container(
                       height: 2,
                       color: Colors.black,
@@ -179,12 +191,15 @@ class DashboardPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const ImageIcon(AssetImage("assets/icons/home_menu.png"), size: 25),
+                const ImageIcon(AssetImage("assets/icons/home_menu.png"),
+                    size: 25),
                 const SizedBox(width: 10),
                 SemiBoldTextView(
                   text: "Home",
                   textSize: 18,
-                  color: controller.tabIndex == 0 ? const Color(0xff333333) : const Color(0xff8A8A8E),
+                  color: controller.tabIndex == 0
+                      ? const Color(0xff333333)
+                      : const Color(0xff8A8A8E),
                 ),
               ],
             ),
@@ -202,12 +217,15 @@ class DashboardPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const ImageIcon(AssetImage("assets/icons/lead_menu.png"), size: 25),
+                const ImageIcon(AssetImage("assets/icons/lead_menu.png"),
+                    size: 25),
                 const SizedBox(width: 10),
                 SemiBoldTextView(
                   text: "Leads",
                   textSize: 18,
-                  color: controller.tabIndex == 1 ? const Color(0xff333333) : const Color(0xff8A8A8E),
+                  color: controller.tabIndex == 1
+                      ? const Color(0xff333333)
+                      : const Color(0xff8A8A8E),
                 ),
               ],
             ),
@@ -294,7 +312,8 @@ class DashboardPage extends StatelessWidget {
                           decoration: const InputDecoration(
                             hintText: 'Start Date/Time', // Placeholder
                             border: InputBorder.none, // No internal border
-                            contentPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 16.0, vertical: 16.0),
                           ),
                           controller: startDateTimeController,
                           onTap: () async {
@@ -303,14 +322,13 @@ class DashboardPage extends StatelessWidget {
                               context: context,
                               initialDate: startDateTime ?? DateTime.now(),
                               firstDate: DateTime(2000),
-                              lastDate:  DateTime.now(),
+                              lastDate: DateTime.now(),
                             );
                             if (pickedDate != null) {
                               // Select Time after Date
                               TimeOfDay? pickedTime = await showTimePicker(
                                 context: context,
                                 initialTime: TimeOfDay.now(),
-
                               );
                               if (pickedTime != null) {
                                 startDateTime = DateTime(
@@ -322,8 +340,11 @@ class DashboardPage extends StatelessWidget {
                                 );
                                 // Update controller with selected date and time
 
-                                String  formattedDateTime = DateFormat('yyyy-MM-dd HH:mm').format(startDateTime!);
-                                startDateTimeController.text = formattedDateTime;
+                                String formattedDateTime =
+                                    DateFormat('yyyy-MM-dd HH:mm')
+                                        .format(startDateTime!);
+                                startDateTimeController.text =
+                                    formattedDateTime;
 
                                 // startDateTimeController.text =
                                 // "${pickedDate.toLocal().toString().split(' ')[0]} ${pickedTime.format(context)}";
@@ -333,7 +354,8 @@ class DashboardPage extends StatelessWidget {
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.calendar_today, color: labelColor),
+                        icon:
+                            const Icon(Icons.calendar_today, color: labelColor),
                         onPressed: () async {
                           // Select Date
                           DateTime? pickedDate = await showDatePicker(
@@ -358,8 +380,10 @@ class DashboardPage extends StatelessWidget {
                               );
                               // Update controller with selected date and time
 
-                          // Format the selected date and time String
-                              String  formattedDateTime = DateFormat('yyyy-MM-dd HH:mm').format(startDateTime!);
+                              // Format the selected date and time String
+                              String formattedDateTime =
+                                  DateFormat('yyyy-MM-dd HH:mm')
+                                      .format(startDateTime!);
                               startDateTimeController.text = formattedDateTime;
 
                               // startDateTimeController.text =
@@ -387,7 +411,8 @@ class DashboardPage extends StatelessWidget {
                           decoration: const InputDecoration(
                             hintText: 'End Date/Time', // Placeholder
                             border: InputBorder.none, // No internal border
-                            contentPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 16.0, vertical: 16.0),
                           ),
                           controller: endDateTimeController,
                           onTap: () async {
@@ -396,7 +421,7 @@ class DashboardPage extends StatelessWidget {
                               context: context,
                               initialDate: endDateTime ?? DateTime.now(),
                               firstDate: DateTime(2000),
-                              lastDate:  DateTime.now(),
+                              lastDate: DateTime.now(),
                             );
                             if (pickedDate != null) {
                               // Select Time after Date
@@ -414,7 +439,9 @@ class DashboardPage extends StatelessWidget {
                                 );
                                 // Update controller with selected date and time
 
-                                String  formattedDateTime = DateFormat('yyyy-MM-dd HH:mm').format(endDateTime!);
+                                String formattedDateTime =
+                                    DateFormat('yyyy-MM-dd HH:mm')
+                                        .format(endDateTime!);
                                 endDateTimeController.text = formattedDateTime;
 
                                 // endDateTimeController.text =
@@ -425,7 +452,8 @@ class DashboardPage extends StatelessWidget {
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.calendar_today, color: labelColor),
+                        icon:
+                            const Icon(Icons.calendar_today, color: labelColor),
                         onPressed: () async {
                           // Select Date
                           DateTime? pickedDate = await showDatePicker(
@@ -450,9 +478,10 @@ class DashboardPage extends StatelessWidget {
                               );
                               // Update controller with selected date and time
 
-                              String  formattedDateTime = DateFormat('yyyy-MM-dd HH:mm').format(endDateTime!);
+                              String formattedDateTime =
+                                  DateFormat('yyyy-MM-dd HH:mm')
+                                      .format(endDateTime!);
                               endDateTimeController.text = formattedDateTime;
-
 
                               // endDateTimeController.text =
                               // "${pickedDate.toLocal().toString().split(' ')[0]} ${pickedTime.format(context)}";
@@ -467,20 +496,26 @@ class DashboardPage extends StatelessWidget {
                 // Export Lead Button
                 GestureDetector(
                   onTap: () async {
-                        Get.back();
-                         leadsController.loading.value = true;
-                   await leadsController.exportLeads({"event_id" : leadsController.eventsController.eventData.value.id ?? "","start_datetime" : startDateTimeController.text,"end_datetime" : endDateTimeController.text,}, context);
-                        leadsController.loading.value = false;
-                       // leadsController.leadBodyData.value =
+                    Get.back();
+                    leadsController.loading.value = true;
+                    await leadsController.exportLeads({
+                      "event_id":
+                          leadsController.eventsController.eventData.value.id ??
+                              "",
+                      "start_datetime": startDateTimeController.text,
+                      "end_datetime": endDateTimeController.text,
+                    }, context);
+                    leadsController.loading.value = false;
+                    // leadsController.leadBodyData.value =
                   },
                   child: Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 18),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 16, horizontal: 18),
                     decoration: const BoxDecoration(
-                      color: blackGrey,
-                      shape: BoxShape.rectangle,
-                      borderRadius: AppBorderRadius.medium
-                    ),
+                        color: blackGrey,
+                        shape: BoxShape.rectangle,
+                        borderRadius: AppBorderRadius.medium),
                     child: const Text(
                       "Export Lead",
                       textAlign: TextAlign.center,
@@ -495,7 +530,7 @@ class DashboardPage extends StatelessWidget {
                 ),
                 Center(
                   child: GestureDetector(
-                    onTap: (){
+                    onTap: () {
                       Get.back();
                     },
                     child: Container(
@@ -527,19 +562,31 @@ class DashboardPage extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Logout Confirmation',textAlign: TextAlign.center,),
-          content: const Text('Are you sure you want to logout?',textAlign: TextAlign.center,),
+          title: const Text(
+            'Logout Confirmation',
+            textAlign: TextAlign.center,
+          ),
+          content: const Text(
+            'Are you sure you want to logout?',
+            textAlign: TextAlign.center,
+          ),
           actions: [
-             OutlinedButton(child: const Text('Cancel'),onPressed: (){
-Get.back();
+            OutlinedButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Get.back();
               },
             ),
-            OutlinedButton(child: const Text('Logout'),onPressed: () async {
-        await sharedPrefController.removeUser();
-        sharedPrefController.removeUser();
-        await SharedPreferencesHelper().clear();// Clear shared preferences
-        Get.offAllNamed('/EventScreen'); //
-              },),
+            OutlinedButton(
+              child: const Text('Logout'),
+              onPressed: () async {
+                await sharedPrefController.removeUser();
+                sharedPrefController.removeUser();
+                await SharedPreferencesHelper()
+                    .clear(); // Clear shared preferences
+                Get.offAllNamed('/EventScreen'); //
+              },
+            ),
           ],
         );
       },

@@ -120,7 +120,7 @@ class _EventsScreenState extends State<EventsScreen>
                 },
               ),
               const Padding(
-                padding: EdgeInsets.symmetric(vertical: 0, horizontal: 15),
+                padding: EdgeInsets.symmetric(vertical: 0, horizontal: 20),
                 child: Text(
                   MyStrings.event_happening_with_dreamcast,
                   style: TextStyle(
@@ -143,7 +143,7 @@ class _EventsScreenState extends State<EventsScreen>
   Widget _loginStripUI() {
     return Container(
       color: blackGrey,
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
       alignment: Alignment.center,
       child: RichText(
         text: TextSpan(
@@ -152,7 +152,7 @@ class _EventsScreenState extends State<EventsScreen>
               color: Colors.white,
               fontSize: 14,
               fontFamily: "figtree_medium",
-              fontWeight: FontWeight.normal),
+              fontWeight: FontWeight.w500),
           children: [
             TextSpan(
               text: MyStrings.logIn,
@@ -187,7 +187,7 @@ class _EventsScreenState extends State<EventsScreen>
 
         case Status.error:
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Center(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -202,7 +202,7 @@ class _EventsScreenState extends State<EventsScreen>
                   Text(
                     eventsController.eventResource.value.message ?? MyStrings.no_event_found,
                     style: const TextStyle(
-                        color: blackGrey,
+                        color: textColor,
                         fontSize: 20,
                         fontFamily: "figtree_semibold"
                     ),
@@ -215,12 +215,12 @@ class _EventsScreenState extends State<EventsScreen>
           final eventsList = eventsController.eventResource.value.data;
           print("Event List-> $eventsList");
           return ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0),
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
             itemCount: eventsList?.length ?? 0,
             itemBuilder: (context, index) {
               final event = eventsList?[index];
               return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 6.0),
+                padding: const EdgeInsets.only(top: 16.0),
                 child: GestureDetector(
                   onTap: () {
                     eventsController.setEventData(event);
@@ -230,7 +230,7 @@ class _EventsScreenState extends State<EventsScreen>
                       context,
                       title: "Alert",
                       message: "Please Login",
-                      positiveButtonLabel: "OK",
+                      positiveButtonLabel: "Okay",
                       isNegativeButtonVisible: false,
                     )
                         : Get.toNamed(
@@ -242,11 +242,11 @@ class _EventsScreenState extends State<EventsScreen>
                     print('Event tapped: ${event?.name}');
                     },
                   child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 18),
+                    padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 18),
                     decoration: BoxDecoration(
                       color: white_color,
                       border: Border.all(color: white80),
-                      borderRadius: BorderRadius.circular(15),
+                      borderRadius: AppBorderRadius.medium,
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
