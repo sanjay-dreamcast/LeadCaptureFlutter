@@ -5,7 +5,7 @@ export "FLUTTER_APPLICATION_PATH=/Users/vishalsharma/Documents/Projects/Flutter/
 export "COCOAPODS_PARALLEL_CODE_SIGN=true"
 export "FLUTTER_TARGET=/Users/vishalsharma/Documents/Projects/Flutter/LeadCaptureFlutter/lib/main.dart"
 export "FLUTTER_BUILD_DIR=build"
-export "FLUTTER_BUILD_NAME=1.0.4"
+export "FLUTTER_BUILD_NAME=1.0.5"
 export "FLUTTER_BUILD_NUMBER=1"
 export "DART_DEFINES=Zmx1dHRlci5pbnNwZWN0b3Iuc3RydWN0dXJlZEVycm9ycz10cnVl,RkxVVFRFUl9XRUJfQVVUT19ERVRFQ1Q9dHJ1ZQ==,RkxVVFRFUl9XRUJfQ0FOVkFTS0lUX1VSTD1odHRwczovL3d3dy5nc3RhdGljLmNvbS9mbHV0dGVyLWNhbnZhc2tpdC8wNTQ1Zjg3MDVkZjMwMTg3N2Q3ODcxMDdiYWMxYTZlOWZjOWVlMWFkLw=="
 export "DART_OBFUSCATION=false"

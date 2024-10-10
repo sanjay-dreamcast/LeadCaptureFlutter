@@ -1,4 +1,3 @@
-
 import 'package:camera/camera.dart';
 import 'package:cphi/view/customerWidget/boldTextView.dart';
 import 'package:cphi/view/customerWidget/regularTextView.dart';
@@ -29,8 +28,10 @@ class HomePgae extends GetView<LocalContactController> {
   HomePgae({Key? key, this.eventData}) : super(key: key);
 
   static const routeName = "/LocalContactViewPage";
-  final LeadsController leadsController = Get.put(LeadsController(Get.find<ApiService>()));
-  final EventsController eventsController = Get.put(EventsController(Get.find<ApiService>())); // Initialize the EventsController
+  final LeadsController leadsController =
+      Get.put(LeadsController(Get.find<ApiService>()));
+  final EventsController eventsController = Get.put(EventsController(
+      Get.find<ApiService>())); // Initialize the EventsController
   final controller = Get.put(LocalContactController());
   final DashboardController dashboardController = Get.find();
   final textController = TextEditingController().obs;
@@ -72,19 +73,22 @@ class HomePgae extends GetView<LocalContactController> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const Padding(
-                      padding: EdgeInsets.only(top: 24.0), // Adjust padding as needed
+                      padding: EdgeInsets.only(
+                          top: 24.0), // Adjust padding as needed
                       child: Text(
                         "Event Name",
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                           color: grey20Color,
-                          fontFamily: 'figtree_medium', // Ensure font is included in pubspec.yaml
+                          fontFamily:
+                              'figtree_medium', // Ensure font is included in pubspec.yaml
                         ),
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(top: 2.0), // Adjust padding as needed
+                      padding:
+                          EdgeInsets.only(top: 2.0), // Adjust padding as needed
                       child: Obx(() {
                         return Text(
                           "${eventsController.eventData.value.name}", // Update the event data
@@ -109,41 +113,72 @@ class HomePgae extends GetView<LocalContactController> {
                               // Get.put(NewQrScan());
                               //  var result = await dashboardController.scanQR();
 
-                             if (eventsController.eventData.value.isSync == 0) {
-                               UniversalAlertDialog.showAlertDialog(
-                                 context,
-                                 title: "Alert",
-                                 message: "You are not allow to add lead for this event, please contact to administration",
-                                 positiveButtonLabel: "OK",
-                                 isNegativeButtonVisible: false,
-                               );
-                               return;
-                             }
+                              if (eventsController.eventData.value.isSync ==
+                                  0) {
+                                UniversalAlertDialog.showAlertDialog(
+                                  context,
+                                  title: "Alert",
+                                  message:
+                                      "You are not allow to add lead for this event, please contact to administration",
+                                  positiveButtonLabel: "OK",
+                                  isNegativeButtonVisible: false,
+                                );
+                                return;
+                              }
 
-                              var result = await Get.toNamed(QrProfilePage.routeName);
+                              var result =
+                                  await Get.toNamed(QrProfilePage.routeName);
 
-                              if (result.toString().toLowerCase().contains("begin")) {
+                              if (result
+                                  .toString()
+                                  .toLowerCase()
+                                  .contains("begin")) {
                                 // Extracting the UC value
-                                String? ucValue = extractUCValue(result.toString());
+                                String? ucValue =
+                                    extractUCValue(result.toString());
+                                String? nameValue = extractNameValue(
+                                    result.toString().replaceAll(";", ""));
+                                String? emailValue =
+                                    extractEmailValue(result.toString());
+                                String? telValue =
+                                    extractMobileValue(result.toString());
+
+                                print(nameValue?.replaceAll(";", ""));
+                                print(emailValue);
+                                print(telValue);
 
                                 if (ucValue != null) {
-                                  checkQrCode(context,eventsController.eventData.value,ucValue);
+                                  checkQrCode(
+                                      context,
+                                      eventsController.eventData.value,
+                                      ucValue,
+                                      nameValue ?? "",
+                                      emailValue ?? "",
+                                      telValue ?? "",
+                                      true);
                                   print('UC Value: $ucValue');
                                 } else {
-                                  UniversalAlertDialog.showAlertDialog(
-                                      context,
-                                      title: "Success!",
-                                      message: "Unique code not found. A valid unique code is necessary to add a lead",
-                                      isNegativeButtonVisible: false,
-                                      positiveButtonLabel: "Ok"
-                                  ).then((_) {
+                                  UniversalAlertDialog.showAlertDialog(context,
+                                          title: "Success!",
+                                          message:
+                                              "Unique code not found. A valid unique code is necessary to add a lead",
+                                          isNegativeButtonVisible: false,
+                                          positiveButtonLabel: "Ok")
+                                      .then((_) {
                                     // Reset the flag when the dialog is dismissed
                                   });
                                 }
                               } else {
                                 print("result=======");
                                 print(result);
-                                checkQrCode(context,eventsController.eventData.value,result);
+                                checkQrCode(
+                                    context,
+                                    eventsController.eventData.value,
+                                    result,
+                                    "",
+                                    "",
+                                    "",
+                                    false);
                               }
 
                               /*if (result["uc"] == null) {
@@ -184,9 +219,10 @@ class HomePgae extends GetView<LocalContactController> {
                                 Container(
                                   decoration: BoxDecoration(
                                       color: const Color(0xffF4F3F7),
-                                      borderRadius:
-                                      const BorderRadius.all(Radius.circular(75)),
-                                      border: Border.all(color: primaryColor,width: 2)),
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(75)),
+                                      border: Border.all(
+                                          color: primaryColor, width: 2)),
                                   height: 150,
                                   width: 150,
                                   child: Column(
@@ -245,30 +281,33 @@ class HomePgae extends GetView<LocalContactController> {
                             child: controller.localDataList.isEmpty
                                 ? const SizedBox()
                                 : Container(
-                              decoration: BoxDecoration(
-                                  color: const Color(0xffF4F3F7),
-                                  borderRadius:
-                                  const BorderRadius.all(Radius.circular(40)),
-                                  border: Border.all(color: Colors.transparent)),
-                              width: 250,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.all(10),
-                                    child: Text(
-                                      "${controller.localDataList.length} Leads collected",
-                                      style: const TextStyle(
-                                        fontSize: 24,
-                                        color: blueGrey20,
-                                      ),
+                                    decoration: BoxDecoration(
+                                        color: const Color(0xffF4F3F7),
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(40)),
+                                        border: Border.all(
+                                            color: Colors.transparent)),
+                                    width: 250,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.all(10),
+                                          child: Text(
+                                            "${controller.localDataList.length} Leads collected",
+                                            style: const TextStyle(
+                                              fontSize: 24,
+                                              color: blueGrey20,
+                                            ),
+                                          ),
+                                        ),
+                                        const Icon(CupertinoIcons.forward)
+                                      ],
                                     ),
                                   ),
-                                  const Icon(CupertinoIcons.forward)
-                                ],
-                              ),
-                            ),
                           ),
                         ],
                       ),
@@ -276,7 +315,9 @@ class HomePgae extends GetView<LocalContactController> {
                   ],
                 ),
               ),
-              controller.loading.value ? Center(child: const CircularProgressIndicator()) : const SizedBox()
+              controller.loading.value
+                  ? Center(child: const CircularProgressIndicator())
+                  : const SizedBox()
             ],
           );
         }),
@@ -299,14 +340,67 @@ class HomePgae extends GetView<LocalContactController> {
     return null;
   }
 
-  Future<void> checkQrCode(BuildContext context, EventData? eventData, String? qrCodeScanned) async {
+  String? extractNameValue(String vCardData) {
+    // Split the vCard data into lines
+    List<String> lines = vCardData.split('\n');
 
+    // Iterate through each line to find the one that contains "UC:"
+    for (String line in lines) {
+      if (line.trim().startsWith('N:')) {
+        // Extract and return the value after "UC:"
+        return line.split(':')[1].trim();
+      }
+    }
+    // Return null if UC value is not found
+    return null;
+  }
+
+  String? extractEmailValue(String vCardData) {
+    // Split the vCard data into lines
+    List<String> lines = vCardData.split('\n');
+
+    // Iterate through each line to find the one that contains "UC:"
+    for (String line in lines) {
+      if (line.trim().startsWith('EMAIL:')) {
+        // Extract and return the value after "UC:"
+        return line.split(':')[1].trim();
+      }
+    }
+    // Return null if UC value is not found
+    return null;
+  }
+
+  String? extractMobileValue(String vCardData) {
+    // Split the vCard data into lines
+    List<String> lines = vCardData.split('\n');
+
+    // Iterate through each line to find the one that contains "UC:"
+    for (String line in lines) {
+      if (line.trim().startsWith('TEL:')) {
+        // Extract and return the value after "UC:"
+        return line.split(':')[1].trim();
+      }
+    }
+    // Return null if UC value is not found
+    return null;
+  }
+
+  Future<void> checkQrCode(
+      BuildContext context,
+      EventData? eventData,
+      String? qrCodeScanned,
+      String name,
+      String email,
+      String phone,
+      bool showBox) async {
     final deviceId = await getDeviceIdentifier();
     // Ensure both `prefix` and `qrCodeScanned` are not null or empty
     print("qrCodeScanned: $qrCodeScanned, prefix: ${eventData?.prefix}");
     String? qrCodePrefix = eventData?.prefix;
-    if (qrCodeScanned != null && qrCodeScanned.isNotEmpty &&
-        qrCodePrefix != null && qrCodePrefix.isNotEmpty) {
+    if (qrCodeScanned != null &&
+        qrCodeScanned.isNotEmpty &&
+        qrCodePrefix != null &&
+        qrCodePrefix.isNotEmpty) {
       // Check if the scanned QR code starts with the given prefix && where the QR code is valid
       if (qrCodeScanned.startsWith(qrCodePrefix)) {
         // The QR code matches the prefix
@@ -317,14 +411,18 @@ class HomePgae extends GetView<LocalContactController> {
               onConfirm: (String notes) async {
                 print("notes-> $notes");
                 controller.loading.value = true;
-               await leadsController.addLeads({
-                  "event_id":eventData?.id,
-                  "qrcode":qrCodeScanned,
-                 "device_id":deviceId,
-                 "note":notes,
+                await leadsController.addLeads({
+                  "event_id": eventData?.id,
+                  "qrcode": qrCodeScanned,
+                  "device_id": deviceId,
+                  "note": notes,
                 }, Get.context!);
                 controller.loading.value = false;
               },
+              name: name,
+              email: email,
+              phone: phone,
+              showUserBox: showBox,
             );
           },
         );
@@ -334,7 +432,8 @@ class HomePgae extends GetView<LocalContactController> {
 
         // Replace with localized strings if necessary
         String title = "Invalid QR Code for Event";
-        String message = "This code does not belong to the current event. Please use a valid QR code for this event.";
+        String message =
+            "This code does not belong to the current event. Please use a valid QR code for this event.";
         String buttonText = "Try Again";
 
         // Show the alert dialog
@@ -367,7 +466,9 @@ class HomePgae extends GetView<LocalContactController> {
     } else if (kIsWeb) {
       // The web doesnt have a device UID, so use a combination fingerprint as an example
       WebBrowserInfo webInfo = await deviceInfo.webBrowserInfo;
-      deviceIdentifier = webInfo.vendor! + webInfo.userAgent!  + webInfo.hardwareConcurrency.toString();
+      deviceIdentifier = webInfo.vendor! +
+          webInfo.userAgent! +
+          webInfo.hardwareConcurrency.toString();
     } else if (Platform.isLinux) {
       LinuxDeviceInfo linuxInfo = await deviceInfo.linuxInfo;
       deviceIdentifier = linuxInfo.machineId;
@@ -375,12 +476,7 @@ class HomePgae extends GetView<LocalContactController> {
     print("id=====${deviceIdentifier}");
     return deviceIdentifier;
   }
-
 }
-
-
-
-
 
 class LeadCollectedWidget extends StatelessWidget {
   @override
@@ -404,15 +500,19 @@ class LeadCollectedWidget extends StatelessWidget {
               'Leads Collected', // Use a localization method for strings
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontFamily: 'figtree_regular', // Ensure font is included in pubspec.yaml
+                fontFamily:
+                    'figtree_regular', // Ensure font is included in pubspec.yaml
                 fontSize: 18.0,
                 fontWeight: FontWeight.w500,
-                color: blueGrey20, // Set text color to white for better contrast
+                color:
+                    blueGrey20, // Set text color to white for better contrast
               ),
             ),
-            SizedBox(width: 15.0), // Optional: Add spacing between text and icon
+            SizedBox(
+                width: 15.0), // Optional: Add spacing between text and icon
             Icon(
-              Icons.arrow_forward_ios, // Replace with your custom icon if needed
+              Icons
+                  .arrow_forward_ios, // Replace with your custom icon if needed
               color: blackGrey,
               size: 22,
             ),
@@ -422,4 +522,3 @@ class LeadCollectedWidget extends StatelessWidget {
     );
   }
 }
-

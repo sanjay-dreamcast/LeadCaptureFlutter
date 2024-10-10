@@ -93,10 +93,18 @@ class UniversalAlertDialog {
 class AddLeadsDialog extends StatelessWidget {
 
   final Function(String note) onConfirm; // Correctly define the type of onConfirm
+  final String name;
+  final String email;
+  final String phone;
+  final bool showUserBox;
 
   const AddLeadsDialog({
     Key? key,
     required this.onConfirm,
+     required this.name,
+    required this.email,
+    required this.phone,
+    required this.showUserBox,
   }) : super(key: key);
 
   @override
@@ -139,49 +147,48 @@ class AddLeadsDialog extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 10),
-            Container(
+            const SizedBox(height: 20),
+           showUserBox ? Container(
               width: double.infinity,
               padding: const EdgeInsets.all(16.0),
-              margin: const EdgeInsets.symmetric(horizontal: 15),
               decoration: BoxDecoration(
                 color: Colors.grey[100],
                 borderRadius: AppBorderRadius.small,
               ),
-              child: const Column(
+              child:  Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 3.0),
+                  name.isEmpty ? const SizedBox() :   Padding(
+                    padding: const EdgeInsets.only(bottom: 3.0),
                     child: Text(
-                      "Name: Ram Kumawat",
-                      style: TextStyle(
+                       "Name: $name" ,
+                      style: const TextStyle(
                         fontSize: 16,
                         color: Colors.black87,
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 3.0),
+                  phone.isEmpty ? const SizedBox() :   Padding(
+                    padding: const EdgeInsets.only(bottom: 3.0),
                     child: Text(
-                      "Mobile No: 8824023248",
-                      style: TextStyle(
+                      "Mobile No: $phone",
+                      style: const TextStyle(
                         fontSize: 16,
                         color: Colors.black87,
                       ),
                     ),
                   ),
-                  Text(
-                    "Email: ramratan@dreamcast.co",
-                    style: TextStyle(
+                  email.isEmpty ? const SizedBox() : Text(
+                    "Email: $email",
+                    style: const TextStyle(
                       fontSize: 16,
                       color: Colors.black87,
                     ),
                   ),
                 ],
               ),
-            ),
-            const SizedBox(height: 10),
+            ) : SizedBox(),
+            const SizedBox(height: 20),
             const Align(
               alignment: Alignment.topLeft,
               child: Text(
@@ -201,7 +208,7 @@ class AddLeadsDialog extends StatelessWidget {
                 hintText: "Note",
                 border: OutlineInputBorder(),
                 hintStyle: TextStyle(color: Color(0xFF8A8A8E),
-                  fontSize: 17,
+                  fontSize: 16,
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.black,width: 0.8),
@@ -218,7 +225,7 @@ class AddLeadsDialog extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 15),
-            Container(
+            SizedBox(
               width: double.infinity,
               child: TextButton(
                 onPressed: () {
@@ -227,14 +234,14 @@ class AddLeadsDialog extends StatelessWidget {
                 },
                 style: TextButton.styleFrom(
                   backgroundColor: blackGrey,
-                  padding: EdgeInsets.symmetric(vertical: 5), // You can adjust vertical padding as needed
+                  padding: const EdgeInsets.symmetric(vertical: 15), // You can adjust vertical padding as needed
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                child: Text(
+                child: const Text(
                   "Add Lead",
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: Colors.white,fontSize: 18),
                 ),
               ),
             ),

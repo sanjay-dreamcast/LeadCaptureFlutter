@@ -503,8 +503,13 @@ class LocalContactViewPage extends GetView<LocalContactController> {
             // Extracting the UC value
             String? ucValue = extractUCValue(result.toString());
 
+            // Extracting the UC value
+            String? nameValue = extractNameValue(result.toString().replaceAll(";", ""));
+            String? emailValue = extractEmailValue(result.toString());
+            String? telValue = extractMobileValue(result.toString());
+
             if (ucValue != null) {
-              checkQrCode(context, eventsController.eventData.value, ucValue);
+              checkQrCode(context,eventsController.eventData.value,ucValue,nameValue ?? "",emailValue ?? "", telValue ??"",true);
               print('UC Value: $ucValue');
             } else {
               UniversalAlertDialog.showAlertDialog(context,
@@ -518,13 +523,13 @@ class LocalContactViewPage extends GetView<LocalContactController> {
               });
             }
           } else {
-            checkQrCode(context, eventsController.eventData.value, result);
+            checkQrCode(context, eventsController.eventData.value, result,"","","",false);
           }
         },
         child: Container(
           width: 150,
-          margin: EdgeInsets.all(20),
-          padding: EdgeInsets.all(15),
+          margin: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(15),
           decoration: const BoxDecoration(
               color: primaryColor,
               borderRadius: BorderRadius.all(Radius.circular(50))),
@@ -552,8 +557,7 @@ class LocalContactViewPage extends GetView<LocalContactController> {
     );
   }
 
-  Future<void> checkQrCode(
-      BuildContext context, EventData? eventData, String? qrCodeScanned) async {
+  Future<void> checkQrCode(BuildContext context, EventData? eventData, String? qrCodeScanned, String name,String email,String phone,bool showBox) async {
     final deviceId = await getDeviceIdentifier();
     // Ensure both `prefix` and `qrCodeScanned` are not null or empty
     print("qrCodeScanned: $qrCodeScanned, prefix: ${eventData?.prefix}");
@@ -579,7 +583,10 @@ class LocalContactViewPage extends GetView<LocalContactController> {
                   "device_id": deviceId
                 }, context);
                 controller.loading.value = false;
-              },
+              }, name: name,
+              email: email,
+              phone: phone,
+              showUserBox: showBox,
             );
           },
         );
@@ -649,6 +656,51 @@ class LocalContactViewPage extends GetView<LocalContactController> {
     return null;
   }
 
+  String? extractNameValue(String vCardData) {
+    // Split the vCard data into lines
+    List<String> lines = vCardData.split('\n');
+
+    // Iterate through each line to find the one that contains "UC:"
+    for (String line in lines) {
+      if (line.trim().startsWith('N:')) {
+        // Extract and return the value after "UC:"
+        return line.split(':')[1].trim();
+      }
+    }
+    // Return null if UC value is not found
+    return null;
+  }
+
+  String? extractEmailValue(String vCardData) {
+    // Split the vCard data into lines
+    List<String> lines = vCardData.split('\n');
+
+    // Iterate through each line to find the one that contains "UC:"
+    for (String line in lines) {
+      if (line.trim().startsWith('EMAIL:')) {
+        // Extract and return the value after "UC:"
+        return line.split(':')[1].trim();
+      }
+    }
+    // Return null if UC value is not found
+    return null;
+  }
+
+  String? extractMobileValue(String vCardData) {
+    // Split the vCard data into lines
+    List<String> lines = vCardData.split('\n');
+
+    // Iterate through each line to find the one that contains "UC:"
+    for (String line in lines) {
+      if (line.trim().startsWith('TEL:')) {
+        // Extract and return the value after "UC:"
+        return line.split(':')[1].trim();
+      }
+    }
+    // Return null if UC value is not found
+    return null;
+  }
+
   Widget circularImage({url, shortName}) {
     return SizedBox(
       height: 60,
@@ -703,7 +755,6 @@ class LocalContactViewPage extends GetView<LocalContactController> {
         final directory = await getApplicationDocumentsDirectory();
         final path = directory.path;
         var pathAsText = "$path/contact.txt";
-
         var contactAsFile = File(await getFilePath("contact"));
         await contactAsFile.writeAsString(vCardAsString);
 
@@ -724,7 +775,6 @@ class LocalContactViewPage extends GetView<LocalContactController> {
         await getApplicationDocumentsDirectory(); // 1
     String appDocumentsPath = appDocumentsDirectory.path; // 2
     String filePath = '$appDocumentsPath/$fileName.txt'; // 3
-
     return filePath;
   }
 
