@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../theme/app_theme.dart';
+
 class UniversalAlertDialog {
 
   static Future<void> showAlertDialog(
@@ -135,6 +137,48 @@ class AddLeadsDialog extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                   fontFamily: 'figtree_bold',
                 ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16.0),
+              margin: const EdgeInsets.symmetric(horizontal: 15),
+              decoration: BoxDecoration(
+                color: Colors.grey[100],
+                borderRadius: AppBorderRadius.small,
+              ),
+              child: const Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 3.0),
+                    child: Text(
+                      "Name: Ram Kumawat",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 3.0),
+                    child: Text(
+                      "Mobile No: 8824023248",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    "Email: ramratan@dreamcast.co",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 10),
