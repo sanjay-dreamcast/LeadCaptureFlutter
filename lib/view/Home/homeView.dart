@@ -156,7 +156,6 @@ class HomePgae extends GetView<LocalContactController> {
                                       emailValue ?? "",
                                       telValue ?? "",
                                       true);
-                                  print('UC Value: $ucValue');
                                 } else {
                                   UniversalAlertDialog.showAlertDialog(context,
                                           title: "Success!",
@@ -169,8 +168,6 @@ class HomePgae extends GetView<LocalContactController> {
                                   });
                                 }
                               } else {
-                                print("result=======");
-                                print(result);
                                 checkQrCode(
                                     context,
                                     eventsController.eventData.value,
@@ -393,7 +390,7 @@ class HomePgae extends GetView<LocalContactController> {
       String email,
       String phone,
       bool showBox) async {
-    final deviceId = await getDeviceIdentifier();
+    final deviceId = await  getDeviceIdentifier();
     // Ensure both `prefix` and `qrCodeScanned` are not null or empty
     print("qrCodeScanned: $qrCodeScanned, prefix: ${eventData?.prefix}");
     String? qrCodePrefix = eventData?.prefix;
@@ -409,7 +406,6 @@ class HomePgae extends GetView<LocalContactController> {
           builder: (BuildContext context) {
             return AddLeadsDialog(
               onConfirm: (String notes) async {
-                print("notes-> $notes");
                 controller.loading.value = true;
                 await leadsController.addLeads({
                   "event_id": eventData?.id,
@@ -449,7 +445,30 @@ class HomePgae extends GetView<LocalContactController> {
         });
       }
     } else {
-      print("QR code or prefix is empty.");
+      if (qrCodeScanned != null &&
+          qrCodeScanned.isNotEmpty) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context2) {
+            return AddLeadsDialog(
+              onConfirm: (String notes) {
+                controller.loading.value = true;
+                leadsController.addLeads({
+                  "event_id": eventData?.id,
+                  "qrcode": qrCodeScanned,
+                  "note": notes,
+                  "device_id": deviceId
+                }, context);
+                controller.loading.value = false;
+              },
+              name: name,
+              email: email,
+              phone: phone,
+              showUserBox: showBox,
+            );
+          },
+        );
+      }
     }
   }
 

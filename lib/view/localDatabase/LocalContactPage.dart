@@ -613,7 +613,33 @@ class LocalContactViewPage extends GetView<LocalContactController> {
         });
       }
     } else {
-      print("QR code or prefix is empty.");
+      if (qrCodeScanned != null &&
+          qrCodeScanned.isNotEmpty) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context2) {
+            return AddLeadsDialog(
+              onConfirm: (String notes) {
+                controller.loading.value = true;
+                print("notes-> $notes");
+                leadsController.addLeads({
+                  "event_id": eventData?.id,
+                  "qrcode": qrCodeScanned,
+                  "note": notes,
+                  "device_id": deviceId
+                }, context);
+                controller.loading.value = false;
+              },
+              name: name,
+              email: email,
+              phone: phone,
+              showUserBox: showBox,
+            );
+          },
+        );
+
+        print("QR code or prefix is empty.");
+      }
     }
   }
 
